@@ -1,0 +1,44 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #F5F5F5;  
+  color: black;             
+  padding: 1rem 2rem;            
+  text-align: center;        
+  position: fixed;           
+  top: 0;                    
+  left: 0;                   
+  right: 0;                  
+  z-index: 1000;     
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+
+#navTitle {
+  /* position: absolute;
+  left: 50%;
+  transform: translateX(-50%); */
+  font-weight: 600;
+  font-size: 2.5rem;;
+  letter-spacing: 0.25em;
+  margin-left: 1rem;
+}
+
+
+#navLogo img {
+  height: 70px;
+  width: auto;
+}
+
+.navLinks {
+  list-style-type: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks li a:hover {
+  color: grey;
+}
