@@ -1,6 +1,7 @@
-import '../App.css';
+import './Homepage.css';
 import Textform from '../components/Textform';
 import Circle from '../components//Circle'; 
+import Upload from '../components/Upload';
 
 const HomePage = () => {
     return (
@@ -19,7 +20,16 @@ const HomePage = () => {
             </div>
             <br></br>
 
-            <Textform />
+            <div className="input-div">
+                <div className="textform">
+                    <Textform />
+                </div>
+                <div className="upload">
+                    <Upload />
+                </div>
+        </div>
+
+
         </div>
     );
 };
