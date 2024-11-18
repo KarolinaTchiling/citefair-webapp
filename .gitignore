@@ -26,4 +26,4 @@ dist-ssr
 # senstive information
 .env
 backend/serviceAccountKey.json
-frontend/firebaseConfig.js
+frontend/src/firebase/firebaseConfig.js
