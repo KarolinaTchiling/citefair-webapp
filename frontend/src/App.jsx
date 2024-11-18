@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import cong from "../firebaseConfig"; // Assuming the correct path to your configuration file
 import { getDatabase, ref, onValue } from "firebase/database";
 
-// App.js
-
 function App() {
   const [data, setData] = useState([]);
 
