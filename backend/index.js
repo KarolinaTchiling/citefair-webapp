@@ -1,10 +1,10 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const dataRoutes = require("./routes/data");
-const userRoutes = require("./routes/users");
-const PORT = 5000;
+// import "dotenv/config";
+import express from "express";
+import dataRoutes from "./routes/data.js";
+import userRoutes from "./routes/users.js";
 
+const app = express();
+const PORT = 5000;
 
 
 // Middleware to parse JSON
