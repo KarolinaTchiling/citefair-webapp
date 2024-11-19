@@ -1,26 +1,24 @@
 import pkg from 'bibtex';
-const {parseBibFile, normalizeFieldValue} = pkg;
-import fs from 'fs/promises'; // Use promises for modern async/await
 
-async function parseBibFromFile(filePath) {
+const { parseBibFile, normalizeFieldValue } = pkg;
+
+export function parseBibContent(bibContent) {
   try {
-    // Read the .bib file contents
-    const bibContent = await fs.readFile(filePath, 'utf-8');
-
-    // Parse the BibTeX content
     const bibFile = parseBibFile(bibContent);
 
-    // Access all entries using entries$
+    // Process entries
     const entries = bibFile['entries$']; // Object containing all entries
     Object.keys(entries).forEach((key) => {
       const entry = entries[key];
       console.log(`Entry Key: ${key}`);
 
-      // Access fields such as title, author, etc.
+      // Normalize and print the title
       const titleField = entry.getField('title');
-      console.log('Title:', normalizeFieldValue(titleField));
+      if (titleField) {
+        console.log('Title:', normalizeFieldValue(titleField));
+      }
 
-      // Access authors
+      // Extract and print authors
       const authorField = entry.getField('author');
       if (authorField && authorField.authors$) {
         console.log('Authors:');
@@ -34,9 +32,6 @@ async function parseBibFromFile(filePath) {
     });
   } catch (error) {
     console.error('Error reading or parsing .bib file:', error);
+    throw error;
   }
 }
-
-// Specify the path to your .bib file
-const filePath = './ease-references.bib'; // Update this to your file path
-parseBibFromFile(filePath);
