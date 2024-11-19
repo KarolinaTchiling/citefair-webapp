@@ -26,8 +26,7 @@ const handleSignUp = async () => {
     console.log("User signed up:", user);
     setSuccess("Account created successfully!");
     setError("");
-
-    console.log("Navigating to /main");
+    
     navigate("/main");
   } catch (err) {
     setError(err.message);
