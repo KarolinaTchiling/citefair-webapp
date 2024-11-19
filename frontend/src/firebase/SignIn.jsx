@@ -1,43 +1,52 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { auth } from "./firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-function SignUp() {
+function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(""); // Handle error messages
   const navigate = useNavigate(); // Initialize navigate function
 
-  const handleSignUp = async () => {
+  const handleSignIn = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save user data to Firebase Realtime Database
-      const db = getDatabase();
-      await set(ref(db, `users/${user.uid}`), {
-        email: user.email,
-        createdAt: new Date().toISOString(), // Add timestamp for user creation
+      // Retrieve the ID token for the user
+      const token = await user.getIdToken();
+      console.log("logged in:", user);
+      console.log("ID Token:", token);
+
+      // Send the token to the backend
+      const response = await fetch("http://localhost:5000/api/get-user-id", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
       });
 
-      console.log("User signed up:", user);
-      setSuccess("Account created successfully!");
-      setError("");
+      if (!response.ok) {
+        throw new Error("Failed to get user ID from backend");
+      }
 
+      const data = await response.json();
+      console.log("User ID from backend:", data.userId);
+
+      // Navigate to the main page after successful login
       console.log("Navigating to /main");
       navigate("/main");
     } catch (err) {
-      setError(err.message);
-      setSuccess("");
+      console.error("Error signing in:", err.message);
+      setError(err.message); // Set error message to display to the user
     }
   };
 
   return (
     <div>
-      <h2>Sign Up</h2>
+      <h2>Sign In</h2>
       <input
         type="email"
         placeholder="Email"
@@ -50,13 +59,13 @@ function SignUp() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={handleSignUp}>Sign Up</button>
+      <button onClick={handleSignIn}>Sign In</button>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
     </div>
   );
 }
 
-export default SignUp;
+export default SignIn;
+
 

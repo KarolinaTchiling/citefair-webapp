@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 import { getDatabase, ref, set } from "firebase/database";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
@@ -16,6 +17,11 @@ const handleSignUp = async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Retrieve the ID token for the user
+    const token = await user.getIdToken(); // Retrieve the token
+    console.log("User signed up", user);
+    console.log("ID Token:", token);
+
     // Save user data to Firebase Realtime Database
     const db = getDatabase();
     await set(ref(db, `users/${user.uid}`), {
@@ -24,11 +30,31 @@ const handleSignUp = async () => {
     });
 
     console.log("User signed up:", user);
-    setSuccess("Account created successfully!");
     setError("");
     
     navigate("/main");
+
+    // Send the token to the backend
+    const response = await fetch("http://localhost:5000/api/get-user-id", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get user ID from backend");
+    }
+
+    const data = await response.json();
+    console.log("User ID from backend:", data.userId);
+
+    setSuccess("Account created successfully!");
+    setError("");
+    navigate("/main");
   } catch (err) {
+    console.error("Error:", err.message);
     setError(err.message);
     setSuccess("");
   }
