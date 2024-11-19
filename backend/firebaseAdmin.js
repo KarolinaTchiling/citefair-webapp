@@ -13,4 +13,5 @@ admin.initializeApp({
 const db = admin.database();
 const storage = admin.storage();
 
-export { db, storage };
+export { db, storage ,admin};
+

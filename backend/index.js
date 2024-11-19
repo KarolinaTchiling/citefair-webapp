@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors"; 
 import dataRoutes from "./routes/data.js";
 import userRoutes from "./routes/users.js";
+import apiRoutes from "./routes/api.js";
 
 const app = express();
 const PORT = 5000;
@@ -22,6 +23,9 @@ app.get("/", (req, res) => {
 
 // Register routes
 app.use("/data", dataRoutes);
+
+// User routes
+app.use("/api", apiRoutes);
 
 // User routes
 app.use("/api", userRoutes);

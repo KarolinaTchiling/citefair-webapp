@@ -1,13 +1,15 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "./firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useUser } from "../UserContext"; // Import the UserContext hook
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // Handle error messages
-  const navigate = useNavigate(); // Initialize navigate function
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { setUserId } = useUser(); // Get setUserId from context
 
   const handleSignIn = async () => {
     try {
@@ -16,8 +18,6 @@ function SignIn() {
 
       // Retrieve the ID token for the user
       const token = await user.getIdToken();
-      console.log("logged in:", user);
-      console.log("ID Token:", token);
 
       // Send the token to the backend
       const response = await fetch("http://localhost:5000/api/get-user-id", {
@@ -33,14 +33,13 @@ function SignIn() {
       }
 
       const data = await response.json();
+      setUserId(data.userId); // Save the userId in context
       console.log("User ID from backend:", data.userId);
 
-      // Navigate to the main page after successful login
-      console.log("Navigating to /main");
-      navigate("/main");
+      navigate("/main"); // Navigate to the main page after successful login
     } catch (err) {
       console.error("Error signing in:", err.message);
-      setError(err.message); // Set error message to display to the user
+      setError(err.message); // Set error message
     }
   };
 
@@ -60,12 +59,12 @@ function SignIn() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleSignIn}>Sign In</button>
-
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
 
 export default SignIn;
+
 
 

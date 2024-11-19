@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
 import { auth } from "../firebase/firebaseConfig"; // Adjust the path as needed
+import { Link } from 'react-router-dom';
 
 function MainPage() {
   const [file, setFile] = useState(null);
@@ -61,6 +62,7 @@ function MainPage() {
       <input type="file" accept=".bib" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload</button>
       {uploadStatus && <p>{uploadStatus}</p>}
+      <div><Link to="/statement">See your CDS</Link></div>
     </div>
   );
 }
