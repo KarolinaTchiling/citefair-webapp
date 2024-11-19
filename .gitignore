@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# senstive information
+.env
+backend/serviceAccountKey.json
+frontend/src/firebase/firebaseConfig.js
