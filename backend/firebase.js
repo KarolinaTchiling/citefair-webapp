@@ -10,3 +10,4 @@ admin.initializeApp({
 // Export database references
 const db = admin.database();
 module.exports = db;
+

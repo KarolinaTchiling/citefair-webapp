@@ -5,7 +5,7 @@ const db = require("../firebase");
 // Route to get data from the "test" node
 router.get("/", async (req, res) => {
   try {
-    const ref = db.ref("users");
+    const ref = db.ref("test");
     ref.once("value", (snapshot) => {
       res.json(snapshot.val());
     });
