@@ -1,6 +1,7 @@
 import React from 'react'
 import SignUp from "../firebase/SignUp";
-import { Link } from 'react-router-dom';
+import SignIn from "../firebase/SignIn";
+// import { Link } from 'react-router-dom';
 
 
 function LandingPage() {
@@ -9,7 +10,7 @@ function LandingPage() {
     <div>
         <h1>Hello</h1>
         <SignUp/>
-        <Link to="/main">Go to Main Page</Link>
+        <SignIn/>
     </div>
   )
 }
