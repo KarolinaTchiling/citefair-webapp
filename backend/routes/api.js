@@ -14,7 +14,7 @@ router.post("/parse-file", async (req, res) => {
 
   try {
     // Use Firebase Storage to retrieve the file
-    const filePath = `users/${userId}/uploads/${fileName}`;
+    const filePath = `users/${userId}/uploads/ref.bib`;
     const bucket = storage.bucket();
     const file = bucket.file(filePath);
 
