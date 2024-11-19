@@ -29,6 +29,7 @@ router.post("/parse-file", async (req, res) => {
 
     // Parse the file content
     const parsedResult = parseBibContent(fileContent.toString("utf-8"));
+    console.log("Parsed Result:", parsedResult);
 
     res.status(200).json({ parsedResult });
   } catch (error) {
