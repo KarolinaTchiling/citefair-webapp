@@ -69,7 +69,6 @@ function ParseFileButton() {
           <ul>
             {parsedResult.map((entry, index) => (
               <li key={index}>
-                <strong>{entry.key}:</strong> {entry.title || "No Title"} -{" "}
                 {entry.authors.join(", ") || "No Authors"}
               </li>
             ))}
