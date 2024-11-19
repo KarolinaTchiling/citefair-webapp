@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { storage } from "../firebase.js";
+import { storage } from "../firebaseAdmin.js";
 
 // Resolve __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
