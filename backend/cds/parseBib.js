@@ -4,34 +4,21 @@ const { parseBibFile, normalizeFieldValue } = pkg;
 
 export function parseBibContent(bibContent) {
   try {
-    const bibFile = parseBibFile(bibContent);
+    const bibFile = parseBibFile(bibContent); // Assuming this parses the .bib content
+    const entries = bibFile["entries$"]; // Access entries in the parsed file
 
-    // Process entries
-    const entries = bibFile['entries$']; // Object containing all entries
-    Object.keys(entries).forEach((key) => {
+    const results = Object.keys(entries).map((key) => {
       const entry = entries[key];
-      console.log(`Entry Key: ${key}`);
-
-      // Normalize and print the title
-      const titleField = entry.getField('title');
-      if (titleField) {
-        console.log('Title:', normalizeFieldValue(titleField));
-      }
-
-      // Extract and print authors
-      const authorField = entry.getField('author');
-      if (authorField && authorField.authors$) {
-        console.log('Authors:');
-        authorField.authors$.forEach((author) => {
-          console.log(
-            (author.firstNames.concat(author.vons, author.lastNames, author.jrs)).join(' ')
-          );
-        });
-      }
-      console.log('\n');
+      return {
+        key,
+        title: entry.getField("title") || "No Title",
+        authors: entry.getField("author") || "No Authors",
+      };
     });
+
+    return results; // Explicitly return the parsed results
   } catch (error) {
-    console.error('Error reading or parsing .bib file:', error);
+    console.error("Error parsing .bib content:", error);
     throw error;
   }
 }
