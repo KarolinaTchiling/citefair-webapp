@@ -1,7 +1,7 @@
 import express from "express";
 import { storage } from "../firebaseAdmin.js"; // Import the initialized storage
 import { getStorage, ref, getDownloadURL } from "firebase/storage"; // Firebase Admin SDK
-import { parseBibContent } from "../cds/parseBib.js"; // Your existing parsing logic
+import { parseBibContent } from "../cds_generator/parseBib.js"; // Your existing parsing logic
 
 const router = express.Router();
 
