@@ -1,9 +1,9 @@
-import React from 'react';
-import ParseFileButton from '../firebase/ParseFileButton.jsx';
+// import React from 'react';
+// import ParseFileButton from '../firebase/ParseFileButton.jsx';
 
-function StatementPage () {
-    return (
-        <div><ParseFileButton /></div>
-    )
-}
-export default StatementPage;
+// function StatementPage () {
+//     return (
+//         <div><ParseFileButton /></div>
+//     )
+// }
+// export default StatementPage;
