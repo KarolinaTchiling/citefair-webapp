@@ -1,32 +1,38 @@
 import express from "express";
-// import { storage } from "../firebaseAdmin.js"; // Import the initialized storage
-// import { getStorage, ref, getDownloadURL } from "firebase/storage"; // Firebase Admin SDK
-import { generate } from "../cds_generator/generate.js"; // Your existing parsing logic
+import { admin } from "../firebaseAdmin.js"; 
+import { generate } from "../cds_generator/generate.js"; 
 
 const router = express.Router();
 
-// router.post("/get-cds")
+const authenticateToken = async (req) => {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new Error("Authorization token is missing or invalid");
+  }
+
+  const token = authHeader.split(' ')[1]; // Extract the token part
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    return decodedToken; 
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
+};
+
 
 
 router.post("/get-cds", async (req, res) => {
-  // const { userId, fileName } = req.body;
-  // if (!userId || !fileName) {
-  //   return res.status(400).json({ error: "User ID and file name are required" });
-  // }
-
-  const { userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ error: "User ID are required" });
-  }
-
   try {
-    const response = await generate(userId)
-    res.status(200).json({ response });
 
+    const decodedToken = await authenticateToken(req);
+    const userId = decodedToken.uid;
+
+    const response = await generate(userId); 
+    res.status(200).json({ response });
   } catch (error) {
-    console.error("Error in /api/parse-file:", error);
-    res.status(500).json({ error: "Failed to parse the file" });
+    console.error("Error in /api/get-cds:", error);
+    res.status(401).json({ error: error.message || "Unauthorized" });
   }
 });
 
