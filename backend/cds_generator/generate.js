@@ -1,37 +1,46 @@
 import { getFileContent } from './getFileContent.js';
 import { cleanData } from './parseBibContent.js';
 import { fetchAuthorGender } from './getGenders.js';
+import { calculateCategories, calculatePercentages } from './genderStats.js';
+import { catStatement, totalStatement } from './getStatement.js';
 
 export async function generate(userId) {
     try {
-        // Step 1: Fetch file content using the user ID
+        // Step 1: Fetch file content using the user ID --------------
         const fileContent = await getFileContent(userId);
         // console.log("Fetched file content:", fileContent);
 
-        // Step 2: Clean and parse the data
-        const cleanedData = await cleanData(fileContent); // Assuming cleanNames is asynchronous
+        // Step 2: Clean and parse the data --------------------------
+        const cleanedData = await cleanData(fileContent);
         // console.log("Cleaned data:", cleanedData);
 
-        //Step 3: Get Gender Assignments
+        //Step 3: Get Gender Assignments ----------------------------
         const genderData = await fetchAuthorGender(cleanedData)
-        console.log("Gender data:", genderData);
+        // console.log("Gender data:", genderData);
 
-        
+        // Step 4: Calculate Gender Stats ---------------------------
+        const totalGender = calculatePercentages(genderData);
+        // console.log("Total gender percentages:", totalGender);
 
-    //   // Step 3: Further processing (if needed)
-    //   const finalResult = cleanedData.map((entry) => {
-    //     return {
-    //       reference: entry.reference,
-    //       authors: entry.authors.map(([firstName, lastName]) => `${firstName} ${lastName}`).join(", "),
-    //     };
-    //   });
+        const catGender = calculateCategories(genderData); 
+        // console.log("Gender category percentages:", catGender);
 
-    //   console.log("Final result:", finalResult);
+        // Step 5: get citation diversity statement ----------------
+        const totalState = totalStatement(totalGender);
+        // console.log(totalState);
 
-        // Step 4: Return the processed result
-    //   return finalResult;
+        const catState = catStatement(catGender);
+        // console.log(catState);
+
+        return {
+            category_data: catGender,
+            general_data: totalGender,
+            category_statement: catState,
+            general_statement: totalState,
+        };
+
     } catch (error) {
       console.error("Error in generate function:", error);
-      throw error; // Re-throw the error to be handled by the caller
+      throw error; 
     }
   }

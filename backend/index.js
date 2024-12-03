@@ -4,7 +4,7 @@ import cors from "cors";
 import dataRoutes from "./routes/data.js";
 import userRoutes from "./routes/users.js";
 import apiRoutes from "./routes/api.js";
-import testRoutes from "./routes/cdsController.js";
+
 
 const app = express();
 const PORT = 5000;
@@ -31,8 +31,6 @@ app.use("/api", apiRoutes);
 // User routes
 app.use("/api", userRoutes);
 
-
-app.use("/test", testRoutes);
 
 
 
