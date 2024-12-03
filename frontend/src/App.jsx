@@ -6,7 +6,7 @@ import LandingPage from './pages/LandingPage';
 // import StatementPage from './pages/StatementPage';
 import TestPage from './pages/TestPage';
 import UploadPage from './pages/UploadPage';
-
+import './input.css';
 
 function App() {
 
