@@ -1,23 +1,46 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";
 
 const SignupForm = () => {
-  const { signup } = useAuth();
+  const { user, signup } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [field, setField] = useState("");
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      // Additional user data can be sent to your backend or database here
-      await signup(email, password);
-      console.log("User signed up:", { firstName, lastName, field });
-      navigate("/upload");
+
+      /// Step 1: Create a new user with Firebase Authentication
+      const userCredential = await signup(email, password);
+      const user = userCredential.user;  // required to use the return since context and firebase are not updated right away
+      console.log("User signed up:", userCredential);
+
+      // Step 2: Save user data to Firebase Realtime Database
+      const db = getDatabase();
+      await set(ref(db, `users/${user.uid}`), {
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        field: field,
+        createdAt: new Date().toISOString(), // Add timestamp for user creation
+      });
+      console.log("User data saved to database.");
+
+      // Step 4: Navigate to the main page
+      setSuccess("Account created successfully!");
+      setError("");
+      navigate("/dashboard");
+
     } catch (error) {
       console.error("Signup failed:", error.message);
     }
