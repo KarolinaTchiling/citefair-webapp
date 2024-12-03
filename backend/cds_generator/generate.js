@@ -2,7 +2,7 @@ import { getFileContent } from './getFileContent.js';
 import { cleanData } from './parseBibContent.js';
 import { fetchAuthorGender } from './getGenders.js';
 import { calculateCategories, calculatePercentages } from './genderStats.js';
-import { catStatement, totalStatement } from './getStatement.js';
+import { catStatement, totalStatement, abbStatement, statementCitations } from './getStatement.js';
 
 export async function generate(userId) {
     try {
@@ -32,11 +32,16 @@ export async function generate(userId) {
         const catState = catStatement(catGender);
         // console.log(catState);
 
+        const abbState = abbStatement();
+        const references = statementCitations();
+
         return {
             category_data: catGender,
             general_data: totalGender,
             category_statement: catState,
             general_statement: totalState,
+            abbreviated_statement: abbState,
+            references: references,
         };
 
     } catch (error) {
