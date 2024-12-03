@@ -58,14 +58,20 @@ function MainPage() {
             setUploadStatus("File upload failed: " + error.message);
         }
     };
-
+    console.log(user)
     return (
         <div>
             <h1>Main Page</h1>
             <input type="file" accept=".bib" onChange={handleFileChange} />
             <button onClick={handleUpload}>Upload</button>
             {uploadStatus && <p>{uploadStatus}</p>}
-            <div><Link to="/statement">See your CDS</Link></div>
+            <div className="text-blue-600"><Link to="/statement">See your CDS</Link></div>
+
+            <div className="max-w-[600px] break-all">
+                <p>${user.accessToken}</p>
+            </div>
+            
+
         </div>
     );
 }
