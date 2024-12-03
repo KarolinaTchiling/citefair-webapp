@@ -1,12 +1,21 @@
-require("dotenv").config();
-const express = require("express");
+// import "dotenv/config";
+import express from "express";
+import cors from "cors"; 
+import dataRoutes from "./routes/data.js";
+import userRoutes from "./routes/users.js";
+import apiRoutes from "./routes/api.js";
+
+
 const app = express();
-const dataRoutes = require("./routes/data");
-const userRoutes = require("./routes/users");
 const PORT = 5000;
+
 
 // Middleware to parse JSON
 app.use(express.json());
+
+app.use(cors({
+  origin: "http://localhost:5173", // Replace with your frontend's URL
+}));
 
 // Test Route
 app.get("/", (req, res) => {
@@ -17,7 +26,12 @@ app.get("/", (req, res) => {
 app.use("/data", dataRoutes);
 
 // User routes
-app.use("/users", userRoutes);
+app.use("/api", apiRoutes);
+
+// User routes
+app.use("/api", userRoutes);
+
+
 
 
 // Start the server

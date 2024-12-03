@@ -1,11 +1,12 @@
-const express = require("express");
+import express from "express";
+import { db } from "../firebaseAdmin.js";
+
 const router = express.Router();
-const db = require("../firebase");
 
 // Route to get data from the "test" node
 router.get("/", async (req, res) => {
   try {
-    const ref = db.ref("users");
+    const ref = db.ref("test");
     ref.once("value", (snapshot) => {
       res.json(snapshot.val());
     });
@@ -15,4 +16,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
