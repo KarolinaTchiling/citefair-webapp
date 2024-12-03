@@ -5,7 +5,6 @@ import { storage } from "../firebaseAdmin.js";
 
 export async function getFileContent(userId) {
   const filePath = `users/${userId}/uploads/ref.bib`;
-  // const filePath = `users/${userId}/uploads/1733196704225ref.bib`;
   const file = storage.bucket().file(filePath);
 
   const [exists] = await file.exists();

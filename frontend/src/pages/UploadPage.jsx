@@ -35,7 +35,7 @@ function MainPage() {
         try {
             const storage = getStorage();
             const timestamp = Date.now();
-            const storageRef = ref(storage, `users/${user.uid}/uploads/${timestamp}ref.bib`); // Keep original file name
+            const storageRef = ref(storage, `users/${user.uid}/uploads/ref.bib`); // Keep original file name
             const snapshot = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
 
