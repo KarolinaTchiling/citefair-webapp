@@ -60,19 +60,53 @@ function MainPage() {
     };
     console.log(user)
     return (
-        <div>
-            <h1>Main Page</h1>
-            <input type="file" accept=".bib" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
-            {uploadStatus && <p>{uploadStatus}</p>}
-            <div className="text-blue-600"><Link to="/statement">See your CDS</Link></div>
-
-            <div className="max-w-[600px] break-all">
-                <p>${user.accessToken}</p>
-            </div>
-            
-
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-6">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Main Page</h1>
+  
+          {/* File Upload */}
+          <div className="mb-4">
+            <label htmlFor="fileInput" className="block text-sm font-medium text-gray-700 mb-2">
+              Upload your .bib file:
+            </label>
+            <input
+              type="file"
+              accept=".bib"
+              onChange={handleFileChange}
+              id="fileInput"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+  
+          {/* Upload Button */}
+          <button
+            onClick={handleUpload}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-4"
+          >
+            Upload
+          </button>
+  
+          {/* Upload Status */}
+          {uploadStatus && (
+            <p className="text-center text-green-600 font-medium mb-4">{uploadStatus}</p>
+          )}
+  
+          {/* Link to CDS */}
+          <div className="text-center mb-6">
+            <Link
+              to="/statement"
+              className="text-blue-600 underline hover:text-blue-800 transition"
+            >
+              See your CDS
+            </Link>
+          </div>
+  
+          {/* User Access Token */}
+          <div className="max-w-[600px] bg-gray-50 p-4 rounded-md break-all border border-gray-300 text-sm text-gray-600">
+            <p>{user.accessToken}</p>
+          </div>
         </div>
+      </div>
     );
 }
 
