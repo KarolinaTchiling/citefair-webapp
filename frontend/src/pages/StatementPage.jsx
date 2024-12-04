@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
+import { useSearchParams } from "react-router-dom";
 
 
 function StatementPage() {
+
+    const [searchParams] = useSearchParams(); // Access query parameters
+    const fileName = searchParams.get("fileName"); // Retrieve fileName from the URL
     const { user, isAuthenticated } = useAuth();
     const [data, setData] = useState(null); // State to store API response
     const [error, setError] = useState(null); // State to store errors
     const [loadingMessage, setLoadingMessage] = useState(null); // State for the loading message
+
+    
+    const filePath = `users/${user.uid}/uploads/${fileName}`;
+    console
 
     const generateMessages = () => {
         const initialMessages = [
@@ -75,6 +83,7 @@ function StatementPage() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${user.accessToken}`,
                 },
+                body: JSON.stringify({ filepath: filePath}),
             });
     
             if (!response.ok) {

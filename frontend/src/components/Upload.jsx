@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useAuth } from "../AuthContext";
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
+import GenerateStatementsButton from "../components/GenerateStatementsButton";
 
-const FileUploadComponent = ({ user, isAuthenticated }) => {
+const FileUploadComponent = () => {
+    const { user, isAuthenticated } = useAuth();
     const [file, setFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState("");
+    const [uploadedFile, setUploadFile] = useState("");
+    const [fileUploaded, setFileUploaded] = useState(false); 
 
     // Handle file input change
     const handleFileChange = (event) => {
@@ -31,9 +36,19 @@ const FileUploadComponent = ({ user, isAuthenticated }) => {
 
         try {
             const storage = getStorage();
-            const timestamp = Date.now();
-            const storageRef = ref(storage, `users/${user.uid}/uploads/ref.bib`);
-            const snapshot = await uploadBytes(storageRef, file);
+            const folderRef = ref(storage, `users/${user.uid}/uploads`);
+            const fileRef = ref(storage, `users/${user.uid}/uploads/${file.name}`);
+
+             // Check if the file already exists
+            const existingFiles = await listAll(folderRef);
+            const fileExists = existingFiles.items.some(item => item.name === file.name);
+
+            if (fileExists) {
+                setUploadStatus(`A file with the name "${file.name}" already exists.`);
+                return; // Stop execution
+            }
+
+            const snapshot = await uploadBytes(fileRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
 
             const uniqueKey = `${Date.now()}_${file.name.replace(/[.#$/[\]]/g, "_")}`;
@@ -46,9 +61,12 @@ const FileUploadComponent = ({ user, isAuthenticated }) => {
             });
 
             setUploadStatus("File uploaded successfully!");
+            setFileUploaded(true);
+            setUploadFile(file.name)
             setFile(null); // Clear the file input
         } catch (error) {
             setUploadStatus("File upload failed: " + error.message);
+            setFileUploaded(false); 
         }
     };
 
@@ -64,13 +82,16 @@ const FileUploadComponent = ({ user, isAuthenticated }) => {
                 id="fileInput"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {uploadStatus && <p className="text-center text-green-600 font-medium mt-2">{uploadStatus}</p>}
             <button
                 onClick={handleUpload}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-2"
             >
                 Upload
             </button>
-            {uploadStatus && <p className="text-center text-green-600 font-medium mt-2">{uploadStatus}</p>}
+            <div className="">
+                <GenerateStatementsButton fileName={uploadedFile} disabled={!fileUploaded}/>
+            </div>
         </div>
     );
 };
