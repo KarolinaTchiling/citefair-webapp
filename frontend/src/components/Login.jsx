@@ -24,7 +24,7 @@ const LoginForm = () => {
     try {
       await continueAsGuest();
       console.log("User logged in as guest!");
-      navigate("/upload");
+      navigate("/guest-dashboard");
     } catch (error) {
       console.error("Guest login failed:", error.message);
     }
