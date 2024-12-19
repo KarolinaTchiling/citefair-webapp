@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
+import { useSearchParams } from "react-router-dom";
 
 
 function StatementPage() {
+
+    const [searchParams] = useSearchParams(); // Access query parameters
+    const fileName = searchParams.get("fileName"); // Retrieve fileName from the URL
     const { user, isAuthenticated } = useAuth();
     const [data, setData] = useState(null); // State to store API response
     const [error, setError] = useState(null); // State to store errors
     const [loadingMessage, setLoadingMessage] = useState(null); // State for the loading message
+
+    
+    const filePath = `users/${user.uid}/uploads/${fileName}`;
+    console
 
     const generateMessages = () => {
         const initialMessages = [
@@ -75,6 +83,7 @@ function StatementPage() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${user.accessToken}`,
                 },
+                body: JSON.stringify({ filepath: filePath}),
             });
     
             if (!response.ok) {
@@ -97,7 +106,7 @@ function StatementPage() {
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-2xl font-bold text-center mb-6">Statement Page</h1>
+            <h1 className="text-2xl font-bold text-center mb-6">Citation Diversity Statements</h1>
 
             {loadingMessage && <p className="text-center text-blue-500">{loadingMessage}</p>} {/* Show loading message */}
             {error && <p className="text-center text-red-500">{error}</p>} {/* Show error message */}

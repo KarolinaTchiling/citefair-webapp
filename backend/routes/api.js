@@ -24,11 +24,16 @@ const authenticateToken = async (req) => {
 
 router.post("/get-cds", async (req, res) => {
   try {
+    // Authenticate the user using the token
+    await authenticateToken(req);
 
-    const decodedToken = await authenticateToken(req);
-    const userId = decodedToken.uid;
+    // Extract filepath from the request body
+    const { filepath } = req.body;
+    if (!filepath) {
+      throw new Error("Filepath is required");
+    }
 
-    const response = await generate(userId); 
+    const response = await generate(filepath);
     res.status(200).json({ response });
   } catch (error) {
     console.error("Error in /api/get-cds:", error);

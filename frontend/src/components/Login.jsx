@@ -13,7 +13,7 @@ const LoginForm = () => {
     try {
       await login(email, password);
       console.log("User logged in!");
-      navigate("/upload");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -24,7 +24,7 @@ const LoginForm = () => {
     try {
       await continueAsGuest();
       console.log("User logged in as guest!");
-      navigate("/upload");
+      navigate("/guest-dashboard");
     } catch (error) {
       console.error("Guest login failed:", error.message);
     }

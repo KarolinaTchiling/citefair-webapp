@@ -4,10 +4,10 @@ import { fetchAuthorGender } from './getGenders.js';
 import { calculateCategories, calculatePercentages } from './genderStats.js';
 import { catStatement, totalStatement, abbStatement, statementCitations } from './getStatement.js';
 
-export async function generate(userId) {
+export async function generate(filepath) {
     try {
         // Step 1: Fetch file content using the user ID --------------
-        const fileContent = await getFileContent(userId);
+        const fileContent = await getFileContent(filepath);
         // console.log("Fetched file content:", fileContent);
 
         // Step 2: Clean and parse the data --------------------------
