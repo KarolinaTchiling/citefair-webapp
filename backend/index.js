@@ -6,6 +6,7 @@ import userRoutes from "./routes/users.js";
 import apiRoutes from "./routes/api.js";
 
 import recRoutes from "./recommendations/routes.js";
+import cdsRoutes from "./cds/routes.js";
 
 
 const app = express();
@@ -35,6 +36,7 @@ app.use("/api", userRoutes);
 
 app.use("/", recRoutes);
 
+app.use("/cds", cdsRoutes);
 
 
 

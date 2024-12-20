@@ -33,7 +33,7 @@ router.post("/get-file", async (req, res) => {
 router.post("/get-titles", async (req, res) => {
   try {
     // Authenticate the user using the token
-    // await authenticateToken(req);
+    await authenticateToken(req);
 
     // Extract filepath from the request body
     const { filepath } = req.body;
@@ -77,7 +77,7 @@ router.post("/get-raw-recommendations", async (req, res) => {
       return res.status(400).json({ error: "paperIds must be a non-empty array." });
     }
 
-    const limit = 5; // You can customize this or accept it from the request body
+    const limit = 100; // You can customize this or accept it from the request body
     const recommendedPapers = await fetchRecommendedPapers(limit, paperIds, [""]);
 
     res.status(200).json({ recommendedPapers });

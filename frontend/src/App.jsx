@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route }  from 'react-router-dom';
 import DashBoardPage from './pages/DashBoardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
+import RelatedPage from './pages/RelatedPage';
 import TestPage from './pages/TestPage';
 import GuestDashboardPage from './pages/GuestDashboard';
 import './input.css';
@@ -16,7 +17,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<DashBoardPage />} />
           <Route path="/guest-dashboard" element={<GuestDashboardPage />} />
-          <Route path="/statements" element={<StatementPage />} /> 
+          <Route path="/statements" element={<StatementPage />} />
+          <Route path="/related" element={<RelatedPage />} /> 
           <Route path="/test" element={<TestPage />} />
         </Routes>
     </div>

@@ -1,0 +1,831 @@
+{
+  "enrichedData": [
+    {
+      "paperId": "9c8788a8f789d0053c3776ac29f3344e8a1e9261",
+      "title": "Gender differences in representation, citations, and h-index: An empirical examination of the field of communication across the ten most productive countries",
+      "url": "https://www.semanticscholar.org/paper/9c8788a8f789d0053c3776ac29f3344e8a1e9261",
+      "citationCount": 0,
+      "publicationDate": "2024-11-20",
+      "authors": [
+        { "authorId": "2582168", "name": "M. Goyanes", "gender": "X" },
+        {
+          "authorId": "2331580879",
+          "name": "Esperanza Herrero",
+          "gender": "W"
+        },
+        { "authorId": "2311496953", "name": "Luis de-Marcos", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "469731be52a15e89349d6bb4d94e939733f94de8",
+      "title": "Multidimensional Diversity and Research Impact in Political Science: What 50 Years of Bibliometric Data Tell Us",
+      "url": "https://www.semanticscholar.org/paper/469731be52a15e89349d6bb4d94e939733f94de8",
+      "citationCount": 0,
+      "publicationDate": "2024-12-12",
+      "authors": [
+        { "authorId": "2117077867", "name": "Yuner Zhu", "gender": "X" },
+        { "authorId": "2412211", "name": "Edmund W. Cheng", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "ec20dc86e1d26c7a60df0cf60f8dbbc2c77f5559",
+      "title": "Identifying Trends in the Most Cited Nursing Articles: Research Topics, Author Gender Representation and Characteristics Correlated With Citation Counts.",
+      "url": "https://www.semanticscholar.org/paper/ec20dc86e1d26c7a60df0cf60f8dbbc2c77f5559",
+      "citationCount": 0,
+      "publicationDate": "2024-10-23",
+      "authors": [
+        {
+          "authorId": "2268317934",
+          "name": "Christopher Holmberg",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "a2e7ac1b92c3307f724d67b6fc6ed7724f839287",
+      "title": "Citation Sentiment Reflects Multiscale Sociocultural Norms",
+      "url": "https://www.semanticscholar.org/paper/a2e7ac1b92c3307f724d67b6fc6ed7724f839287",
+      "citationCount": 0,
+      "publicationDate": "2024-11-14",
+      "authors": [
+        { "authorId": "2237992455", "name": "Xiaohuan Xia", "gender": "W" },
+        { "authorId": "120478179", "name": "Mathieu Ouellet", "gender": "M" },
+        {
+          "authorId": "1492181738",
+          "name": "Shubhankar P. Patankar",
+          "gender": "M"
+        },
+        { "authorId": "2261430749", "name": "Diana I. Tamir", "gender": "W" },
+        { "authorId": "2060577809", "name": "Danielle Bassett", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "295dcc81b1815dceb38db6a5cac221c1e57c1e6d",
+      "title": "Abstract 4136398: Gender Disparities Absent in Citation Metrics and Online Attention Across Thoracic Surgery Publications",
+      "url": "https://www.semanticscholar.org/paper/295dcc81b1815dceb38db6a5cac221c1e57c1e6d",
+      "citationCount": 0,
+      "publicationDate": "2024-11-12",
+      "authors": [
+        { "authorId": "2330619174", "name": "Alyssa Sato", "gender": "W" },
+        {
+          "authorId": "2241356999",
+          "name": "Ronald P Karlsberg",
+          "gender": "M"
+        },
+        { "authorId": "2330684595", "name": "Carlos Quesada", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "e1ec0e99cb21a7ea3e88a1033def855992086065",
+      "title": "Do open acces journal articles experience citation advantage?",
+      "url": "https://www.semanticscholar.org/paper/e1ec0e99cb21a7ea3e88a1033def855992086065",
+      "citationCount": 0,
+      "publicationDate": "2024-12-04",
+      "authors": [
+        { "authorId": "2334201326", "name": "Singgih Sugiarto", "gender": "M" },
+        {
+          "authorId": "2334192177",
+          "name": "Thomas Sixtus Iswahyudi Hari Widodo",
+          "gender": "M"
+        },
+        { "authorId": "2329667511", "name": "Suyanto Suyanto", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "597bc114dabf6ed6140ab9d78f937395d494ac0d",
+      "title": "Gender Disparities in Academic Publishing in Argentina. A Review of Political Science Journals (2011–2021)",
+      "url": "https://www.semanticscholar.org/paper/597bc114dabf6ed6140ab9d78f937395d494ac0d",
+      "citationCount": 0,
+      "publicationDate": "2024-11-20",
+      "authors": [
+        { "authorId": "2176317072", "name": "Luciana Berman", "gender": "W" },
+        {
+          "authorId": "2331659641",
+          "name": "María Paula Bertino",
+          "gender": "W"
+        },
+        { "authorId": "2285927522", "name": "Agustín Vallejo", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "e608ef6e0a8631ae52f1a8c0667fa40564c6f2a4",
+      "title": "Citation Cartels: Understanding Their Emergence and Impact on the Academic World",
+      "url": "https://www.semanticscholar.org/paper/e608ef6e0a8631ae52f1a8c0667fa40564c6f2a4",
+      "citationCount": 0,
+      "publicationDate": "2024-10-30",
+      "authors": [
+        { "authorId": "80970667", "name": "Michael M. Willie", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "b0de158e593b20207a849f58149bbcd1a56786ea",
+      "title": "Comparison of journal and top publisher self-citation rates in COVID-19 research",
+      "url": "https://www.semanticscholar.org/paper/b0de158e593b20207a849f58149bbcd1a56786ea",
+      "citationCount": 0,
+      "publicationDate": "2024-12-05",
+      "authors": [
+        {
+          "authorId": "1729449306",
+          "name": "Alvaro Quincho-Lopez",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "b8b03efa01afa54fb0835f0a4a219ece80932051",
+      "title": "Thematic Evolution and Scholarly Contributions: A Study of the Top 100 Most Cited Papers in the Journal of Religion and Health.",
+      "url": "https://www.semanticscholar.org/paper/b8b03efa01afa54fb0835f0a4a219ece80932051",
+      "citationCount": 0,
+      "publicationDate": "2024-12-07",
+      "authors": [
+        { "authorId": "3216889", "name": "S. Abdelwahab", "gender": "M" },
+        { "authorId": "1393694000", "name": "M. Taha", "gender": "M" },
+        { "authorId": "2266160691", "name": "A. Farasani", "gender": "X" },
+        { "authorId": "2283194400", "name": "A. Jerah", "gender": "X" },
+        {
+          "authorId": "2315827631",
+          "name": "Saleh M. Abdullah",
+          "gender": "M"
+        },
+        { "authorId": "2219387372", "name": "Bassem Oraibi", "gender": "M" },
+        { "authorId": "2209073004", "name": "Y. Babiker", "gender": "M" },
+        { "authorId": "2304262559", "name": "H. Alfaifi", "gender": "M" },
+        { "authorId": "2304202113", "name": "A. Alzahrani", "gender": "M" },
+        { "authorId": "2329446233", "name": "Ahmed S Alamer", "gender": "M" },
+        { "authorId": "2334341420", "name": "Tawfeeq Altherwi", "gender": "M" },
+        {
+          "authorId": "2331640869",
+          "name": "Ibrahim Abdel Aziz Ibrahim",
+          "gender": "M"
+        },
+        { "authorId": "2311386143", "name": "Waseem Hassan", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "fda9c60c787337637ce8443c37f93ad516ccc8cb",
+      "title": "A longitudinal examination of collaboration diversity among communication scholars: 1990–2023",
+      "url": "https://www.semanticscholar.org/paper/fda9c60c787337637ce8443c37f93ad516ccc8cb",
+      "citationCount": 0,
+      "publicationDate": "2024-11-19",
+      "authors": [
+        { "authorId": "2148667315", "name": "Shan Xu", "gender": "M" },
+        {
+          "authorId": "3051916",
+          "name": "Kulsawasd Jitkajornwanich",
+          "gender": "X"
+        },
+        { "authorId": "2332285230", "name": "Prabu David", "gender": "M" },
+        { "authorId": "2332323281", "name": "Hye-jung Park", "gender": "W" },
+        { "authorId": "2332303143", "name": "Yani Zhao", "gender": "X" },
+        { "authorId": "2332284712", "name": "Jeffery Du", "gender": "M" },
+        {
+          "authorId": "2332279535",
+          "name": "Thanathip Chumthong",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "3adfd4753a3f261afddbfce2df90c835ce8468f2",
+      "title": "A Bibliometric Analysis of Inverse Optimization Research: Trends, Impact, and Key Contributions",
+      "url": "https://www.semanticscholar.org/paper/3adfd4753a3f261afddbfce2df90c835ce8468f2",
+      "citationCount": 0,
+      "publicationDate": "2024-12-02",
+      "authors": [
+        { "authorId": "2136194282", "name": "Saeide Bigdellou", "gender": "W" },
+        { "authorId": "2334074091", "name": "Ali Ghaemmaghami", "gender": "M" },
+        { "authorId": "145828682", "name": "Shirin Aslani", "gender": "W" },
+        {
+          "authorId": "2334074684",
+          "name": "Mohammad Modarres Yazdi",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "a82341e35edfb72de7c9accda8a508f5d7c33dfd",
+      "title": "Who You Publish With Matters: The Effects of Authorship Composition on Citations of Sports Economics Publications",
+      "url": "https://www.semanticscholar.org/paper/a82341e35edfb72de7c9accda8a508f5d7c33dfd",
+      "citationCount": 0,
+      "publicationDate": "2024-11-01",
+      "authors": [
+        {
+          "authorId": "116703959",
+          "name": "Katrin Scharfenkamp",
+          "gender": "W"
+        },
+        { "authorId": "2165952781", "name": "Lara Lesch", "gender": "W" },
+        { "authorId": "2240133303", "name": "Pamela Wicker", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "445536916310691ee1b7aa30ed5d8411aedd7e4c",
+      "title": "A novel Hj-index based model to assess the researchers using scopus database",
+      "url": "https://www.semanticscholar.org/paper/445536916310691ee1b7aa30ed5d8411aedd7e4c",
+      "citationCount": 0,
+      "publicationDate": "2024-12-01",
+      "authors": [
+        {
+          "authorId": "2327480803",
+          "name": "Voora V. V. Eswari Lakshmi Devi",
+          "gender": "W"
+        },
+        { "authorId": "51209127", "name": "S. S. Amiripalli", "gender": "X" }
+      ]
+    },
+    {
+      "paperId": "a58e16f78f385d33fd8c7e5b81ace8288d2c41b3",
+      "title": "JOWUA: Bibliometrics Analysis of Research Publication Between 2019 and 2024",
+      "url": "https://www.semanticscholar.org/paper/a58e16f78f385d33fd8c7e5b81ace8288d2c41b3",
+      "citationCount": 0,
+      "publicationDate": "2024-12-12",
+      "authors": [
+        {
+          "authorId": "2331204817",
+          "name": "S. Poornimadarshini",
+          "gender": "X"
+        },
+        { "authorId": "2311957090", "name": "S. Sindhu", "gender": "W" },
+        {
+          "authorId": "2311958861",
+          "name": "Saravanakumar Veerappan",
+          "gender": "M"
+        },
+        { "authorId": "2311960429", "name": "N. Arvinth", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "aa18fb4783146094c6632065addd6c0a69c7830c",
+      "title": "Preprints vs. Journal Articles: Citation Impact in COVID-19 Research",
+      "url": "https://www.semanticscholar.org/paper/aa18fb4783146094c6632065addd6c0a69c7830c",
+      "citationCount": 0,
+      "publicationDate": "2024-11-11",
+      "authors": [
+        { "authorId": "2000610833", "name": "Hiroyuki Tsunoda", "gender": "M" },
+        { "authorId": "2108705065", "name": "Yuan Sun", "gender": "X" },
+        { "authorId": "2312897217", "name": "Masaki Nishizawa", "gender": "M" },
+        { "authorId": "2108959817", "name": "Xiaomin Liu", "gender": "X" },
+        { "authorId": "3248257", "name": "Kou Amano", "gender": "M" },
+        { "authorId": "2273360105", "name": "Rie Kominami", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "287166a1b179a89494ae90b8c9e6c7f28f6fdea5",
+      "title": "Bibliometric Insights into the \"Kathmandu School of Law Review\"",
+      "url": "https://www.semanticscholar.org/paper/287166a1b179a89494ae90b8c9e6c7f28f6fdea5",
+      "citationCount": 1,
+      "publicationDate": "2024-10-22",
+      "authors": [
+        { "authorId": "2300533903", "name": "Alaka Neupane", "gender": "X" },
+        { "authorId": "79361899", "name": "T. Karki", "gender": "M" },
+        { "authorId": "2327256866", "name": "Avinash Neupane", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "2d1c93519ed705ebac858cc1def8d5613bdfc649",
+      "title": "Gender disparities in authorship: A fifteen-year bibliometric analysis of interventional radiology journals.",
+      "url": "https://www.semanticscholar.org/paper/2d1c93519ed705ebac858cc1def8d5613bdfc649",
+      "citationCount": 0,
+      "publicationDate": "2025-01-01",
+      "authors": [
+        { "authorId": "2299844448", "name": "T. Stirrat", "gender": "X" },
+        { "authorId": "2332509694", "name": "Shankar Thiru", "gender": "M" },
+        { "authorId": "2332708480", "name": "Yumin Gao", "gender": "X" },
+        { "authorId": "2311019734", "name": "Caitlyn Tran", "gender": "X" },
+        { "authorId": "2332601249", "name": "Gregorio Baek", "gender": "M" },
+        { "authorId": "2332603514", "name": "Amy Zhou", "gender": "W" },
+        {
+          "authorId": "2332603359",
+          "name": "Margaret E. Greer",
+          "gender": "W"
+        },
+        { "authorId": "2332600905", "name": "Jonathan Garner", "gender": "M" },
+        { "authorId": "2299843414", "name": "Muhammad Umair", "gender": "M" },
+        { "authorId": "2332603734", "name": "Neil Jain", "gender": "M" },
+        { "authorId": "2311019321", "name": "Anousheh Sayah", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "13c1c483e9b84e17e44ba5eae4683398399a50d9",
+      "title": "A Bibliometric Analysis of Highly Cited Artificial Intelligence Publications in Science Citation Index Expanded",
+      "url": "https://www.semanticscholar.org/paper/13c1c483e9b84e17e44ba5eae4683398399a50d9",
+      "citationCount": 0,
+      "publicationDate": "2024-11-14",
+      "authors": [
+        { "authorId": "2331331953", "name": "Yuh-Shan Ho", "gender": "M" },
+        {
+          "authorId": "2047188282",
+          "name": "J. Prieto-Gutierrez",
+          "gender": "X"
+        }
+      ]
+    },
+    {
+      "paperId": "e77db1770c35006451324122e2eff2ea60ceb5c7",
+      "title": "Distinct patterns of bioscience doctoral publication disparities by gender and race/ethnicity",
+      "url": "https://www.semanticscholar.org/paper/e77db1770c35006451324122e2eff2ea60ceb5c7",
+      "citationCount": 0,
+      "publicationDate": "2024-10-22",
+      "authors": [
+        { "authorId": "2327208220", "name": "Katie Leap", "gender": "W" },
+        { "authorId": "2327208302", "name": "Gregory S. Payne", "gender": "M" },
+        {
+          "authorId": "2327207447",
+          "name": "Janet S. Sinsheimer",
+          "gender": "W"
+        },
+        { "authorId": "2240329646", "name": "Diana E. Azurdia", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "b2beea84eb057ba604d213bd046acd2f13e751f7",
+      "title": "Measuring Inclusion: Gender and Coauthorship at the Federal Reserve Board",
+      "url": "https://www.semanticscholar.org/paper/b2beea84eb057ba604d213bd046acd2f13e751f7",
+      "citationCount": 0,
+      "publicationDate": "2024-12-01",
+      "authors": [
+        { "authorId": "102357409", "name": "Deepa D. Datta", "gender": "W" },
+        { "authorId": "66808022", "name": "Robert J. Vigfusson", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "8dde7533fa3a903cc1597bc72babf0311ea53ad3",
+      "title": "Social Media Crowdsourcing a Co-Citation Bibliometric Analysis",
+      "url": "https://www.semanticscholar.org/paper/8dde7533fa3a903cc1597bc72babf0311ea53ad3",
+      "citationCount": 0,
+      "publicationDate": null,
+      "authors": [
+        { "authorId": "2320063887", "name": "Anna D. Kyosova", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "03b0cbec5f5a610844ebd159ede4a9a3f6b79b0a",
+      "title": "Bibliometrics",
+      "url": "https://www.semanticscholar.org/paper/03b0cbec5f5a610844ebd159ede4a9a3f6b79b0a",
+      "citationCount": 0,
+      "publicationDate": null,
+      "authors": [
+        {
+          "authorId": "2335698690",
+          "name": "Pierre-Carl Langlais",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "68be7ca6a6d708c446154c094a788812bf707ce3",
+      "title": "Student Dropout: A Bibliometric Analysis of Influencing Factors Using VOS Viewer to Explore Trends, Impact, and Collaborative Patterns",
+      "url": "https://www.semanticscholar.org/paper/68be7ca6a6d708c446154c094a788812bf707ce3",
+      "citationCount": 0,
+      "publicationDate": "2024-11-05",
+      "authors": [
+        {
+          "authorId": "2310033654",
+          "name": "David Richard Pincay Sancán",
+          "gender": "M"
+        },
+        {
+          "authorId": "2329995559",
+          "name": "Lidia del Rocío Castro Cepeda",
+          "gender": "W"
+        },
+        {
+          "authorId": "2127452147",
+          "name": "Andrés Joao Noguera Cundar",
+          "gender": "M"
+        },
+        {
+          "authorId": "2323695484",
+          "name": "Geoconda Marisela Velasco Castelo",
+          "gender": "W"
+        },
+        {
+          "authorId": "2329996106",
+          "name": "Christian Giovanni Flores Arévalo",
+          "gender": "M"
+        },
+        {
+          "authorId": "2329994752",
+          "name": "Fabián Eduardo Bastidas Alarcón",
+          "gender": "M"
+        },
+        {
+          "authorId": "2310029425",
+          "name": "Francisco Javier Andrade Domínguez",
+          "gender": "M"
+        },
+        {
+          "authorId": "2310030089",
+          "name": "Romina Lissette Sánchez Centanaro",
+          "gender": "W"
+        },
+        {
+          "authorId": "2310030095",
+          "name": "Carolina Denisse Barros Gavino",
+          "gender": "W"
+        },
+        {
+          "authorId": "2329996253",
+          "name": "Yarlin Daniela Jaramillo Vasquez",
+          "gender": "W"
+        }
+      ]
+    },
+    {
+      "paperId": "79f88488faf4fb3f9603d3d704b81a04bcca025c",
+      "title": "Quantifying the Innovativeness of Celebrated Scientists and Their Embeddedness in Collaboration Networks",
+      "url": "https://www.semanticscholar.org/paper/79f88488faf4fb3f9603d3d704b81a04bcca025c",
+      "citationCount": 0,
+      "publicationDate": "2024-11-19",
+      "authors": [
+        { "authorId": "2210635207", "name": "Chaolin Tian", "gender": "X" },
+        { "authorId": "2279663190", "name": "Yurui Huang", "gender": "X" },
+        { "authorId": "2214883186", "name": "Ching Jin", "gender": "X" },
+        { "authorId": "2279742480", "name": "Yifang Ma", "gender": "X" },
+        { "authorId": "1838478", "name": "Brian Uzzi", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "fbe2643636f484537b0e11ab43837eaea81d6b3c",
+      "title": "Mitigating Consequences of Prestige in Citations of Publications",
+      "url": "https://www.semanticscholar.org/paper/fbe2643636f484537b0e11ab43837eaea81d6b3c",
+      "citationCount": 0,
+      "publicationDate": "2024-11-08",
+      "authors": [
+        { "authorId": "2330077493", "name": "Michael Balzer", "gender": "M" },
+        { "authorId": "120636215", "name": "Adhen Benlahlou", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "488557a42506dbf7415d9654e4a181a3282b44a1",
+      "title": "Bibliometric Analysis of International Academic Studies on Unconscious Bias",
+      "url": "https://www.semanticscholar.org/paper/488557a42506dbf7415d9654e4a181a3282b44a1",
+      "citationCount": 0,
+      "publicationDate": "2024-12-01",
+      "authors": [
+        { "authorId": "2095337124", "name": "Yaşar Suveren", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "eaaa0e7895e87389b8bc45960c932dcb2ba89e12",
+      "title": "Emerging Themes, Leaders, and Collaboration in Library and Information Science Research",
+      "url": "https://www.semanticscholar.org/paper/eaaa0e7895e87389b8bc45960c932dcb2ba89e12",
+      "citationCount": 0,
+      "publicationDate": "2025-01-01",
+      "authors": [
+        {
+          "authorId": "2329117403",
+          "name": "Pornnisa Wattanasiri",
+          "gender": "X"
+        },
+        { "authorId": "2249662093", "name": "Paiboon Manorom", "gender": "M" },
+        { "authorId": "3209250", "name": "Wirapong Chansanam", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "90c03efef263f266732840b590386ca06c916053",
+      "title": "A bibliometric analysis of research on black women: exploring social exclusion and racial discrimination (1977-2024)",
+      "url": "https://www.semanticscholar.org/paper/90c03efef263f266732840b590386ca06c916053",
+      "citationCount": 0,
+      "publicationDate": "2024-11-06",
+      "authors": [
+        {
+          "authorId": "2329663254",
+          "name": "Larissa Oliveira Nascimento",
+          "gender": "W"
+        },
+        {
+          "authorId": "2220473672",
+          "name": "Mirna Albuquerque Frota",
+          "gender": "W"
+        },
+        {
+          "authorId": "2329901476",
+          "name": "Evanice Avelino de Souza",
+          "gender": "M"
+        },
+        {
+          "authorId": "2329478278",
+          "name": "Francisco Aquiles Oliveira Caetano",
+          "gender": "M"
+        },
+        {
+          "authorId": "2067637140",
+          "name": "Janaildo Soares de Sousa",
+          "gender": "M"
+        },
+        {
+          "authorId": "2300679920",
+          "name": "Thiago Medeiros da Costa Daniele",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "475424900acdabc3925c6acdfeb67c5a27ec4a39",
+      "title": "MIT Open Access",
+      "url": "https://www.semanticscholar.org/paper/475424900acdabc3925c6acdfeb67c5a27ec4a39",
+      "citationCount": 0,
+      "publicationDate": null,
+      "authors": [
+        {
+          "authorId": "2331800505",
+          "name": "Jeffrey L. Furman",
+          "gender": "M"
+        },
+        { "authorId": "2069371464", "name": "Kyle L. Jensen", "gender": "M" },
+        { "authorId": "2331801111", "name": "Fiona Murray", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "2eeb63937127701cac53f227a05ad8b19b8fb1f4",
+      "title": "The origin, consequence, and visibility of criticism in science",
+      "url": "https://www.semanticscholar.org/paper/2eeb63937127701cac53f227a05ad8b19b8fb1f4",
+      "citationCount": 0,
+      "publicationDate": "2024-12-03",
+      "authors": [
+        { "authorId": "2334012955", "name": "Bingsheng Chen", "gender": "X" },
+        { "authorId": "2333595365", "name": "Dakota Murray", "gender": "M" },
+        { "authorId": "2333729516", "name": "Yixuan Liu", "gender": "X" },
+        {
+          "authorId": "2309172612",
+          "name": "Albert-L'aszl'o Barab'asi",
+          "gender": "X"
+        }
+      ]
+    },
+    {
+      "paperId": "bd13dc9e86ba3072e37253e6b8424440fdbdac61",
+      "title": "What Are the Differences in Perception of Gender Disparities in Academia? A Survey of Academics from Russia",
+      "url": "https://www.semanticscholar.org/paper/bd13dc9e86ba3072e37253e6b8424440fdbdac61",
+      "citationCount": 0,
+      "publicationDate": "2024-10-22",
+      "authors": [
+        { "authorId": "1741262316", "name": "Marina Pilkina", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "b1536b4454934e0327c18daa034739b0cd0b26b4",
+      "title": "A Bibliometric Analysis of Ten Years on Positive Psychology in Foreign/Second Language Education (2012-2022)",
+      "url": "https://www.semanticscholar.org/paper/b1536b4454934e0327c18daa034739b0cd0b26b4",
+      "citationCount": 0,
+      "publicationDate": "2024-10-31",
+      "authors": [
+        { "authorId": "2293344329", "name": "Naile Canlı", "gender": "W" },
+        { "authorId": "2249591709", "name": "Devrim Höl", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "a1542c8490a19a102e852c8d2e7387dcfdab7d33",
+      "title": "Research Pattern and Keyword Evolution in Skills-Based Workforce Scheduling: A Bibliometric Analysis",
+      "url": "https://www.semanticscholar.org/paper/a1542c8490a19a102e852c8d2e7387dcfdab7d33",
+      "citationCount": 0,
+      "publicationDate": null,
+      "authors": [
+        {
+          "authorId": "101761755",
+          "name": "Ezzah Suraya Sarudin",
+          "gender": "W"
+        },
+        {
+          "authorId": "73461610",
+          "name": "Ini Imaina Binti Abdullah",
+          "gender": "M"
+        },
+        { "authorId": "80129679", "name": "N. H. Jamian", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "91ed1ba6e6a2f901d4ebd7d4ee842d0b3d4098bd",
+      "title": "Two scholarly publishing cultures? Open access drives a divergence in European academic publishing practices",
+      "url": "https://www.semanticscholar.org/paper/91ed1ba6e6a2f901d4ebd7d4ee842d0b3d4098bd",
+      "citationCount": 0,
+      "publicationDate": "2024-11-09",
+      "authors": [
+        { "authorId": "2330190045", "name": "Leon Kopitar", "gender": "M" },
+        { "authorId": "9774628", "name": "N. Plohl", "gender": "X" },
+        {
+          "authorId": "2104149167",
+          "name": "Mojca Tancer Verboten",
+          "gender": "W"
+        },
+        { "authorId": "2330192537", "name": "Gregor vStiglic", "gender": "M" },
+        { "authorId": "2330176586", "name": "Roger Watson", "gender": "M" },
+        { "authorId": "2330192618", "name": "Dean Korovsak", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "7d1bb2b5e9fec3c45efbe0370cf69c5d8c85d0a0",
+      "title": "Locating the Leading Edge of Cultural Change",
+      "url": "https://www.semanticscholar.org/paper/7d1bb2b5e9fec3c45efbe0370cf69c5d8c85d0a0",
+      "citationCount": 0,
+      "publicationDate": "2024-11-22",
+      "authors": [
+        { "authorId": "2331734600", "name": "Sarah Griebel", "gender": "W" },
+        { "authorId": "2331736218", "name": "Becca Cohen", "gender": "M" },
+        { "authorId": "2332072877", "name": "Lucian Li", "gender": "M" },
+        { "authorId": "2331762324", "name": "Jiayu Liu", "gender": "X" },
+        { "authorId": "2331770995", "name": "Jaihyun Park", "gender": "M" },
+        { "authorId": "2331734838", "name": "Jana Perkins", "gender": "W" },
+        { "authorId": "2330684583", "name": "Ted Underwood", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "2b79beab1e1ed79870847bcd4fe6919766775354",
+      "title": "Citation distributions and research evaluations: The impossibility of formulating a universal indicator",
+      "url": "https://www.semanticscholar.org/paper/2b79beab1e1ed79870847bcd4fe6919766775354",
+      "citationCount": 1,
+      "publicationDate": "2024-11-01",
+      "authors": [
+        {
+          "authorId": "2244716252",
+          "name": "Alonso Rodríguez-Navarro",
+          "gender": "M"
+        }
+      ]
+    },
+    {
+      "paperId": "287a7622af4a3d708d50288b2e0dccd4c9a79d9b",
+      "title": "BIBLIOMETRIC STUDY: NATURAL AND ENGINEERING SCIENCES",
+      "url": "https://www.semanticscholar.org/paper/287a7622af4a3d708d50288b2e0dccd4c9a79d9b",
+      "citationCount": 0,
+      "publicationDate": "2024-10-30",
+      "authors": [
+        { "authorId": "2328638514", "name": "Surekha S", "gender": "W" },
+        { "authorId": "2328638516", "name": "Sindhu S", "gender": "W" },
+        {
+          "authorId": "2311958861",
+          "name": "Saravanakumar Veerappan",
+          "gender": "M"
+        },
+        { "authorId": "2328499656", "name": "Arvinth N", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "5a6b411fe2e8b85f824615735abc03a4393f0c02",
+      "title": "Measuring Researcher Impact in the Environmental Science Field",
+      "url": "https://www.semanticscholar.org/paper/5a6b411fe2e8b85f824615735abc03a4393f0c02",
+      "citationCount": 0,
+      "publicationDate": "2024-12-13",
+      "authors": [
+        { "authorId": "2335463040", "name": "Lindsay Adoranti", "gender": "W" },
+        { "authorId": "2335463175", "name": "Melissa Cameron", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "3d557ee0c8aeb0ef40c4710aa349dc34b3649184",
+      "title": "Delineating Feminist Studies through bibliometric analysis",
+      "url": "https://www.semanticscholar.org/paper/3d557ee0c8aeb0ef40c4710aa349dc34b3649184",
+      "citationCount": 0,
+      "publicationDate": "2024-11-27",
+      "authors": [
+        {
+          "authorId": "2005834175",
+          "name": "Natsumi S. Shokida",
+          "gender": "W"
+        },
+        { "authorId": "2265565326", "name": "Diego Kozlowski", "gender": "M" },
+        { "authorId": "2266070950", "name": "Vincent Larivière", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "e4fbac62be694c46750ba25ad6893b17f40a8b2b",
+      "title": "Bibliometric analysis of the top 500 most cited articles in cancer epidemiology",
+      "url": "https://www.semanticscholar.org/paper/e4fbac62be694c46750ba25ad6893b17f40a8b2b",
+      "citationCount": 0,
+      "publicationDate": "2024-11-11",
+      "authors": [
+        { "authorId": "2330329232", "name": "Yasemin Adali", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "49893bd148d6db735f8d92791c9a993870acb2af",
+      "title": "Trends and Patterns on Religious Intolerance Research: A Bibliometric Analysis",
+      "url": "https://www.semanticscholar.org/paper/49893bd148d6db735f8d92791c9a993870acb2af",
+      "citationCount": 0,
+      "publicationDate": "2024-11-26",
+      "authors": [
+        {
+          "authorId": "115310997",
+          "name": "Benny Thomas Vivian",
+          "gender": "M"
+        },
+        { "authorId": "52481137", "name": "S. Selvadurai", "gender": "M" },
+        {
+          "authorId": "2334660347",
+          "name": "Roslizawati Binti Taib",
+          "gender": "X"
+        },
+        { "authorId": "1643626197", "name": "V. Ravana", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "3f2e337dcec9300c7add64bb444207cf0a0c3b33",
+      "title": "Citation and bibliographic coupling between authors in the field of social network analysis",
+      "url": "https://www.semanticscholar.org/paper/3f2e337dcec9300c7add64bb444207cf0a0c3b33",
+      "citationCount": 0,
+      "publicationDate": "2024-10-30",
+      "authors": [
+        { "authorId": "145823704", "name": "D. Maltseva", "gender": "W" },
+        { "authorId": "2328511074", "name": "Vladimir Batagelj", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "7c5a9c71fa07f965312527addd6e9d44fa8d414b",
+      "title": "Bibliometric Analysis of IJISS Journal based on Citation and Publication Relevant Metrics",
+      "url": "https://www.semanticscholar.org/paper/7c5a9c71fa07f965312527addd6e9d44fa8d414b",
+      "citationCount": 0,
+      "publicationDate": "2024-11-15",
+      "authors": [
+        {
+          "authorId": "2331204817",
+          "name": "S. Poornimadarshini",
+          "gender": "X"
+        },
+        { "authorId": "2311957090", "name": "S. Sindhu", "gender": "W" },
+        {
+          "authorId": "2311958861",
+          "name": "Saravanakumar Veerappan",
+          "gender": "M"
+        },
+        { "authorId": "2311960429", "name": "N. Arvinth", "gender": "M" },
+        { "authorId": "2331207082", "name": "Saranya Muthusamy", "gender": "W" }
+      ]
+    },
+    {
+      "paperId": "539522d382af9c5328786a3b06a93083130ea721",
+      "title": "Bibliometric characteristics of retracted publications in pediatrics research: a systematic review",
+      "url": "https://www.semanticscholar.org/paper/539522d382af9c5328786a3b06a93083130ea721",
+      "citationCount": 0,
+      "publicationDate": "2024-12-11",
+      "authors": [
+        { "authorId": null, "name": "Zhi-Yi Yang", "gender": "X" },
+        { "authorId": "2335418351", "name": "Li-Li Yang", "gender": "X" }
+      ]
+    },
+    {
+      "paperId": "439b2f792d9912e559342a013a37ed004b4cf8a2",
+      "title": "Global Trends in the Job Performance: A Bibliometric Analysis",
+      "url": "https://www.semanticscholar.org/paper/439b2f792d9912e559342a013a37ed004b4cf8a2",
+      "citationCount": 0,
+      "publicationDate": "2024-11-05",
+      "authors": [
+        { "authorId": "2307382924", "name": "Pooja Kohli", "gender": "W" },
+        { "authorId": "2278298190", "name": "Kamlesh Kohli", "gender": "M" },
+        { "authorId": "2331449497", "name": "V. C. Sharma", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "5c60ffba046224cdb10bce0c3e0b7bd3d54b1dbc",
+      "title": "Does Open Access Foster Interdisciplinary Citation? Decomposing Open Access Citation Advantage",
+      "url": "https://www.semanticscholar.org/paper/5c60ffba046224cdb10bce0c3e0b7bd3d54b1dbc",
+      "citationCount": 0,
+      "publicationDate": "2024-11-22",
+      "authors": [
+        { "authorId": "2331858736", "name": "Kai Nishikawa", "gender": "M" },
+        { "authorId": "2331858322", "name": "Akiyoshi Murakami", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "3c7d424b2d1ba5117b03edbb4ab4fbd620509707",
+      "title": "Impact of scientific production of Italian scientists in exercises and sport sciences by measuring the author-weighted h-index",
+      "url": "https://www.semanticscholar.org/paper/3c7d424b2d1ba5117b03edbb4ab4fbd620509707",
+      "citationCount": 0,
+      "publicationDate": "2024-11-01",
+      "authors": [
+        { "authorId": "2266569110", "name": "Gaetano Raiola", "gender": "M" },
+        { "authorId": "48464021", "name": "Giovanni Esposito", "gender": "M" },
+        { "authorId": "134628488", "name": "Rosario Ceruso", "gender": "X" },
+        { "authorId": "2266321625", "name": "Francesca D’Elia", "gender": "W" },
+        { "authorId": "1403162073", "name": "T. D’Isanto", "gender": "M" }
+      ]
+    },
+    {
+      "paperId": "65b92a90908b9dbf030963090a592881d1d3fd9b",
+      "title": "Citation patterns of Cochrane Reviews and other systematic reviews: a bibliometric analysis.",
+      "url": "https://www.semanticscholar.org/paper/65b92a90908b9dbf030963090a592881d1d3fd9b",
+      "citationCount": 0,
+      "publicationDate": "2024-12-17",
+      "authors": [
+        { "authorId": "2295549760", "name": "L.O. Rosengaard", "gender": "X" },
+        {
+          "authorId": "1700836039",
+          "name": "Mikkel Zola Andersen",
+          "gender": "M"
+        },
+        { "authorId": "2280728484", "name": "Jacob Rosenberg", "gender": "M" },
+        { "authorId": "11328584", "name": "S. Fonnes", "gender": "X" }
+      ]
+    },
+    {
+      "paperId": "425321e6aaaf822f2c72cdafcb1dc37b5665e081",
+      "title": "Why do some retracted articles continue to get cited?",
+      "url": "https://www.semanticscholar.org/paper/425321e6aaaf822f2c72cdafcb1dc37b5665e081",
+      "citationCount": 0,
+      "publicationDate": "2024-11-04",
+      "authors": [
+        { "authorId": "2257114352", "name": "Marion Schmidt", "gender": "W" }
+      ]
+    }
+  ]
+}

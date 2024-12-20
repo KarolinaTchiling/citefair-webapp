@@ -5,6 +5,8 @@ import { getTitles } from './recommendations/getTitles.js';
 // const testUserId = "O37o0MJa0OaSUoEAw7r4tX6GcFL2"
 // generate(testUserId);
 
-const filepath = "users/dXmI9q8FKwbfzAeJ1G6i66LuUIG3/uploads/ease-references.bib"
-const data = await getTitles(filepath);
-console.log(data);
+// const filepath = "users/dXmI9q8FKwbfzAeJ1G6i66LuUIG3/uploads/ease-references.bib"
+// const data = await getTitles(filepath);
+// console.log(data);
+
+
