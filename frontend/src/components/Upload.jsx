@@ -85,7 +85,7 @@ const FileUploadComponent = () => {
             {uploadStatus && <p className="text-center text-green-600 font-medium mt-2">{uploadStatus}</p>}
             <button
                 onClick={handleUpload}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-2"
+                className="w-full bg-blue text-white py-2 px-4 rounded-md hover:bg-blue focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-2"
             >
                 Upload
             </button>

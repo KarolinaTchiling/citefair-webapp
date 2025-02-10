@@ -19,21 +19,9 @@ const LoginForm = () => {
     }
   };
 
-  const handleGuest = async (e) => {
-    e.preventDefault();
-    try {
-      await continueAsGuest();
-      console.log("User logged in as guest!");
-      navigate("/guest-dashboard");
-    } catch (error) {
-      console.error("Guest login failed:", error.message);
-    }
-  };
 
   return (
-    <div className="flex items-center w-full justify-center">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Log In</h1>
+      <div className="w-full bg-white shadow-md rounded-lg p-8">
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label
@@ -74,17 +62,7 @@ const LoginForm = () => {
             Log In
           </button>
         </form>
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">Or</p>
-          <button
-            onClick={handleGuest}
-            className="mt-2 w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-          >
-            Continue as Guest
-          </button>
-        </div>
       </div>
-    </div>
   );
 };
 

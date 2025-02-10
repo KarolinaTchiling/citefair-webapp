@@ -7,7 +7,6 @@ import StatementPage from './pages/StatementPage';
 import RelatedPage from './pages/RelatedPage';
 import TestPage from './pages/TestPage';
 import LoginPage from './pages/LoginPage';
-import GuestDashboardPage from './pages/GuestDashboard';
 import './input.css';
 
 function App() {
@@ -18,7 +17,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashBoardPage />} />
-          <Route path="/guest-dashboard" element={<GuestDashboardPage />} />
+          {/* <Route path="/guest-dashboard" element={<GuestDashboardPage />} /> */}
           <Route path="/statements" element={<StatementPage />} />
           <Route path="/related" element={<RelatedPage />} /> 
           <Route path="/test" element={<TestPage />} />

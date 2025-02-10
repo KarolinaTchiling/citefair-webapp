@@ -3,11 +3,25 @@ import Signup from "../components/Signup";
 import Login from "../components/Login";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
-import Steps from "../components/Steps";
-
+import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
+import GuestDashboard from "../components/GuestDashboard";
 
 
 function LandingPage() {
+
+  const navigate = useNavigate();
+
+  const handleScroll = () => {
+    const targetElement = document.getElementById("target-section");
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth" });
+    } else {
+      console.log("Target section not found!");
+    }
+  };
+
+
   return (
     <div className="flex flex-col">
       <Navbar />
@@ -46,7 +60,7 @@ function LandingPage() {
 
           <button 
             className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
-            onClick={() => navigate('/login')}>
+            onClick={handleScroll}>
             Get Started
           </button>
         </div>
@@ -101,8 +115,56 @@ function LandingPage() {
           </div>
 
         </div>
-
       </div>
+
+      <div id="target-section"  className="h-[calc(100vh-64px)] bg-indigo">
+      {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
+
+        {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
+        <div className="flex flex-col items-center bg-indigo rounded-2xl mt-10 mx-20">
+
+
+        <div className="flex flex-col md:flex-row justify-center w-[65vw] gap-20 items-stretch">
+          {/* Left Side - Signup */}
+          <div className="flex-1 flex flex-col justify-center min-h-full">
+            <div className="mb-4 text-center text-white text-2xl">Create an Account</div>
+            <div className="flex-grow flex">
+              <Signup />
+            </div>
+          </div>
+
+          {/* Vertical Divider */}
+          <div className="w-[1px] bg-yellow/50"></div>
+
+          {/* Right Side - Guest Dashboard */}
+          <div className="flex-1 flex flex-col justify-center min-h-full">
+            <div className="mb-4 text-center text-white text-2xl">Continue Without an Account</div>
+            <div className="flex-grow flex">
+              <GuestDashboard />
+            </div>
+          </div>
+        </div>
+
+          <div className="flex flex-row items-center gap-10">
+            <div className="my-20 text-center text-white text-2xl">Already have an account? </div>
+              <div>
+                <button 
+                    className="px-10 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
+                    onClick={() => navigate('/login')}>
+                    Log in
+                </button>
+              </div>
+          </div>
+
+      
+        </div>
+        
+
+    
+      </div>
+
+      <Footer />
+  
     </div>
   );
 }
