@@ -2,22 +2,109 @@ import React from 'react';
 import Signup from "../components/Signup";
 import Login from "../components/Login";
 import Logout from "../components/Logout";
+import Navbar from "../components/Navbar";
+import Steps from "../components/Steps";
 
 
 
 function LandingPage() {
   return (
-    <div>
+    <div className="flex flex-col">
+      <Navbar />
 
-      <div className="pt-10 flex flex-row justify-center gap-7">
-          <div className="flex w-[400px]"><Signup/></div>
-          <div className="flex w-[400px]"><Login/></div>
+      {/* Main Content Section */}
+      <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
+        
+        {/* Heading Section (20% of screen height) */}
+        <div className="h-[20vh] flex items-center justify-center">
+          <div className="text-5xl md:text-6xl text-white font-semibold flex flex-col md:flex-row text-center md:text-left">
+            <div className="mr-6">Fair Citations.</div>
+            <div className="text-yellow">Better Research.</div>
+          </div>
+        </div>
+
+        {/* Subtitle Section (15% of screen height) */}
+        <div className="h-[15vh] flex items-center justify-center">
+          <div className="text-center text-2xl md:text-4xl text-white font-[400] max-w-4xl">
+            Elevate your research with CiteFairly — 
+            <span className="font-[700]"> analyze gender biases</span>, 
+            <span className="font-[700]"> broaden your sources</span>, and generate
+            <span className="font-[700]"> citation diversity statements</span> effortlessly.
+          </div>
+        </div>
+
+        {/* "How it works" Section and Button (20% of screen height) */}
+        <div className="h-[20vh] flex flex-col md:flex-row items-center justify-center gap-12">
+          <div className="text-center">
+            <div className="text-3xl md:text-4xl font-bold text-white">
+              How it works?
+            </div>
+            <div className="mt-1 text-sm md:text-md text-white">
+              Hover over the numbers to learn more
+            </div>
+          </div>
+
+          <button 
+            className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
+            onClick={() => navigate('/login')}>
+            Get Started
+          </button>
+        </div>
+
+        {/* Steps Section (35% of screen height) */}
+        <div className="h-[35vh] flex items-start mt-2 justify-center w-full">
+        <div className="text-white flex flex-col md:flex-row items-start justify-start gap-1 text-lg mt-1">
+            {[
+              {
+                number: "1",
+                title: "Upload your reference list",
+                caption:
+                  "Upload your reference list file. CiteFairly accepts .bib, .ris, .enw, .txt, and .xml.",
+              },
+              {
+                number: "2",
+                title: "Get your gender bias analysis",
+                caption:
+                  "CiteFairly will analyze the gender of your cited authors and provide insights on any biases.",
+              },
+              {
+                number: "3",
+                title: "Diversify your sources",
+                caption:
+                  "Using your reference list, gender analysis, and Semantic Scholar's AI-powered recommendation algorithm, you will get recommended articles to help diversify your research.",
+              },
+              {
+                number: "4",
+                title: "Generate your CDS",
+                caption:
+                  "Given your provided reference list alongside any added papers from our suggestions, CiteFairly will generate your custom citation diversity statements.",
+              },
+            ].map((step, index) => (
+              <div
+                key={index}
+                className="group flex flex-col items-center w-full max-w-[330px] text-left transition-transform duration-300 hover:scale-110"
+              >
+                {/* Number Circle */}
+                <div className="bg-blue text-indigo font-bold h-16 w-16 rounded-full flex items-center justify-center text-5xl">
+                  {step.number}
+                </div>
+
+                {/* Step Title */}
+                <span className="mt-3 text-center">{step.title}</span>
+
+                {/* Caption (Hidden by Default, Shows on Hover) */}
+                <div className="text-white text-sm text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 mt-2">
+                  {step.caption}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
       </div>
-
-      <Logout/>
-
-     </div>
-  )
+    </div>
+  );
 }
 
-export default LandingPage
+export default LandingPage;
