@@ -42,7 +42,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-white rounded-lg p-8 shadow-md">
+    <div className="h-full w-full flex flex-col bg-white rounded-lg p-8">
 
       {/* Error & Success Messages */}
       {error && <div className="text-red-500 text-center mb-2">{error}</div>}

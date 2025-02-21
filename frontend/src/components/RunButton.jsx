@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 
 
-const GenerateStatementsButton = ({ fileName, disabled }) => {
+const RunButton = ({ fileName, firstName, lastName, disabled }) => {
     const navigate = useNavigate(); // Access the navigate function
 
     const handleClick = () => {
@@ -26,4 +26,4 @@ const GenerateStatementsButton = ({ fileName, disabled }) => {
     )
 }
 
-export default GenerateStatementsButton;
+export default RunButton;
