@@ -22,8 +22,7 @@ function GuestDashboard() {
     setShowUploadSection(true); // Update the UI
   };
 
-  console.log(firstName);
-
+  console.log(uploadedFile);
   return (
     <div className="">
       <div className="h-full w-full flex flex-col bg-white rounded-lg p-8 pb-4">

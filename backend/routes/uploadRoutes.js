@@ -23,14 +23,6 @@ router.post("/guest-upload", upload.single("file"), async (req, res) => {
 });
 
 
-router.get("/test", async (req, res) => {
-    try {
-      const response = "hi"
-      res.status(200).json({ response });
-    } catch (error) {
-      console.error("Error in /get-test:", error);
-      res.status(401).json({ error: error.message || "Unauthorized" });
-    }
-  });
+
 
 export default router;
