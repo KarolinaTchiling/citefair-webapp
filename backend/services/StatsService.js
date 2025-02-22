@@ -78,6 +78,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
     let number_of_self_citations = 0;
     let title_not_found = 0;
+    let total_papers = 0;
 
 
     let fullName;
@@ -93,6 +94,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
         if (index > 0) await delay(100); // 100ms delay to respect rate limits
 
         const result = await fetchPaper(title);
+        total_papers += 1;
         
         if (result.meta?.count === 0) {
             results.push({ title, error: "Title not found" });
@@ -126,7 +128,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
         }
     }
 
-    return { results, number_of_self_citations, title_not_found };
+    return { results, number_of_self_citations, title_not_found, total_papers };
 };
 
 // 🔹 Step 6: Fetch author gender from Gender-API
@@ -240,5 +242,5 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
     const papersWithGender = await fetchAuthorGender(papers);
     return { papers: papersWithGender, 
         genders: calculatePercentages(papersWithGender), categories: calculateCategories(papersWithGender), 
-        number_of_self_citations: papersData.number_of_self_citations, title_not_found: papersData.title_not_found};
+        number_of_self_citations: papersData.number_of_self_citations, title_not_found: papersData.title_not_found, total_papers: papersData.total_papers};
 };
