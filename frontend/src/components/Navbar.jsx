@@ -8,9 +8,11 @@ const Navbar = () => {
         // <div className="border-2 border-indigo-600 py-4 px-20 flex flex-row items-center justify-between">
          <div className="py-4 px-20 flex flex-row items-center justify-between bg-white">
 
-            <div className="font-logo text-2xl">
+            <button 
+                className="font-logo text-2xl"
+                onClick={() => navigate('/')}>
                 CiteFairly
-            </div>
+            </button>
 
             <div className="flex flex-row items-center">
 
