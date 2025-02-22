@@ -62,7 +62,13 @@ const ResultsPage = () => {
         : [];
 
     // Define colors for each gender category
-    const COLORS1 = ["#FF6384", "#36A2EB", "#FFCE56"]; // W (Pink), M (Blue), X (Yellow)
+    const colors1 = ["#FF6384", "#29C2E0", "#E0E0E0"]; // W (Pink), M (Blue), X (Grey)
+
+    const genderLabels = {
+        W: "Women Authors",
+        M: "Men Authors",
+        X: "Unknown Gender",
+    };
 
     // Convert gender distribution data to a format that Recharts can use
     const catData = data?.categories
@@ -71,9 +77,18 @@ const ResultsPage = () => {
                 value: parseFloat(percentage), // Convert percentage string to a number
             }))
         : [];
+    
 
     // Define colors for each gender category
-    const COLORS2 = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]; // W (Pink), M (Blue), X (Yellow)
+    const colors2 = ["#29C2E0", "#FFCE56", "#AD85FF", "#FF6384", "#E0E0E0"]; // MM (Blue), MW (Yellow), MW (Purple), WW (Pink), X (Grey)
+
+    const catLabels = {
+        MM: "First and last authors are men",
+        MW: "Man first author and woman last author",
+        WM: "Woman first author and man last author",
+        WW: "First and last authors are women",
+        X: "Unknown Category",
+    };
 
 
 
@@ -90,88 +105,80 @@ const ResultsPage = () => {
                     </div>
                 </div>
 
-
-                <div className="flex flex-row"> 
-
-
-                <div className="mt-6 p-4 bg-indigo rounded-md">
-                    <h2 className="text-xl text-white text-center font-semibold">Gender Distribution of all Authors</h2>
-                    {genderData.length > 0 ? (
-                        <ResponsiveContainer width={400} height={300}>
-                            <PieChart>
-                                <Pie
-                                    data={genderData}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                                    outerRadius={100}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {genderData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS1[index % COLORS1.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p>No gender data available.</p>
-                    )}
-                </div>
-
-                <div className="mt-6 p-4 bg-indigo rounded-md">
-                    <h2 className="text-xl text-white text-center font-semibold">Gender Distribution of all Authors</h2>
-                    {catData.length > 0 ? (
-                        <ResponsiveContainer width={400} height={300}>
-                            <PieChart>
-                                <Pie
-                                    data={catData}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                                    outerRadius={100}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {genderData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS2[index % COLORS2.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p>No cat data available.</p>
-                    )}
-                </div>
-
+                <div className="mt-1 p-4 bg-indigo -lg w-[75%] text-white text-xl flex flex-row items-center justify-between gap-10">
+                    <div className="w-[35%] text-right">
+                        <p><strong>Total Papers:</strong> {data?.total_papers}</p>
+                        <p><strong>Number of Self-Citations:</strong> {data?.number_of_self_citations}</p>
+                        <p><strong>Unsuccessful articles matches:</strong> {data?.title_not_found}</p>
+                    </div>
+                    <p className="text-lg w-[65%] text-center">Articles which were unsuccessfully matched means that sufficient author data was not found. Thus, both self-cited articles and unmatched articles are excluded from the bias analysis.  </p>
                 </div>
 
 
+                {/* Pie Charts */}
+                <div className="flex flex-row mb-10 gap-20"> 
+                        <div className="mt-6 p-4 bg-indigo rounded-md">
+                            <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
+                            {genderData.length > 0 ? (
+                                <ResponsiveContainer width={400} height={330}>
+                                    <PieChart>
+                                        <Pie
+                                            data={genderData}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={true}
+                                            label={({ percent }) => ` ${(percent * 100).toFixed(1)}%`}
+                                            outerRadius={100}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {genderData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={colors1[index % colors1.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend
+                                            formatter={(value) => genderLabels[value] || value} 
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <p>No gender data available.</p>
+                            )}
+                        </div>
 
-            {/* Citation Categories */}
-            {/* <div className="mt-6 p-4 bg-gray-100 rounded-md">
-                <h2 className="text-xl font-semibold">Citation Categories</h2>
-                <ul className="list-disc pl-5">
-                    {data?.categories &&
-                        Object.entries(data.categories).map(([category, percentage], index) => (
-                            <li key={index}><strong>{category}:</strong> {percentage}</li>
-                        ))}
-                </ul>
-            </div> */}
+                        <div className="mt-6 p-4 bg-indigo rounded-md">
+                            <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
+                            {catData.length > 0 ? (
+                                <ResponsiveContainer width={400} height={400}>
+                                    <PieChart>
+                                        <Pie
+                                            data={catData}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={true}
+                                            label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                                            outerRadius={100}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {catData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={colors2[index % colors2.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend
+                                            formatter={(value) => catLabels[value] || value} 
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <p>No cat data available.</p>
+                            )}
+                        </div>
 
-            {/* Other Stats */}
-            <div className="mt-6 p-4 bg-gray-100 rounded-md">
-                <h2 className="text-xl font-semibold">Other Statistics</h2>
-                <p><strong>Number of Self-Citations:</strong> {data?.number_of_self_citations}</p>
-                <p><strong>Titles Not Found:</strong> {data?.title_not_found}</p>
-                <p><strong>Total Papers:</strong> {data?.total_papers}</p>
-            </div>
+                </div>
+
 
             </div>
         </div>
