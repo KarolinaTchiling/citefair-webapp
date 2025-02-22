@@ -73,11 +73,21 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // 🔹 Step 5: Process multiple titles by fetching related papers
 // this is used to get author data
 // this also removes self-citations 
-export const getPapers = async (titles, firstName, lastName) => {
+export const getPapers = async (titles, firstName, middleName, lastName) => {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
     let number_of_self_citations = 0;
     let title_not_found = 0;
+
+
+    let fullName;
+    if (!middleName){
+        fullName = firstName + " " + lastName; 
+    } else {
+        fullName = firstName + " " + middleName + " " + lastName;
+    }
+
+    console.log(fullName);
 
     for (const [index, title] of cleanedTitles.entries()) {
         if (index > 0) await delay(100); // 100ms delay to respect rate limits
@@ -95,8 +105,8 @@ export const getPapers = async (titles, firstName, lastName) => {
             const relevance_score = result.results[0]?.relevance_score;
 
             let selfCitation = false;
-            
-            const fullName = firstName + " " + lastName;
+
+
             for (const author of authors){
                 if (author.name == fullName){
                     selfCitation = true;
@@ -223,9 +233,9 @@ export const calculateCategories = (data) => {
 };
 
 // 🔹 Final Step: Fully Automated Bibliography Processing
-export const processBibliography = async (fileName, userId, firstName, lastName) => {
+export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
     const titles = await getTitles(fileName, userId);
-    const papersData = await getPapers(titles, firstName, lastName);
+    const papersData = await getPapers(titles, firstName, middleName, lastName);
     const papers = papersData.results
     const papersWithGender = await fetchAuthorGender(papers);
     return { papers: papersWithGender, 

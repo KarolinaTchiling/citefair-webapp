@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
 
-const RunButton = ({ fileName, firstName, lastName, disabled }) => {
+const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
     const navigate = useNavigate(); // Access the navigate function
     const { user } = useAuth();
 
@@ -19,6 +19,7 @@ const RunButton = ({ fileName, firstName, lastName, disabled }) => {
                     fileName: fileName,
                     userId: user.uid,
                     firstName: firstName,
+                    middleName: middleName,
                     lastName: lastName,
                 }),
             });

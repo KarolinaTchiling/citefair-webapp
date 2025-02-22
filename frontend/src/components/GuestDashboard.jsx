@@ -7,6 +7,7 @@ import RunButton from "./RunButton";
 function GuestDashboard() {
   const { user } = useAuth();
   const [firstName, setFirstName] = useState(""); // User enters first name
+  const [middleName, setMiddleName] = useState(""); // User enters first name
   const [lastName, setLastName] = useState(""); // User enters last name
   const [uploadedFile, setUploadedFile] = useState(""); // Track uploaded file
   const [fileUploaded, setFileUploaded] = useState(false); // Track file status
@@ -55,6 +56,21 @@ function GuestDashboard() {
                   />
                 </div>
 
+                {/* Middle Name Input */}
+                <div className="mb-3">
+                  <label htmlFor="middleName" className="block text-sm font-medium text-gray-700">
+                    Middle Name
+                  </label>
+                  <input
+                    type="text"
+                    id="middleName"
+                    value={middleName}
+                    placeholder=""
+                    onChange={(e) => setMiddleName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>                
+
                 {/* Last Name Input */}
                 <div className="mb-3">
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
@@ -98,6 +114,7 @@ function GuestDashboard() {
                 <RunButton
                   fileName={uploadedFile}
                   firstName={firstName}
+                  middleName={middleName}
                   lastName={lastName}
                   disabled={!fileUploaded || !firstName || !lastName}
                 />
