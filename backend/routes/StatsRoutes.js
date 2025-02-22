@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.post("/processBib", async (req, res) => {
     try {
-        const { fileName, userId } = req.body;
+        const { fileName, userId, firstName, lastName } = req.body;
         if (!fileName || !userId) return res.status(400).json({ error: "fileName and userId are required" });
 
-        const finalData = await processBibliography(fileName, userId);
+        const finalData = await processBibliography(fileName, userId, firstName, lastName);
         res.json(finalData);
     } catch (error) {
         console.error("Error processing bibliography:", error.message);

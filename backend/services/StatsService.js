@@ -71,17 +71,22 @@ const fetchPaper = async (title) => {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // 🔹 Step 5: Process multiple titles by fetching related papers
-export const getPapers = async (titles) => {
+// this is used to get author data
+// this also removes self-citations 
+export const getPapers = async (titles, firstName, lastName) => {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
+    let number_of_self_citations = 0;
+    let title_not_found = 0;
 
     for (const [index, title] of cleanedTitles.entries()) {
-        if (index > 0) await delay(10); // 100ms delay to respect rate limits
+        if (index > 0) await delay(100); // 100ms delay to respect rate limits
 
         const result = await fetchPaper(title);
         
         if (result.meta?.count === 0) {
             results.push({ title, error: "Title not found" });
+            title_not_found += 1;
         } else {
             const matchedTitle = result.results[0]?.display_name;
             const authors = (result.results[0]?.authorships || []).map(auth => ({
@@ -89,16 +94,29 @@ export const getPapers = async (titles) => {
             }));
             const relevance_score = result.results[0]?.relevance_score;
 
-            results.push({
-                title,
-                matchedTitle,
-                authors,
-                relevance_score
-            });
+            let selfCitation = false;
+            
+            const fullName = firstName + " " + lastName;
+            for (const author of authors){
+                if (author.name == fullName){
+                    selfCitation = true;
+                    number_of_self_citations += 1;
+                    break;
+                }
+            }
+
+            if (!selfCitation) {
+                results.push({
+                    title,
+                    matchedTitle,
+                    authors,
+                    relevance_score
+                });
+            } 
         }
     }
 
-    return results;
+    return { results, number_of_self_citations, title_not_found };
 };
 
 // 🔹 Step 6: Fetch author gender from Gender-API
@@ -205,10 +223,12 @@ export const calculateCategories = (data) => {
 };
 
 // 🔹 Final Step: Fully Automated Bibliography Processing
-export const processBibliography = async (fileName, userId) => {
+export const processBibliography = async (fileName, userId, firstName, lastName) => {
     const titles = await getTitles(fileName, userId);
-    const papers = await getPapers(titles);
+    const papersData = await getPapers(titles, firstName, lastName);
+    const papers = papersData.results
     const papersWithGender = await fetchAuthorGender(papers);
-    console.log(papersWithGender);
-    return { papers: papersWithGender, genders: calculatePercentages(papersWithGender), categories: calculateCategories(papersWithGender) };
+    return { papers: papersWithGender, 
+        genders: calculatePercentages(papersWithGender), categories: calculateCategories(papersWithGender), 
+        number_of_self_citations: papersData.number_of_self_citations, title_not_found: papersData.title_not_found};
 };

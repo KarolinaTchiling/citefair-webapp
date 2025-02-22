@@ -9,11 +9,6 @@ const RunButton = ({ fileName, firstName, lastName, disabled }) => {
 
     const handleClick = async () => {
         try {
-            // const formData = new FormData();
-            // formData.append("fileName", fileName);
-            // formData.append("firstName", firstName);
-            // formData.append("lastName", lastName);
-            // formData.append("userId", user.uid);
 
             const response = await fetch("http://localhost:5000/stats/processBib", {
                 method: "POST",
@@ -22,7 +17,9 @@ const RunButton = ({ fileName, firstName, lastName, disabled }) => {
                 },
                 body: JSON.stringify({
                     fileName: fileName,
-                    userId: user.uid
+                    userId: user.uid,
+                    firstName: firstName,
+                    lastName: lastName,
                 }),
             });
 
