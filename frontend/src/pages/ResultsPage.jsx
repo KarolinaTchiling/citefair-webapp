@@ -148,7 +148,7 @@ const ResultsPage = () => {
                         </div>
 
                         <div className="mt-6 p-4 bg-indigo rounded-md">
-                            <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
+                            <h2 className="text-2xl text-white text-center font-semibold pb-2">Distribution of Gender Categories</h2>
                             {catData.length > 0 ? (
                                 <ResponsiveContainer width={400} height={400}>
                                     <PieChart>
