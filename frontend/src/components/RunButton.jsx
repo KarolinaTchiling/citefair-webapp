@@ -2,40 +2,22 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
-
 const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
     const navigate = useNavigate(); // Access the navigate function
     const { user } = useAuth();
 
-    const handleClick = async () => {
-        try {
+    const handleClick = () => {
+        // Prepare the data object
+        const data = {
+            fileName: fileName,
+            userId: user.uid,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+        };
 
-            const response = await fetch("http://localhost:5000/stats/processBib", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    fileName: fileName,
-                    userId: user.uid,
-                    firstName: firstName,
-                    middleName: middleName,
-                    lastName: lastName,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch data");
-            }
-
-            const data = await response.json(); // Parse response JSON
-
-            // Navigate to /results and pass the response data
-            navigate(`/results`, { state: { resultData: data } });
-
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        // Navigate to /results and pass the data
+        navigate(`/results`, { state: { resultData: data } });
     };
 
     return (
@@ -52,7 +34,9 @@ const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
                 Run CiteFairly
             </button>
         </div>  
-    )
-}
+    );
+};
 
 export default RunButton;
+
+
