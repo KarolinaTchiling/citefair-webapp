@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fade-out-text {
+    position: relative;
+    width: 20%;
+    -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+  }
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+.animate-blink {
+    animation: blink 1s infinite;
+}

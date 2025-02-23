@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Loader from '../components/Loader.jsx';
+import Typewriter from '../components/Typewriter.jsx';
 
 const ResultsPage = () => {
     const location = useLocation();
@@ -96,15 +97,22 @@ const ResultsPage = () => {
             {loading ? (
                 <>
                     <div className="h-[20vh] flex items-center justify-center">
-                        <div className="text-6xl md:text-5xl text-white font-semibold flex flex-col md:flex-row text-center md:text-left">
-                            <div className="">Hold Tight...</div>
+                        <div className=" text-white flex flex-col text-center">
+                            <div className="text-5xl font-semibold ">Hold Tight...</div>
+                            <div className="text-lg pt-2">Your analysis is being generated!</div>
                         </div>
                     </div>
 
-                    <div className="h-[20vh]">
+                    <div className="pt-10">
                         <Loader />
                     </div>
 
+                    {/* <marquee className="text-white pt-10 fade-out-text text-xl" width="30%" direction="left">
+                        Parsing the reference list... Extracting the titles... Searching Open Alex for author data... Labelling genders using Gender-API... Computing statistics...Generating plots
+                    </marquee> */}
+
+                        <Typewriter />
+             
 
                     {/* <div className="flex flex-col items-center justify-center">
                         <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>

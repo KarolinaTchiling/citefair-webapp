@@ -29,7 +29,7 @@ const StyledWrapper = styled.div`
   .loader-spanne-20 > span {
     position: absolute;
     right: 0;
-    width: 4px;
+    width: 5px;
     height: 60px;
     background-color: #FFCE56;
     display: block;
