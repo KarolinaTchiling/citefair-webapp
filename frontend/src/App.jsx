@@ -5,7 +5,7 @@ import DashBoardPage from './pages/DashBoardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
 import RelatedPage from './pages/RelatedPage';
-import TestPage from './pages/TestPage';
+import TestPage from './pages/TestingPage';
 import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import './input.css';

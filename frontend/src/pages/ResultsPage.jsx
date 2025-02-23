@@ -4,11 +4,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Loader from '../components/Loader.jsx';
 import Typewriter from '../components/Typewriter.jsx';
+import Sidebar from '../components/Sidebar.jsx';
+
 
 const ResultsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { resultData } = location.state || {}; // Retrieve the data passed from RunButton
+
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
+
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -92,125 +98,124 @@ const ResultsPage = () => {
         <div className="flex flex-col">
             <Navbar />
 
+            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
+
             <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
 
-            {loading ? (
-                <>
-                    <div className="h-[20vh] flex items-center justify-center">
-                        <div className=" text-white flex flex-col text-center">
-                            <div className="text-5xl font-semibold ">Hold Tight...</div>
-                            <div className="text-lg pt-2">Your analysis is being generated!</div>
-                        </div>
-                    </div>
-
-                    <div className="pt-10">
-                        <Loader />
-                    </div>
-
-                    {/* <marquee className="text-white pt-10 fade-out-text text-xl" width="30%" direction="left">
-                        Parsing the reference list... Extracting the titles... Searching Open Alex for author data... Labelling genders using Gender-API... Computing statistics...Generating plots
-                    </marquee> */}
-
-                        <Typewriter />
-             
-
-                    {/* <div className="flex flex-col items-center justify-center">
-                        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-white text-lg mt-4">Processing your data...</p>
-                    </div> */}
-                
-                </>
-                
-                ) : error ? (
-                    <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
-                ) : (
+                {loading ? (
                     <>
+                        <div className="h-[20vh] flex items-center justify-center">
+                            <div className=" text-white flex flex-col text-center">
+                                <div className="text-5xl font-semibold ">Hold Tight...</div>
+                                <div className="text-lg pt-2">Your analysis is being generated!</div>
+                            </div>
+                        </div>
+
+                        <div className="pt-10">
+                            <Loader />
+                        </div>
+                        <Typewriter />
+                
+                    </>
+                    
+                    ) : error ? (
+                        <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
+                    ) : (
+                        <>
                         {/* Heading Section (20% of screen height) */}
                         <div className="h-[20vh] flex items-center justify-center">
-                            <div className="text-6xl md:text-5xl text-white font-semibold flex flex-col md:flex-row text-center md:text-left">
-                                <div className="">Your Citation Analysis Results</div>
-                            </div>
+                        <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
+                            Your Citation Analysis Results
+                        </h1>
                         </div>
 
-                        <div className="mt-1 p-4 bg-indigo -lg w-[75%] text-white text-xl flex flex-row items-center justify-between gap-10">
-                            <div className="w-[35%] text-right">
-                                <p><strong>Total Papers:</strong> {data?.total_papers}</p>
-                                <p><strong>Number of Self-Citations:</strong> {data?.number_of_self_citations}</p>
-                                <p><strong>Unsuccessful articles matches:</strong> {data?.title_not_found}</p>
-                            </div>
-                            <p className="text-lg w-[65%] text-center">Articles which were unsuccessfully matched means that sufficient author data was not found. Thus, both self-cited articles and unmatched articles are excluded from the bias analysis.  </p>
+                        {/* Summary Section */}
+                        <div className="mt-1 p-1 bg-indigo w-[86%] text-white text-xl grid grid-cols-2 gap-10 mr-56">
+                        <div className="text-right">
+                            <p><strong>Total Papers:</strong> {data?.total_papers}</p>
+                            <p><strong>Number of Self-Citations:</strong> {data?.number_of_self_citations}</p>
+                            <p><strong>Unsuccessful article matches:</strong> {data?.title_not_found}</p>
+                        </div>
+                        <div className="text-left">
+                            <p className="text-lg">
+                            Articles which were unsuccessfully matched mean that sufficient author data was not found.
+                            Thus, both self-cited articles and unmatched articles are excluded from the bias analysis.
+                            </p>
+                        </div>
                         </div>
 
 
-                        {/* Pie Charts */}
-                        <div className="flex flex-row mb-10 gap-20"> 
-                                <div className="mt-6 p-4 bg-indigo rounded-md">
-                                    <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
-                                    {genderData.length > 0 ? (
-                                        <ResponsiveContainer width={400} height={330}>
-                                            <PieChart>
-                                                <Pie
-                                                    data={genderData}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    labelLine={true}
-                                                    label={({ percent }) => ` ${(percent * 100).toFixed(1)}%`}
-                                                    outerRadius={100}
-                                                    fill="#8884d8"
-                                                    dataKey="value"
-                                                >
-                                                    {genderData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={colors1[index % colors1.length]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip />
-                                                <Legend
-                                                    formatter={(value) => genderLabels[value] || value} 
-                                                />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    ) : (
-                                        <p>No gender data available.</p>
-                                    )}
-                                </div>
 
-                                <div className="mt-6 p-4 bg-indigo rounded-md">
-                                    <h2 className="text-2xl text-white text-center font-semibold pb-2">Distribution of Gender Categories</h2>
-                                    {catData.length > 0 ? (
-                                        <ResponsiveContainer width={400} height={400}>
-                                            <PieChart>
-                                                <Pie
-                                                    data={catData}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    labelLine={true}
-                                                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
-                                                    outerRadius={100}
-                                                    fill="#8884d8"
-                                                    dataKey="value"
-                                                >
-                                                    {catData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={colors2[index % colors2.length]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip />
-                                                <Legend
-                                                    formatter={(value) => catLabels[value] || value} 
-                                                />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    ) : (
-                                        <p>No cat data available.</p>
-                                    )}
-                                </div>
+                            {/* Pie Charts */}
+                            <div className="flex flex-row mb-10 gap-20"> 
+                                    <div className="mt-6 p-4 bg-indigo rounded-md">
+                                        <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
+                                        {genderData.length > 0 ? (
+                                            <ResponsiveContainer width={400} height={330}>
+                                                <PieChart>
+                                                    <Pie
+                                                        data={genderData}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={true}
+                                                        label={({ percent }) => ` ${(percent * 100).toFixed(1)}%`}
+                                                        outerRadius={100}
+                                                        fill="#8884d8"
+                                                        dataKey="value"
+                                                    >
+                                                        {genderData.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={colors1[index % colors1.length]} />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip />
+                                                    <Legend
+                                                        formatter={(value) => genderLabels[value] || value} 
+                                                    />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <p>No gender data available.</p>
+                                        )}
+                                    </div>
 
-                        </div>                    
-                    </>
+                                    <div className="mt-6 p-4 bg-indigo rounded-md">
+                                        <h2 className="text-2xl text-white text-center font-semibold pb-2">Distribution of Gender Categories</h2>
+                                        {catData.length > 0 ? (
+                                            <ResponsiveContainer width={400} height={400}>
+                                                <PieChart>
+                                                    <Pie
+                                                        data={catData}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={true}
+                                                        label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                                                        outerRadius={100}
+                                                        fill="#8884d8"
+                                                        dataKey="value"
+                                                    >
+                                                        {catData.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={colors2[index % colors2.length]} />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip />
+                                                    <Legend
+                                                        formatter={(value) => catLabels[value] || value} 
+                                                    />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <p>No cat data available.</p>
+                                        )}
+                                    </div>
 
-                )}
+                            </div>                    
+                        </>
+
+                    )}
 
             </div>
         </div>
+       
     );
 };
 
