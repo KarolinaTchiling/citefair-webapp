@@ -37,8 +37,30 @@ export const AuthProvider = ({ children }) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  const continueAsGuest = async () => {
-    await signInAnonymously(auth);
+  const registerGuest = async (uid, firstName, middleName, lastName) => {
+    try {
+      const response = await fetch("http://localhost:5000/guest/registerGuest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid, firstName, middleName, lastName }),
+      });
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error("Error registering guest:", error);
+    }
+  };
+
+  const continueAsGuest = async (firstName, middleName, lastName) => {
+    try {
+      const result = await signInAnonymously(auth);
+      const guestUID = result.user.uid;
+      await registerGuest(guestUID, firstName, middleName, lastName);
+    } catch (error) {
+      console.error("Error during guest sign-in:", error);
+    }
   };
 
   const value = {

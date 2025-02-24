@@ -19,7 +19,7 @@ function GuestDashboard() {
 
   const handleContinueAsGuest = async (e) => {
     e.preventDefault(); // Prevents the form from refreshing
-    await continueAsGuest(); // Ensure the function completes
+    await continueAsGuest(firstName, middleName, lastName); // Ensure the function completes
     setShowUploadSection(true); // Update the UI
   };
 
