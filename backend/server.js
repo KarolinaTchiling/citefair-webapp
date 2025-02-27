@@ -3,6 +3,7 @@ import cors from "cors";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import statsRoutes from "./routes/StatsRoutes.js";
 import statementRoutes from "./routes/StatementRoutes.js";
+import relatedWorksRoutes from "./routes/RelatedWorksRoutes.js";
 import guestRoutes from "./routes/GuestRoutes.js";
 
 import testingRoutes from "./routes/TestingRoutes.js";
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/upload", uploadRoutes);
 app.use("/stats", statsRoutes);
 app.use("/cds", statementRoutes);
+app.use("/related", relatedWorksRoutes);
 app.use("/guest", guestRoutes);
 
 app.use("/testing", testingRoutes);

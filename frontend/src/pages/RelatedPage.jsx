@@ -1,103 +1,125 @@
-import React, { useEffect, useState } from 'react';
-import RecommendedPapers from "../components/RecommendedPapers";
-import { useAuth } from "../AuthContext";
+import React, { useEffect, useState } from "react";
+import Sidebar from '../components/Sidebar.jsx';
+import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
-function RelatedPage() {
-  const [data, setData] = useState(null); // State to hold the enriched data
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const RelatedPage = () => {
+    const navigate = useNavigate();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
-  const { user, isAuthenticated } = useAuth();
-  // const fileName = "ease-references.bib";
-  // const filePath = `users/${user.uid}/uploads/${fileName}`;
-  const token = user.accessToken; // Replace with the correct way to access your token
-  
-//   console.log(token);
-//   console.log(user);
-//   console.log(filePath);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
+    useEffect(() => {
 
-        const filePath = "users/NYj6VmrnlaXU8bgwPjb4z5nDZrz1/uploads/APSECrefs.bib";
+        const sessionUserData = sessionStorage.getItem("userData");
 
-        // Get the token (assume it's provided by your AuthContext or another service)
-        const token = user.accessToken; // Replace with the correct way to access your toke
-        if (!token) throw new Error("Authorization token is missing");
+ 
+        if (!sessionUserData) {
+            console.error("Missing required session data, redirecting...");
+            navigate("/");
+            return;
+        }
 
-        // Step 2: Call /get-titles with the file content
-        const titlesResponse = await fetch('http://localhost:5000/get-titles', {
-            method: 'POST',
-            headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Include the token here
-            },
-            body: JSON.stringify({ filepath: filePath }),
-        });
-        if (!titlesResponse.ok) throw new Error("Failed to fetch titles");
-        const titlesData = await titlesResponse.json();
+        const userData = JSON.parse(sessionUserData);
+        const fileName = userData.fileName;
+        const userId = userData.userId;
 
-        // Step 3: Call /get-ssids with titles
-        const ssidsResponse = await fetch('http://localhost:5000/get-ssids', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titles: titlesData.titles }),
-        });
-        if (!ssidsResponse.ok) throw new Error("Failed to fetch SSIDs");
-        const ssidsData = await ssidsResponse.json();
+        const fetchData = async () => {
+            try {
 
-        // Step 4: Call /get-raw-recommendations with paper IDs
-        const rawRecommendationsResponse = await fetch('http://localhost:5000/get-raw-recommendations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paperIds: ssidsData.paperIds }),
-        });
-        if (!rawRecommendationsResponse.ok) throw new Error("Failed to fetch raw recommendations");
-        const rawRecommendationsData = await rawRecommendationsResponse.json();
+                const response = await fetch("http://localhost:5000/related/get-related-works", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({ fileName, userId }),
+              });
+              
+              if (!response.ok) {
+                  throw new Error("Failed to fetch data");
+              }
 
-        console.log(rawRecommendationsData); // this right soo something happens after
+              const result = await response.json();
+              setData(result);
+            
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Failed to load reference list.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Step 5: Call /get-recommendations with raw recommendations
-        const recommendationsResponse = await fetch('http://localhost:5000/get-recommendations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(rawRecommendationsData),
-        });
-        
-        if (!recommendationsResponse.ok) throw new Error("Failed to fetch final recommendations");
-        const recommendationsData = await recommendationsResponse.json();
+        fetchData();
+    }, [navigate]);
 
-        // Set the final enriched data
-        setData(recommendationsData.enrichedData);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchData();
-  }, []);
+    const papers = data?.papers || [];
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    return (
+        <div>
+            <Navbar />
+            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+            <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center min-h-[calc(100vh-64px)]">
 
-  return (
-    <div>
-      <div className="pt-10 flex flex-row justify-center gap-7">
-        <div className="flex">
-          <RecommendedPapers data={{ enrichedData: data }} />
+
+                {loading ? (
+                    <div></div>
+                ) : error ? (
+                    <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
+                ) : (
+
+                <>
+                <div className="h-[13vh] flex items-center justify-center">
+                    <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
+                        Related Articles
+                    </h1>
+                </div>
+
+                {/* <div> 
+                    {papers.length === 0 ? (
+                        <p className="text-white text-lg">No references found.</p>
+                    ) : (
+                        <div className="space-y-6 w-full max-w-4xl mb-20">
+                            {papers.map((paper, index) => (
+                                <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                    <h2 className="text-lg font-semibold">{paper.title}</h2>
+
+                                    <div className="mt-3">
+                                        <p className="font-semibold">Authors:</p>
+                                        {paper.authors && paper.authors.length > 0 ? (
+                                            <ul className="list-disc list-inside">
+                                                {paper.authors.map((author, idx) => (
+                                                    <li key={idx} className="text-gray-300">
+                                                        {author.name}{" "}
+                                                        <span className="text-sm text-gray-500">
+                                                            ({author.gender || "Unknown"})
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="text-gray-400">No match found.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div> */}
+               
+                </>
+                 )}
+            </div>
+
+        <Footer />
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
 
 export default RelatedPage;
