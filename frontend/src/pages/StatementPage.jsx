@@ -13,15 +13,13 @@ const StatementPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // const sessionUserData = sessionStorage.getItem("userData");
 
     useEffect(() => {
 
         const sessionUserData = sessionStorage.getItem("userData");
 
- 
         if (!sessionUserData) {
-            console.error("Missing required session data, redirecting...");
+            console.error("No result data, redirecting...");
             navigate("/");
             return;
         }
@@ -32,18 +30,24 @@ const StatementPage = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
-                
+                const response = await fetch("http://localhost:5000/cds/generateCds", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ fileName, userId }),
+                });
+        
                 if (!response.ok) {
                     throw new Error("Failed to fetch data");
                 }
-
-                const result = await response.json();
-                setData(result);
-            
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError("Failed to load reference list.");
+        
+                const result = await response.json(); 
+                setData(result); //store data in state
+        
+            } catch (error) {
+                console.error("Error:", error);
+                steError(error.message);
             } finally {
                 setLoading(false);
             }
@@ -52,8 +56,6 @@ const StatementPage = () => {
         fetchData();
     }, [navigate]);
 
-
-    const papers = data?.papers || [];
 
     return (
         <div>
@@ -72,41 +74,46 @@ const StatementPage = () => {
                 <>
                 <div className="h-[13vh] flex items-center justify-center">
                     <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                        Your References
+                        Your Citation Diversity Statements 
                     </h1>
                 </div>
 
-                <div> 
-                    {papers.length === 0 ? (
-                        <p className="text-white text-lg">No references found.</p>
+                <div>
+                    {data === null ? (
+                        <p className="text-white text-lg">No statements found.</p>
                     ) : (
                         <div className="space-y-6 w-full max-w-4xl mb-20">
-                            {papers.map((paper, index) => (
-                                <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
-                                    <h2 className="text-lg font-semibold">{paper.title}</h2>
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                <h2 className="text-3xl font-semibold text-center py-2">Full Citation Diversity Statement - By Author Categories</h2>
+                                <p>{data.catStatement}</p>
+                            </div>
 
-                                    <div className="mt-3">
-                                        <p className="font-semibold">Authors:</p>
-                                        {paper.authors && paper.authors.length > 0 ? (
-                                            <ul className="list-disc list-inside">
-                                                {paper.authors.map((author, idx) => (
-                                                    <li key={idx} className="text-gray-300">
-                                                        {author.name}{" "}
-                                                        <span className="text-sm text-gray-500">
-                                                            ({author.gender || "Unknown"})
-                                                        </span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p className="text-gray-400">No match found.</p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                            <h2 className="text-3xl font-semibold text-center py-2">Full Citation Diversity Statement - By Gender</h2>
+                                <p>{data.genderStatement}</p>
+                            </div>
+
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                            <h2 className="text-3xl font-semibold text-center py-2">Abbreviated Citation Diversity Statement</h2>
+                                <p>{data.abbStatement}</p>
+                            </div>
+
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                <h2 className="text-lg font-semibold text-center">Citations</h2>
+
+                                <ol className="list-decimal list-inside">
+                                    {Object.entries(data.citations).map(([key, citation]) => (
+                                    <li key={key} className="text-gray-300 py-1">{citation}</li>
+                                    ))}
+                                </ol>
+                            </div>
+
                         </div>
                     )}
                 </div>
+
+
+              
                
                 </>
                  )}

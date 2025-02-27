@@ -79,6 +79,7 @@ const ResultsPage = () => {
             } finally {
                 setLoading(false);
             }
+            
         };
 
         fetchData();
