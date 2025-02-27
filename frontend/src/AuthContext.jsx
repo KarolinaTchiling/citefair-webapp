@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       console.log("User successfully signed up & saved to database.");
-      navigate("/test"); 
+      navigate("/dashboard"); 
   
     } catch (error) {
       console.error("Signup failed:", error);
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }) => {
         console.log("User already exists, logging in.");
       }
       console.log("Google Sign-In successful:", user);
-      navigate("/test"); 
+      navigate("/dashboard"); 
     } catch (error) {
       console.error("Google Sign-In failed:", error);
     }
