@@ -7,7 +7,7 @@ dotenv.config();
 export const getRelatedWorks = async (fileName, userId) => {
     const titles = await getTitles(fileName, userId);
     const ss_ids = await getIds(titles);
-    const related_papers = await fetchRecommendedPapers(5, ss_ids);
+    const related_papers = await fetchRecommendedPapers(50, ss_ids);
     const result = await fetchAuthorGender(related_papers);
 
     // Save results to Realtime Database
