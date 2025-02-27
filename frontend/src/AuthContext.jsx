@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 
 const AuthContext = createContext();
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerGuest = async (uid, firstName, middleName, lastName) => {
     try {
-      const response = await fetch("http://localhost:5000/guest/registerGuest", {
+      const response = await fetch(`${API_BASE_URL}/guest/registerGuest`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
