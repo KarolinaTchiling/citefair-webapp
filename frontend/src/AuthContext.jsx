@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await signOut(auth);
+    sessionStorage.clear();
   };
 
   const signup = async (email, password) => {

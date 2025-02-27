@@ -1,4 +1,4 @@
-import { db } from "../config/firebaseConfig.js";
+import { db } from "../firebaseConfig.js";
 import dotenv from "dotenv";
 import fetch from 'node-fetch';
 

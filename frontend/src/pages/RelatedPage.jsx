@@ -49,7 +49,7 @@ const RelatedPage = () => {
 
       // Fallback to POST request if no stored data
       try {
-        const response = await fetch("http://localhost:5000/related/get-related-works", {
+        const response = await fetch("http://localhost:5000/related/process-related-works", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -1,8 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../AuthContext";
 
 const Footer = () => {
     const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+          await logout();
+          console.log("User logged out!");
+        } catch (error) {
+          console.error("Logout failed:", error.message);
+        }
+      };
 
     return (
         // <div className="border-2 border-indigo-600 py-4 px-20 flex flex-row items-center justify-between">
@@ -22,9 +33,9 @@ const Footer = () => {
                 </button>
 
                 <button 
-                    className="px-8 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
-                    onClick={() => navigate('/login')}>
-                    Log in
+                    className="px-8 py-1 text-md text-white bg-red font-[500] rounded-md hover:bg-red/80 transition duration-200"
+                    onClick={handleLogout}>
+                    Log Out
                 </button>
 
             </div>

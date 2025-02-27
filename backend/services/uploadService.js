@@ -1,4 +1,4 @@
-import { bucket, db } from "../config/firebaseConfig.js";
+import { bucket, db } from "../firebaseConfig.js";
 
 
 const uploadFileToFirebase = async (file, userId) => {

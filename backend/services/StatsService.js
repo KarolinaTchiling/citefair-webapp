@@ -4,7 +4,7 @@
 // All of these are run from the processBibliography function which takes a fileName and userId
 
 
-import { bucket, db } from "../config/firebaseConfig.js";
+import { bucket, db } from "../firebaseConfig.js";
 import pkg from "bibtex";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
