@@ -62,8 +62,14 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
                 Citation Analysis
             </button>
             <button className="w-full text-left transition duration-300 hover:scale-105">Related Articles</button>
+            
             <button className="w-full text-left transition duration-300 hover:scale-105">Citation Diversity Statements</button>
-            <button className="w-full text-left transition duration-300 hover:scale-105">Reference List</button>
+            <button 
+              className="w-full text-left transition duration-300 hover:scale-105"
+              onClick={() => navigate('/reference-list')}>
+                Reference List
+            </button>
+            
           </ul>
         </Box>
       </Drawer>

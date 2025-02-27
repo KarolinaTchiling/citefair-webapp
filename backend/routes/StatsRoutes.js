@@ -1,5 +1,6 @@
 import express from "express";
 import { processBibliography } from "../services/StatsService.js";
+import { db } from "../config/firebaseConfig.js";
 
 const router = express.Router();
 
@@ -15,6 +16,30 @@ router.post("/processBib", async (req, res) => {
         console.error("Error processing bibliography:", error.message);
         res.status(500).json({ error: error.message || "Internal Server Error" });
     }
+});
+
+router.get("/getProcessedBib", async (req, res) => {
+    try {
+        const { fileName, userId } = req.query;
+
+        if (!fileName || !userId) {
+            return res.status(400).json({ error: "fileName and userId are required"});
+
+        }
+
+        const snapshot = await db.ref(`users/${userId}/data/${fileName}/processedBib`).once("value");
+        const storedData = snapshot.val();
+
+        if (!storedData) {
+            return res.status(404).json(null);
+        }
+
+        res.json(storedData);
+    } catch (error) {
+        console.error("Error fetching stored data:", error);
+        res.status(500).json({error: "Failed to retrieve stored data"})
+    }
+
 });
 
 

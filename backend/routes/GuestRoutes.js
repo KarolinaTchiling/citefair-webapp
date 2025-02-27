@@ -31,4 +31,31 @@ router.post("/registerGuest", async (req, res) => {
   }
 });
 
+// router.get("/getUser", async (req, res) => {
+//     try {
+//         const { fileName, userId } = req.query;
+
+//         if (!fileName || !userId) {
+//             return res.status(400).json({ error: "fileName and userId are required"});
+
+//         }
+
+//         const snapshot = await db.ref(`users/${userId}/data/${fileName}`.once("value"));
+//         const storedData = snapshot.val();
+
+//         if (!storedData) {
+//             return res.status(404).json(null);
+//         }
+
+//         res.json(storedData);
+//     } catch (error) {
+//         console.error("Error fetching stored data:", error);
+//         res.status(500).json({error: "Failed to retrieve stored data"})
+//     }
+
+// });
+
+
+
+
 export default router;

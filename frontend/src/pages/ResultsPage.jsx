@@ -10,10 +10,14 @@ import Sidebar from '../components/Sidebar.jsx';
 const ResultsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { resultData } = location.state || {}; // Retrieve the data passed from RunButton
 
+    const [resultData, setResultData] = useState(() =>{
+        const storedData = sessionStorage.getItem("resultData");
+        return storedData ? JSON.parse(storedData) : location.state?.resultData;
+
+    });
+   
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
-
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
     const [data, setData] = useState(null);
@@ -28,7 +32,30 @@ const ResultsPage = () => {
             return;
         }
 
+        // Store `resultData` in sessionStorage for persistence
+        sessionStorage.setItem("resultData", JSON.stringify(resultData));
+
+        const { fileName, userId } = resultData;
+
         const fetchData = async () => {
+            // Step 1: Check if data exists in Firebase
+            try {
+                const storedResponse = await fetch(`http://localhost:5000/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+
+                if (storedResponse.ok){
+                    const storedData = await storedResponse.json();
+                    if (storedData) {
+                        console.log("Using stored data:", storedData);
+                        setData(storedData);
+                        setLoading(false);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn("No stored data found, processing new request...");
+            }
+
+            // Step 2: If no stored data, call processBib API
             try {
                 const response = await fetch("http://localhost:5000/stats/processBib", {
                     method: "POST",
