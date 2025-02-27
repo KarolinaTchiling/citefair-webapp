@@ -14,7 +14,7 @@ const uploadFileToFirebase = async (file, userId) => {
     const downloadURL = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileRef.name)}?alt=media`;
 
     // Save metadata to Firebase Realtime Database
-    await db.ref(`users/files/${fileName}`).set({
+    await db.ref(`users/${userId}/data/${fileName}`).set({
         url: downloadURL,
         originalFileName: file.originalname,
         uploadedAt: new Date().toISOString(),
