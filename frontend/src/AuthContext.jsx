@@ -95,28 +95,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signUpWithGoogle = async (navigate) => {
+  const signInWithGoogle = async (navigate) => {
     try {
       const authInstance = getAuth();
       const result = await signInWithPopup(authInstance, provider);
-  
-      // Get user data from Firebase Auth
       const user = result.user;
+
+      // Get user data
       const { uid, email, displayName } = user;
-  
-      // Extract first and last name from displayName (if available)
       const nameParts = displayName ? displayName.split(" ") : [];
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
-  
-      // Get Firebase Database instance
+
+      // Get Firebase Database reference
       const db = getDatabase();
       const userRef = ref(db, `users/${uid}`);
-  
-      // Check if the user already exists in the database
+
+      // Check if user exists
       const snapshot = await get(userRef);
       if (!snapshot.exists()) {
-        // If user does not exist, save them to the database
+        // If user does NOT exist, create them
         await set(userRef, {
           uid,
           email,
@@ -124,16 +122,16 @@ export const AuthProvider = ({ children }) => {
           lastName,
           createdAt: new Date().toISOString(),
         });
+        console.log("New user created in database.");
+      } else {
+        console.log("User already exists, logging in.");
       }
-  
       console.log("Google Sign-In successful:", user);
-      navigate("/test");
+      navigate("/test"); 
     } catch (error) {
-      console.error("Error during Google Sign-In:", error);
+      console.error("Google Sign-In failed:", error);
     }
   };
-
-  
 
   const value = {
     user,
@@ -141,7 +139,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     signup,
     continueAsGuest,
-    signUpWithGoogle,
+    signInWithGoogle,
     isAuthenticated: !!user // True only if logged in and not a guest
   };
 

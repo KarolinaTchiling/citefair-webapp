@@ -21,7 +21,7 @@ const Signup = () => {
     }
   };
 
-  const { signUpWithGoogle } = useAuth();
+  const { signInWithGoogle } = useAuth();
 
   return (
     <div className="h-full w-full flex flex-col bg-white rounded-lg p-8">
@@ -88,16 +88,16 @@ const Signup = () => {
           Sign Up
         </button>
 
-        <div className="flex flex-row items-center text-lg mt-5 gap-10 self-center">
+      </form>
+
+      <div className="flex flex-row items-center text-lg mt-5 gap-10 self-center">
           <p>Or</p>
 
-          <button onClick={() => signUpWithGoogle(navigate)} className="group">
+          <button onClick={() => signInWithGoogle(navigate)} className="group">
             <img src={GoogleSignUp} className="h-12 transition duration-200 group-hover:brightness-75" />
           </button>
 
         </div>
-
-      </form>
     </div>
   );
 };

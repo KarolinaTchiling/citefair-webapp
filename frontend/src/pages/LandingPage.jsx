@@ -21,7 +21,7 @@ function LandingPage() {
   }, [location]);
 
   const handleScroll = () => {
-    const targetElement = document.getElementById("target-section");
+    const targetElement = document.getElementById("create-account");
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -125,7 +125,7 @@ function LandingPage() {
         </div>
       </div>
 
-      <div id="target-section"  className="h-[calc(100vh-64px)] bg-indigo">
+      <div id="create-account"  className="h-[calc(100vh-64px)] bg-indigo">
       {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
         {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
