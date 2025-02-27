@@ -63,7 +63,12 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
             </button>
             <button className="w-full text-left transition duration-300 hover:scale-105">Related Articles</button>
             
-            <button className="w-full text-left transition duration-300 hover:scale-105">Citation Diversity Statements</button>
+            <button 
+              className="w-full text-left transition duration-300 hover:scale-105"
+              onClick={() => navigate('/statements')}>
+                Citation Diversity Statements
+            </button>
+
             <button 
               className="w-full text-left transition duration-300 hover:scale-105"
               onClick={() => navigate('/reference-list')}>
