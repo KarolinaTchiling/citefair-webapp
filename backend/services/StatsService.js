@@ -4,7 +4,7 @@
 // All of these are run from the processBibliography function which takes a fileName and userId
 
 
-import { bucket } from "../config/firebaseConfig.js";
+import { bucket, db } from "../config/firebaseConfig.js";
 import pkg from "bibtex";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
@@ -240,7 +240,26 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
     const papersData = await getPapers(titles, firstName, middleName, lastName);
     const papers = papersData.results
     const papersWithGender = await fetchAuthorGender(papers);
-    return { papers: papersWithGender, 
-        genders: calculatePercentages(papersWithGender), categories: calculateCategories(papersWithGender), 
-        number_of_self_citations: papersData.number_of_self_citations, title_not_found: papersData.title_not_found, total_papers: papersData.total_papers};
+
+    // Calculate gender statistics
+    const genderStats = calculatePercentages(papersWithGender);
+    const categoryStats = calculateCategories(papersWithGender);
+
+    // Prepare the final processed data
+    const processedData = {
+        papers: papersWithGender,
+        genders: genderStats,
+        categories: categoryStats,
+        number_of_self_citations: papersData.number_of_self_citations,
+        title_not_found: papersData.title_not_found,
+        total_papers: papersData.total_papers,
+        processedAt: new Date().toISOString(),
+    };
+
+    // **Save results to Firebase**
+    await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
+        ...processedData,
+    });
+ 
+    return processedData;
 };

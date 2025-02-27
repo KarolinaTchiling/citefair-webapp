@@ -1,24 +1,23 @@
 import express from "express";
-import { processBibliography } from "../services/StatsService.js";
+import { getRelatedWorks } from "../services/RelatedWorksService.js";
 import { db } from "../config/firebaseConfig.js";
 
 const router = express.Router();
 
-
-router.post("/processBib", async (req, res) => {
+router.post("/process-related-works", async (req, res) => {
     try {
-        const { fileName, userId, firstName, middleName, lastName } = req.body;
+        const { fileName, userId } = req.body;
         if (!fileName || !userId) return res.status(400).json({ error: "fileName and userId are required" });
 
-        const finalData = await processBibliography(fileName, userId, firstName, middleName, lastName);
+        const finalData = await getRelatedWorks(fileName, userId );
         res.json(finalData);
     } catch (error) {
-        console.error("Error processing bibliography:", error.message);
+        console.error("Error generating related works:", error.message);
         res.status(500).json({ error: error.message || "Internal Server Error" });
     }
 });
 
-router.get("/getProcessedBib", async (req, res) => {
+router.get("/get-related-works", async (req, res) => {
     try {
         const { fileName, userId } = req.query;
 
@@ -27,7 +26,7 @@ router.get("/getProcessedBib", async (req, res) => {
 
         }
 
-        const snapshot = await db.ref(`users/${userId}/data/${fileName}/processedBib`).once("value");
+        const snapshot = await db.ref(`users/${userId}/data/${fileName}/related`).once("value");
         const storedData = snapshot.val();
 
         if (!storedData) {
@@ -41,7 +40,6 @@ router.get("/getProcessedBib", async (req, res) => {
     }
 
 });
-
 
 
 

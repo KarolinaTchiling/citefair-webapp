@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
-import { getDatabase, ref, set } from "firebase/database";
 import FileUploadComponent from "./Upload";
 import RunButton from "./RunButton";
 

@@ -1,200 +1,127 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
-import { useSearchParams } from "react-router-dom";
+import Sidebar from '../components/Sidebar.jsx';
+import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
-
-function StatementPage() {
-
-    const [searchParams] = useSearchParams(); // Access query parameters
-    const fileName = searchParams.get("fileName"); // Retrieve fileName from the URL
-    const { user, isAuthenticated } = useAuth();
-    const [data, setData] = useState(null); // State to store API response
-    const [error, setError] = useState(null); // State to store errors
-    const [loadingMessage, setLoadingMessage] = useState(null); // State for the loading message
+const StatementPage = () => {
     const navigate = useNavigate();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
-    const handleClick = () => {
-        navigate("/related");
-    };
-      
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const callGetCds = async () => {
-        try {
-            // Use the correct file path or dynamic query parameter from the URL
-            const filePath = "users/NYj6VmrnlaXU8bgwPjb4z5nDZrz1/uploads/APSECrefs.bib";
-    
-            setLoadingMessage("Fetching titles...");
-            const titlesResponse = await fetch("http://localhost:5000/cds/get-titles", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ filepath: filePath }),
-            });
-            const titles = await titlesResponse.json();
-    
-            setLoadingMessage("Fetching papers from Open Alex...");
-            const papersResponse = await fetch("http://localhost:5000/cds/get-papers", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(titles),
-            });
-            const papers = await papersResponse.json();
-    
-            setLoadingMessage("Labeling authors with Gender-api...");
-            const labelledPapersResponse = await fetch("http://localhost:5000/cds/get-gendered-papers", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(papers),
-            });
-            const labelledPapers = await labelledPapersResponse.json();
-    
-            setLoadingMessage("Calculating statistics...");
-            const statsResponse = await fetch("http://localhost:5000/cds/get-gender-stats", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(labelledPapers),
-            });
-            const stats = await statsResponse.json();
-    
-            setLoadingMessage("Fetching statements...");
-            const statementsResponse = await fetch("http://localhost:5000/cds/get-statements", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(stats),
-            });
-            const statements = await statementsResponse.json();
-    
-            setData(statements.cds); // Update the final data
-            setLoadingMessage(null); // Clear the loading message
-        } catch (error) {
-            console.error("Error in callGetCds:", error);
-            setError("An error occurred while fetching data. Please try again later.");
-            setLoadingMessage(null); // Clear the loading message
-        }
-    };
-    
-    
+
     useEffect(() => {
-        callGetCds();
-    }, []); // Empty dependency array ensures it runs only once when the component mounts
+
+        const sessionUserData = sessionStorage.getItem("userData");
+
+        if (!sessionUserData) {
+            console.error("No result data, redirecting...");
+            navigate("/");
+            return;
+        }
+
+        const userData = JSON.parse(sessionUserData);
+        const fileName = userData.fileName;
+        const userId = userData.userId;
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/cds/generateCds", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ fileName, userId }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+        
+                const result = await response.json(); 
+                setData(result); //store data in state
+        
+            } catch (error) {
+                console.error("Error:", error);
+                steError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
+
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-        <h1 className="text-2xl font-bold text-center mb-6">Citation Diversity Statements</h1>
+        <div>
+            <Navbar />
+            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
-        <button
-            onClick={handleClick}
-            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-        >
-            Discover Related Papers
-        </button>
+            <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center min-h-[calc(100vh-64px)]">
 
-        {loadingMessage && (
-            <div className="mt-4 text-center">
-                <p className="text-blue-500">{loadingMessage}</p>
-                <div className="w-64 h-2 mx-auto bg-gray-200 rounded">
-                    <div className="h-2 bg-blue-500 rounded animate-pulse"></div>
+
+                {loading ? (
+                    <div></div>
+                ) : error ? (
+                    <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
+                ) : (
+
+                <>
+                <div className="h-[13vh] flex items-center justify-center">
+                    <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
+                        Your Citation Diversity Statements 
+                    </h1>
                 </div>
+
+                <div>
+                    {data === null ? (
+                        <p className="text-white text-lg">No statements found.</p>
+                    ) : (
+                        <div className="space-y-6 w-full max-w-4xl mb-20">
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                <h2 className="text-3xl font-semibold text-center py-2">Full Citation Diversity Statement - By Author Categories</h2>
+                                <p>{data.catStatement}</p>
+                            </div>
+
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                            <h2 className="text-3xl font-semibold text-center py-2">Full Citation Diversity Statement - By Gender</h2>
+                                <p>{data.genderStatement}</p>
+                            </div>
+
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                            <h2 className="text-3xl font-semibold text-center py-2">Abbreviated Citation Diversity Statement</h2>
+                                <p>{data.abbStatement}</p>
+                            </div>
+
+                            <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                <h2 className="text-lg font-semibold text-center">Citations</h2>
+
+                                <ol className="list-decimal list-inside">
+                                    {Object.entries(data.citations).map(([key, citation]) => (
+                                    <li key={key} className="text-gray-300 py-1">{citation}</li>
+                                    ))}
+                                </ol>
+                            </div>
+
+                        </div>
+                    )}
+                </div>
+
+
+              
+               
+                </>
+                 )}
             </div>
-        )}
 
-        {error && <p className="text-center text-red-500 mt-4">{error}</p>}
-
-        {data && (
-            <div className="space-y-8">
-                {/* Category Statistics and Statement Section */}
-                <section className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">Category Statistics</h2>
-                    {data.category_data ? (
-                        <table className="w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="border border-gray-300 px-4 py-2 text-left">Category</th>
-                                    <th className="border border-gray-300 px-4 py-2 text-left">Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Object.entries(data.category_data).map(([key, value]) => (
-                                    <tr key={key}>
-                                        <td className="border border-gray-300 px-4 py-2">{key}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{value}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No category data available.</p>
-                    )}
-                    <h3 className="text-lg font-medium mt-6">Category Statement</h3>
-                    <p className="text-gray-700 mt-2">{data.fullCategories || "No category statement available."}</p>
-                </section>
-
-                {/* General Statistics and Statement Section */}
-                <section className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">General Statistics</h2>
-                    {data.general_data ? (
-                        <table className="w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="border border-gray-300 px-4 py-2 text-left">Category</th>
-                                    <th className="border border-gray-300 px-4 py-2 text-left">Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Object.entries(data.general_data).map(([key, value]) => (
-                                    <tr key={key}>
-                                        <td className="border border-gray-300 px-4 py-2">{key}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{value}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No general data available.</p>
-                    )}
-                    <h3 className="text-lg font-medium mt-6">General Statement</h3>
-                    <p className="text-gray-700 mt-2">{data.fullGeneral || "No general statement available."}</p>
-                </section>
-
-                {/* Abbreviated Statement Section */}
-                <section className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">Abbreviated Statement</h2>
-                    <p className="text-gray-700">{data.abbreviated || "No abbreviated statement available."}</p>
-                </section>
-
-                {/* References Section */}
-                <section className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">References</h2>
-                    {data.references ? (
-                        <ul className="list-disc list-inside space-y-2">
-                            {Object.entries(data.references).map(([key, value]) => (
-                                <li key={key} className="text-gray-700">
-                                    <strong>[{key}]</strong> {value}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No references available.</p>
-                    )}
-                </section>
-
-                {/* Missing Titles Section */}
-                {data.missing && data.missing.titles && (
-                    <section className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4">Missing Titles</h2>
-                        <ul className="list-disc list-inside space-y-2">
-                            {data.missing.titles.map((title, index) => (
-                                <li key={index} className="text-gray-700">
-                                    {title}
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                )}
-            </div>
-        )}
-    </div>
-);
-}
+        <Footer />
+        </div>
+    );
+};
 
 export default StatementPage;

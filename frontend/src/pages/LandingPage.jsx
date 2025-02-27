@@ -1,7 +1,5 @@
 import React from 'react';
 import Signup from "../components/Signup";
-import Login from "../components/Login";
-import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';

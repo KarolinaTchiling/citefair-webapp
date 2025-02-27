@@ -5,15 +5,20 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recha
 import Loader from '../components/Loader.jsx';
 import Typewriter from '../components/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
+import Footer from "../components/Footer";
 
 
 const ResultsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { resultData } = location.state || {}; // Retrieve the data passed from RunButton
 
+    const [userData, setUserData] = useState(() =>{
+        const storedData = sessionStorage.getItem("userData");
+        return storedData ? JSON.parse(storedData) : location.state?.userData;
+
+    });
+   
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
-
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
     const [data, setData] = useState(null);
@@ -22,20 +27,43 @@ const ResultsPage = () => {
 
     useEffect(() => {
 
-        if (!resultData) {
+        if (!userData) {
             console.error("No result data, redirecting...");
             navigate("/");
             return;
         }
 
+        // Store `userData` in sessionStorage for persistence
+        sessionStorage.setItem("userData", JSON.stringify(userData));
+
+        const { fileName, userId } = userData;
+
         const fetchData = async () => {
+            // Step 1: Check if data exists in Firebase
+            try {
+                const storedResponse = await fetch(`http://localhost:5000/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+
+                if (storedResponse.ok){
+                    const storedData = await storedResponse.json();
+                    if (storedData) {
+                        console.log("Using stored data:", storedData);
+                        setData(storedData);
+                        setLoading(false);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn("No stored data found, processing new request...");
+            }
+
+            // Step 2: If no stored data, call processBib API
             try {
                 const response = await fetch("http://localhost:5000/stats/processBib", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(resultData),
+                    body: JSON.stringify(userData),
                 });
         
                 if (!response.ok) {
@@ -51,10 +79,11 @@ const ResultsPage = () => {
             } finally {
                 setLoading(false);
             }
+            
         };
 
         fetchData();
-    }, [resultData, navigate]);
+    }, [userData, navigate]);
 
     // Convert gender distribution data to a format that Recharts can use
     const genderData = data?.genders
@@ -97,7 +126,6 @@ const ResultsPage = () => {
     return (
         <div className="flex flex-col">
             <Navbar />
-
             <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
             <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
@@ -214,6 +242,7 @@ const ResultsPage = () => {
                     )}
 
             </div>
+            <Footer />
         </div>
        
     );

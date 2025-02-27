@@ -17,7 +17,7 @@ const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
         };
 
         // Navigate to /results and pass the data
-        navigate(`/results`, { state: { resultData: data } });
+        navigate(`/results`, { state: { userData: data } });
     };
 
     return (
