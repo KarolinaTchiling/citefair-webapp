@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Signup from "../components/Signup";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GuestDashboard from "../components/GuestDashboard";
 
 
 function LandingPage() {
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const targetElement = document.getElementById(location.hash.substring(1)); // Remove '#' from hash
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [location]);
 
   const handleScroll = () => {
     const targetElement = document.getElementById("target-section");
