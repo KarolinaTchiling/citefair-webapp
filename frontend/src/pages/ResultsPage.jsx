@@ -7,6 +7,7 @@ import Typewriter from '../components/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import Footer from "../components/Footer";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResultsPage = () => {
     const location = useLocation();
@@ -41,7 +42,7 @@ const ResultsPage = () => {
         const fetchData = async () => {
             // Step 1: Check if data exists in Firebase
             try {
-                const storedResponse = await fetch(`http://localhost:5000/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+                const storedResponse = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
 
                 if (storedResponse.ok){
                     const storedData = await storedResponse.json();
@@ -58,7 +59,7 @@ const ResultsPage = () => {
 
             // Step 2: If no stored data, call processBib API
             try {
-                const response = await fetch("http://localhost:5000/stats/processBib", {
+                const response = await fetch(`${API_BASE_URL}/stats/processBib`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

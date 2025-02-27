@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const StatementPage = () => {
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
@@ -30,7 +32,7 @@ const StatementPage = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/cds/generateCds", {
+                const response = await fetch(`${API_BASE_URL}/cds/generateCds`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

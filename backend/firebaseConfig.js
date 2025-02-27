@@ -5,7 +5,6 @@ import "dotenv/config";
 
 const serviceAccount = JSON.parse(fs.readFileSync("./serviceAccountKey.json", "utf8"));
 
-
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

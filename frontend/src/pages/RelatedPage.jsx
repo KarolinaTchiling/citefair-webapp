@@ -6,6 +6,8 @@ import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import Typewriter from "../components/Typewriter";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RelatedPage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -32,7 +34,7 @@ const RelatedPage = () => {
       // Try GET request first
       try {
         const storedResponse = await fetch(
-          `http://localhost:5000/related/get-related-works?fileName=${fileName}&userId=${userId}`
+          `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
         );
         if (storedResponse.ok) {
           const storedData = await storedResponse.json();
@@ -49,7 +51,7 @@ const RelatedPage = () => {
 
       // Fallback to POST request if no stored data
       try {
-        const response = await fetch("http://localhost:5000/related/process-related-works", {
+        const response = await fetch(`${API_BASE_URL}/related/process-related-works`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

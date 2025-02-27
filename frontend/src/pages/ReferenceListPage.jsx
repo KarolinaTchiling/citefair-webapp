@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ReferenceListPage = () => {
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
@@ -32,7 +34,7 @@ const ReferenceListPage = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+                const response = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
                 
                 if (!response.ok) {
                     throw new Error("Failed to fetch data");
