@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getDatabase, ref, set } from "firebase/database";
+import GoogleSignUp from '/google_signup.svg';
 
 const Signup = () => {
   const { signup } = useAuth();
@@ -9,7 +9,6 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [field, setField] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -17,29 +16,12 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      // Step 1: Create a new user with Firebase Authentication
-      const userCredential = await signup(email, password);
-      const user = userCredential.user;
-
-      // Step 2: Save user data to Firebase Realtime Database
-      const db = getDatabase();
-      await set(ref(db, `users/${user.uid}`), {
-        email,
-        firstName,
-        lastName,
-        field,
-        createdAt: new Date().toISOString(),
-      });
-
-      // Step 3: Navigate to the dashboard
-      setSuccess("Account created successfully!");
-      setError("");
-      navigate("/dashboard");
+      await signup(email, password, firstName, lastName, navigate);
     } catch (error) {
-      console.error("Signup failed:", error);
-      setError("Failed to create account. Please try again.");
     }
   };
+
+  const { signUpWithGoogle } = useAuth();
 
   return (
     <div className="h-full w-full flex flex-col bg-white rounded-lg p-8">
@@ -98,24 +80,6 @@ const Signup = () => {
           />
         </div>
 
-        {/* Field Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Field of Study</label>
-          <select
-            value={field}
-            onChange={(e) => setField(e.target.value)}
-            required
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="" disabled>Select your field</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Science">Science</option>
-            <option value="Art">Art</option>
-            <option value="Business">Business</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
         {/* Submit Button (Pushes to Bottom) */}
         <button
           type="submit"
@@ -123,6 +87,16 @@ const Signup = () => {
         >
           Sign Up
         </button>
+
+        <div className="flex flex-row items-center text-lg mt-5 gap-10 self-center">
+          <p>Or</p>
+
+          <button onClick={() => signUpWithGoogle(navigate)} className="group">
+            <img src={GoogleSignUp} className="h-12 transition duration-200 group-hover:brightness-75" />
+          </button>
+
+        </div>
+
       </form>
     </div>
   );
