@@ -5,15 +5,16 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recha
 import Loader from '../components/Loader.jsx';
 import Typewriter from '../components/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
+import Footer from "../components/Footer";
 
 
 const ResultsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [resultData, setResultData] = useState(() =>{
-        const storedData = sessionStorage.getItem("resultData");
-        return storedData ? JSON.parse(storedData) : location.state?.resultData;
+    const [userData, setUserData] = useState(() =>{
+        const storedData = sessionStorage.getItem("userData");
+        return storedData ? JSON.parse(storedData) : location.state?.userData;
 
     });
    
@@ -26,16 +27,16 @@ const ResultsPage = () => {
 
     useEffect(() => {
 
-        if (!resultData) {
+        if (!userData) {
             console.error("No result data, redirecting...");
             navigate("/");
             return;
         }
 
-        // Store `resultData` in sessionStorage for persistence
-        sessionStorage.setItem("resultData", JSON.stringify(resultData));
+        // Store `userData` in sessionStorage for persistence
+        sessionStorage.setItem("userData", JSON.stringify(userData));
 
-        const { fileName, userId } = resultData;
+        const { fileName, userId } = userData;
 
         const fetchData = async () => {
             // Step 1: Check if data exists in Firebase
@@ -62,7 +63,7 @@ const ResultsPage = () => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(resultData),
+                    body: JSON.stringify(userData),
                 });
         
                 if (!response.ok) {
@@ -81,7 +82,7 @@ const ResultsPage = () => {
         };
 
         fetchData();
-    }, [resultData, navigate]);
+    }, [userData, navigate]);
 
     // Convert gender distribution data to a format that Recharts can use
     const genderData = data?.genders
@@ -124,7 +125,6 @@ const ResultsPage = () => {
     return (
         <div className="flex flex-col">
             <Navbar />
-
             <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
             <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
@@ -241,6 +241,7 @@ const ResultsPage = () => {
                     )}
 
             </div>
+            <Footer />
         </div>
        
     );
