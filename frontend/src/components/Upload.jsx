@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
-import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
-import { getDatabase, ref as dbRef, set } from "firebase/database";
-import GenerateStatementsButton from "../components/GenerateStatementsButton";
 
-const FileUploadComponent = () => {
+const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     const { user, isAuthenticated } = useAuth();
     const [file, setFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState("");
-    const [uploadedFile, setUploadFile] = useState("");
-    const [fileUploaded, setFileUploaded] = useState(false); 
 
     // Handle file input change
     const handleFileChange = (event) => {
@@ -22,51 +17,39 @@ const FileUploadComponent = () => {
         }
     };
 
-    // Function to handle file upload
     const handleUpload = async () => {
         if (!file) {
             setUploadStatus("No file selected");
             return;
         }
-
         if (!isAuthenticated) {
             setUploadStatus("User not authenticated");
             return;
         }
 
         try {
-            const storage = getStorage();
-            const folderRef = ref(storage, `users/${user.uid}/uploads`);
-            const fileRef = ref(storage, `users/${user.uid}/uploads/${file.name}`);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("userId", user.uid); // Send only userId
 
-             // Check if the file already exists
-            const existingFiles = await listAll(folderRef);
-            const fileExists = existingFiles.items.some(item => item.name === file.name);
-
-            if (fileExists) {
-                setUploadStatus(`A file with the name "${file.name}" already exists.`);
-                return; // Stop execution
-            }
-
-            const snapshot = await uploadBytes(fileRef, file);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-
-            const uniqueKey = `${Date.now()}_${file.name.replace(/[.#$/[\]]/g, "_")}`;
-            const db = getDatabase();
-
-            await set(dbRef(db, `users/${user.uid}/files/${uniqueKey}`), {
-                url: downloadURL,
-                originalFileName: file.name,
-                uploadedAt: new Date().toISOString(),
+            const response = await fetch("http://localhost:5000/upload/guest-upload", {
+                method: "POST",
+                body: formData,
             });
 
-            setUploadStatus("File uploaded successfully!");
-            setFileUploaded(true);
-            setUploadFile(file.name)
-            setFile(null); // Clear the file input
+            const data = await response.json();
+            if (response.ok) {
+                setUploadStatus("File uploaded successfully!");
+                setUploadedFile(data.fileName);
+                setFileUploaded(true);
+                setFile(null);
+            } else {
+                setUploadStatus("File upload failed: " + data.error);
+                setFileUploaded(false);
+            }
         } catch (error) {
             setUploadStatus("File upload failed: " + error.message);
-            setFileUploaded(false); 
+            setFileUploaded(false);
         }
     };
 
@@ -82,16 +65,13 @@ const FileUploadComponent = () => {
                 id="fileInput"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {uploadStatus && <p className="text-center text-green-600 font-medium mt-2">{uploadStatus}</p>}
             <button
                 onClick={handleUpload}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-2"
+                className="w-full bg-indigo/80 text-white py-2 px-4 rounded-md hover:bg-indigo/60 mt-4"
             >
-                Upload
+                Upload File
             </button>
-            <div className="">
-                <GenerateStatementsButton fileName={uploadedFile} disabled={!fileUploaded}/>
-            </div>
+            {uploadStatus && <p className="text-center text-green-600 font-sm mt-2">{uploadStatus}</p>}
         </div>
     );
 };

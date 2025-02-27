@@ -1,12 +1,23 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
-
-const GenerateStatementsButton = ({ fileName, disabled }) => {
+const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
     const navigate = useNavigate(); // Access the navigate function
+    const { user } = useAuth();
 
     const handleClick = () => {
-        navigate(`/statements?fileName=${encodeURIComponent(fileName)}`);
+        // Prepare the data object
+        const data = {
+            fileName: fileName,
+            userId: user.uid,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+        };
+
+        // Navigate to /results and pass the data
+        navigate(`/results`, { state: { resultData: data } });
     };
 
     return (
@@ -23,7 +34,9 @@ const GenerateStatementsButton = ({ fileName, disabled }) => {
                 Run CiteFairly
             </button>
         </div>  
-    )
-}
+    );
+};
 
-export default GenerateStatementsButton;
+export default RunButton;
+
+

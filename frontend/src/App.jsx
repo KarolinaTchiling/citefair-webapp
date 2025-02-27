@@ -6,7 +6,8 @@ import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
 import RelatedPage from './pages/RelatedPage';
 import TestPage from './pages/TestPage';
-import GuestDashboardPage from './pages/GuestDashboard';
+import LoginPage from './pages/LoginPage';
+import ResultsPage from './pages/ResultsPage';
 import './input.css';
 
 function App() {
@@ -15,11 +16,15 @@ function App() {
     <div>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashBoardPage />} />
-          <Route path="/guest-dashboard" element={<GuestDashboardPage />} />
+          {/* <Route path="/guest-dashboard" element={<GuestDashboardPage />} /> */}
           <Route path="/statements" element={<StatementPage />} />
           <Route path="/related" element={<RelatedPage />} /> 
           <Route path="/test" element={<TestPage />} />
+
+          <Route path="/results" element={<ResultsPage />} />
+
         </Routes>
     </div>
   );
