@@ -90,12 +90,30 @@ const ReferenceListPage = () => {
                                         {paper.authors && paper.authors.length > 0 ? (
                                             <ul className="list-disc list-inside">
                                                 {paper.authors.map((author, idx) => (
-                                                    <li key={idx} className="text-gray-300">
-                                                        {author.name}{" "}
-                                                        <span className="text-sm text-gray-500">
-                                                            ({author.gender || "Unknown"})
-                                                        </span>
-                                                    </li>
+                                                <li key={idx}>
+                                                <span
+                                                    className={`font-medium ${
+                                                    author.gender === "M"
+                                                        ? "text-[#29C2E0]"
+                                                        : author.gender === "W"
+                                                        ? "text-[#FF6384]"
+                                                        : "text-gray-400"
+                                                    }`}
+                                                >
+                                                    {author.name}
+                                                </span>{" "}
+                                                <span
+                                                    className={`text-sm ${
+                                                    author.gender === "M"
+                                                        ? "text-[#29C2E0]"
+                                                        : author.gender === "W"
+                                                        ? "text-[#FF6384]"
+                                                        : "text-gray-400"
+                                                    }`}
+                                                >
+                                                    ({author.gender || "Unknown"})
+                                                </span>
+                                                </li>
                                                 ))}
                                             </ul>
                                         ) : (
