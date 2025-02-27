@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     const { user, isAuthenticated } = useAuth();
     const [file, setFile] = useState(null);
@@ -32,7 +34,7 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
             formData.append("file", file);
             formData.append("userId", user.uid); // Send only userId
 
-            const response = await fetch("http://localhost:5000/upload/guest-upload", {
+            const response = await fetch(`${API_BASE_URL}/upload/guest-upload`, {
                 method: "POST",
                 body: formData,
             });
