@@ -88,6 +88,12 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
               onClick={() => navigate('/reference-list')}>
                 Reference List
             </button>
+
+            <button 
+              className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
+              onClick={() => navigate('/dashboard')}>
+                Back to Dashboard
+            </button>
             
           </ul>
         </Box>

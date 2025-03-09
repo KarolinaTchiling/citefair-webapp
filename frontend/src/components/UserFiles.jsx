@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
+import { useNavigate } from "react-router-dom"; // Import navigation hook
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const UserFiles = () => {
-  const { user } = useAuth(); // Get authenticated user
-  const [files, setFiles] = useState([]); // Store file list
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -38,6 +40,13 @@ const UserFiles = () => {
 
     fetchFiles();
   }, [user]);
+
+  // Navigate to the results page and pass `fileName` & `userId`
+  const handleSeeResults = (fileName) => {
+    navigate("/results", {
+      state: { userData: { fileName, userId: user.uid } },
+    });
+  };
 
   return (
     <div className="h-full w-full flex flex-col bg-white rounded-lg px-8 py-4">
@@ -76,9 +85,12 @@ const UserFiles = () => {
                     )}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
-                    <a href="#" className="text-blue-500 hover:underline">
+                    <button
+                      onClick={() => handleSeeResults(fileName)}
+                      className="text-blue-500 hover:underline"
+                    >
                       See Results
-                    </a>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -93,3 +105,4 @@ const UserFiles = () => {
 };
 
 export default UserFiles;
+
