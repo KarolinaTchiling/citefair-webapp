@@ -50,7 +50,7 @@ const UserFiles = () => {
 
   return (
     <div className="h-full w-full flex flex-col bg-white rounded-lg px-8 py-4">
-      <h1 className="text-3xl text-center pb-2">Previous Analysis</h1>
+      <h1 className="text-3xl text-center pb-2">Previous Analyses</h1>
 
       {loading ? (
         <p>Loading files...</p>
