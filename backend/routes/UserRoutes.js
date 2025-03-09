@@ -3,6 +3,7 @@ import { bucket, db } from "../firebaseConfig.js";
 
 const router = express.Router();
 
+
 router.post("/name", async (req, res) => {
   try {
     // Expect the UID to be sent from the client

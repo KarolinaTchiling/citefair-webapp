@@ -8,6 +8,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -16,7 +17,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await signup(email, password, firstName, lastName, navigate);
+      await signup(email, password, firstName, middleName, lastName, navigate);
     } catch (error) {
     }
   };
@@ -25,7 +26,9 @@ const Signup = () => {
 
   return (
     <div className="h-full w-full flex flex-col bg-white rounded-lg p-8">
-
+      <p className="text-base text-center">
+        Please use the name under which you publish in order to remove self-citation biases from our analysis.
+      </p>
       {/* Error & Success Messages */}
       {error && <div className="text-red-500 text-center mb-2">{error}</div>}
       {success && <div className="text-green-500 text-center mb-2">{success}</div>}
@@ -33,7 +36,7 @@ const Signup = () => {
       {/* Form Section */}
       <form onSubmit={handleSignup} className="flex-grow flex flex-col">
         {/* First Name */}
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
             type="text"
@@ -44,8 +47,19 @@ const Signup = () => {
           />
         </div>
 
+        {/* Middle Name */}
+        <div className="mb-2">
+          <label className="block text-sm font-medium text-gray-700">Middle Name</label>
+          <input
+            type="text"
+            value={middleName}
+            onChange={(e) => setMiddleName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          />
+        </div>        
+
         {/* Last Name */}
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700">Last Name</label>
           <input
             type="text"
@@ -57,7 +71,7 @@ const Signup = () => {
         </div>
 
         {/* Email */}
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700">Email</label>
           <input
             type="email"

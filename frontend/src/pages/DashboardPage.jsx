@@ -48,7 +48,7 @@ function DashBoardPage() {
 
               <div className="h-[13vh] flex items-center justify-center">
                 <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                  Welcome Back, {fullName}!
+                  Welcome, {fullName}!
                 </h1>
              </div>
 

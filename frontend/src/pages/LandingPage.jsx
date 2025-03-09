@@ -125,7 +125,7 @@ function LandingPage() {
         </div>
       </div>
 
-      <div id="create-account"  className="h-[calc(100vh-64px)] bg-indigo">
+      <div id="create-account"  className=" bg-indigo">
       {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
         {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
@@ -154,7 +154,7 @@ function LandingPage() {
         </div>
 
           <div className="flex flex-row items-center gap-10">
-            <div className="my-20 text-center text-white text-2xl">Already have an account? </div>
+            <div className="my-16 text-center text-white text-2xl">Already have an account? </div>
               <div>
                 <button 
                     className="px-10 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
@@ -167,7 +167,6 @@ function LandingPage() {
       
         </div>
         
-
     
       </div>
 

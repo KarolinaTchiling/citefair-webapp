@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (email, password, firstName, lastName, navigate) => {
+  const signup = async (email, password, firstName, middleName, lastName, navigate) => {
     try {
       // Step 1: Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -88,7 +88,9 @@ export const AuthProvider = ({ children }) => {
         uid: user.uid, // Save UID as well
         email,
         firstName,
+        middleName,
         lastName,
+        isGuest: false,
         createdAt: new Date().toISOString(),
       });
 
@@ -111,6 +113,7 @@ export const AuthProvider = ({ children }) => {
       const nameParts = displayName ? displayName.split(" ") : [];
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
+      const middleName = ""; // Google does not provide a middle name
 
       // Get Firebase Database reference
       const db = getDatabase();
@@ -124,7 +127,9 @@ export const AuthProvider = ({ children }) => {
           uid,
           email,
           firstName,
+          middleName,
           lastName,
+          isGuest: false,
           createdAt: new Date().toISOString(),
         });
         console.log("New user created in database.");
