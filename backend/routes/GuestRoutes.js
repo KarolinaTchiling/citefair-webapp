@@ -1,5 +1,6 @@
 import express from "express";
-import { db } from "../firebaseConfig.js";
+import { db, auth, bucket } from "../firebaseConfig.js";
+import admin from "firebase-admin";
 
 const router = express.Router();
 
@@ -30,6 +31,113 @@ router.post("/registerGuest", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.get("/isGuest", async (req, res) => {
+  try {
+    const { uid } = req.query; // ✅ Get `uid` from query params
+
+    if (!uid) {
+      return res.status(400).json({ error: "UID is required" });
+    }
+
+    // Fetch user data from Firebase Realtime Database
+    const userSnapshot = await db.ref(`/users/${uid}`).once("value");
+    const userData = userSnapshot.val();
+
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if user is a guest (defaults to false if not set)
+    const isGuest = userData.isGuest ?? false;
+
+    res.status(200).json({ isGuest });
+
+  } catch (error) {
+    console.error("Error checking guest status:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/save-guest", async (req, res) => {
+  try {
+    const { uid, email, password } = req.body;
+    
+    if (!uid || !email || !password) {
+      return res.status(400).json({ error: "UID, email, and password are required" });
+    }
+
+    // Fetch guest user data from Realtime Database
+    const userSnapshot = await db.ref(`/users/${uid}`).once("value");
+    const userData = userSnapshot.val();
+
+    if (!userData || !userData.isGuest) {
+      return res.status(400).json({ error: "User is not a guest or does not exist" });
+    }
+
+    // Upgrade guest user in Firebase Authentication (Admin SDK)
+    await admin.auth().updateUser(uid, {
+      email: email,
+      password: password,
+    });
+
+    // Update Firebase Realtime Database (Mark user as non-guest)
+    await db.ref(`/users/${uid}`).update({
+      email,
+      isGuest: false,
+    });
+
+    res.status(200).json({ message: "Guest account upgraded successfully" });
+
+  } catch (error) {
+    console.error("Error upgrading guest account:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+router.delete("/deleteGuest", async (req, res) => {
+  try {
+    const { uid } = req.body;
+    
+    if (!uid) {
+      return res.status(400).json({ error: "UID is required" });
+    }
+
+    // Fetch user data from Firebase Realtime Database
+    const userSnapshot = await db.ref(`/users/${uid}`).once("value");
+    const userData = userSnapshot.val();
+
+    if (!userData || !userData.isGuest) {
+      return res.status(400).json({ error: "User is not a guest or does not exist" });
+    }
+
+    // Delete the file in firebase storage
+    const storagePath = `users/${uid}/uploads/`; // ✅ Corrected path
+    const [files] = await bucket.getFiles({ prefix: storagePath });
+    console.log(` Checking for files in: ${storagePath}`);
+    if (files.length > 0) {
+      // Delete all found files
+      await Promise.all(files.map((file) => file.delete()));
+      console.log(`Deleted all files in: ${storagePath}`);
+    } else {
+      console.log(` No files found in: ${storagePath}`);
+    }
+
+    // Delete user from Firebase Authentication
+    await admin.auth().deleteUser(uid);
+
+    // Remove user data from Firebase Realtime Database
+    await db.ref(`/users/${uid}`).remove();
+
+    res.status(200).json({ message: "Guest session deleted successfully" });
+
+  } catch (error) {
+    console.error("Error deleting guest session:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 
 

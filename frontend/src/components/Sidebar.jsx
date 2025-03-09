@@ -1,13 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Box, IconButton, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const drawerWidth = 250; // Set width of the Drawer
 
 const Sidebar = ({ isOpen, toggleDrawer }) => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get the authenticated user
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    const fetchGuestStatus = async () => {
+      if (user?.uid) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/guest/isGuest?uid=${user.uid}`);
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch guest status");
+          }
+
+          const data = await response.json();
+          setIsGuest(data.isGuest);
+        } catch (error) {
+          console.error("Error fetching guest status:", error);
+        }
+      }
+    };
+
+    fetchGuestStatus();
+  }, [user]);
+
   return (
     <>
       {/* Button to Open Drawer */}
@@ -88,6 +114,23 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
               onClick={() => navigate('/reference-list')}>
                 Reference List
             </button>
+
+            {/* 🔹 Hide "Back to Dashboard" for Guest Users */}
+            {!isGuest && (
+              <button 
+                className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
+                onClick={() => navigate('/dashboard')}>
+                  Back to Dashboard
+              </button>
+            )}
+
+            {isGuest && (
+              <button 
+                className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
+                onClick={() => navigate('/save-guest')}>
+                  Create an Account to Save Results
+              </button>
+            )}
             
           </ul>
         </Box>

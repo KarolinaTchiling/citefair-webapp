@@ -1,4 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+} from "firebase/database";
 import { auth } from "./firebaseConfig"; // Import your configured auth
 import {
   onAuthStateChanged,
@@ -6,10 +12,14 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInAnonymously,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
 } from "firebase/auth";
 
 const AuthContext = createContext();
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const provider = new GoogleAuthProvider();
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -30,13 +40,14 @@ export const AuthProvider = ({ children }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = async () => {
-    await signOut(auth);
-    sessionStorage.clear();
-  };
-
-  const signup = async (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const logout = async (navigate) => {
+    try {
+        await signOut(auth);
+        sessionStorage.clear();
+        navigate("/"); 
+    } catch (error) {
+        console.error("Error logging out:", error);
+    }
   };
 
   const registerGuest = async (uid, firstName, middleName, lastName) => {
@@ -65,12 +76,80 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const signup = async (email, password, firstName, middleName, lastName, navigate) => {
+    try {
+      // Step 1: Create user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      // Step 2: Save user data to Firebase Realtime Database
+      const db = getDatabase();
+      await set(ref(db, `users/${user.uid}`), {
+        uid: user.uid, // Save UID as well
+        email,
+        firstName,
+        middleName,
+        lastName,
+        isGuest: false,
+        createdAt: new Date().toISOString(),
+      });
+
+      console.log("User successfully signed up & saved to database.");
+      navigate("/dashboard"); 
+  
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
+  };
+
+  const signInWithGoogle = async (navigate) => {
+    try {
+      const authInstance = getAuth();
+      const result = await signInWithPopup(authInstance, provider);
+      const user = result.user;
+
+      // Get user data
+      const { uid, email, displayName } = user;
+      const nameParts = displayName ? displayName.split(" ") : [];
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+      const middleName = ""; // Google does not provide a middle name
+
+      // Get Firebase Database reference
+      const db = getDatabase();
+      const userRef = ref(db, `users/${uid}`);
+
+      // Check if user exists
+      const snapshot = await get(userRef);
+      if (!snapshot.exists()) {
+        // If user does NOT exist, create them
+        await set(userRef, {
+          uid,
+          email,
+          firstName,
+          middleName,
+          lastName,
+          isGuest: false,
+          createdAt: new Date().toISOString(),
+        });
+        console.log("New user created in database.");
+      } else {
+        console.log("User already exists, logging in.");
+      }
+      console.log("Google Sign-In successful:", user);
+      navigate("/dashboard"); 
+    } catch (error) {
+      console.error("Google Sign-In failed:", error);
+    }
+  };
+
   const value = {
     user,
     login,
     logout,
     signup,
     continueAsGuest,
+    signInWithGoogle,
     isAuthenticated: !!user // True only if logged in and not a guest
   };
 

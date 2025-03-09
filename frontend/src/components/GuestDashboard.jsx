@@ -10,7 +10,7 @@ function GuestDashboard() {
   const [lastName, setLastName] = useState(""); // User enters last name
   const [uploadedFile, setUploadedFile] = useState(""); // Track uploaded file
   const [fileUploaded, setFileUploaded] = useState(false); // Track file status
-  const { login, continueAsGuest } = useAuth();
+  const { continueAsGuest } = useAuth();
 
   const [showUploadSection, setShowUploadSection] = useState(false); // Track section visibility
 

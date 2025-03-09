@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Signup from "../components/Signup";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GuestDashboard from "../components/GuestDashboard";
 
 
 function LandingPage() {
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const targetElement = document.getElementById(location.hash.substring(1)); // Remove '#' from hash
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [location]);
 
   const handleScroll = () => {
-    const targetElement = document.getElementById("target-section");
+    const targetElement = document.getElementById("create-account");
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -115,7 +125,7 @@ function LandingPage() {
         </div>
       </div>
 
-      <div id="target-section"  className="h-[calc(100vh-64px)] bg-indigo">
+      <div id="create-account"  className=" bg-indigo">
       {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
         {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
@@ -144,7 +154,7 @@ function LandingPage() {
         </div>
 
           <div className="flex flex-row items-center gap-10">
-            <div className="my-20 text-center text-white text-2xl">Already have an account? </div>
+            <div className="my-16 text-center text-white text-2xl">Already have an account? </div>
               <div>
                 <button 
                     className="px-10 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
@@ -157,7 +167,6 @@ function LandingPage() {
       
         </div>
         
-
     
       </div>
 

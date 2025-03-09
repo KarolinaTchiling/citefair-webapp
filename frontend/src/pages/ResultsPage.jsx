@@ -13,10 +13,8 @@ const ResultsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [userData, setUserData] = useState(() =>{
-        const storedData = sessionStorage.getItem("userData");
-        return storedData ? JSON.parse(storedData) : location.state?.userData;
-
+    const [userData, setUserData] = useState(() => {
+        return location.state?.userData || JSON.parse(sessionStorage.getItem("userData")) || null;
     });
    
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
