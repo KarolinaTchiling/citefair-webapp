@@ -20,6 +20,7 @@ const RelatedPage = () => {
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
   const [filterFirstOrLastWoman, setFilterFirstOrLastWoman] = useState(false);
+  const [filterFirstAndLastWoman, setFilterFirstAndLastWoman] = useState(false);
 
   useEffect(() => {
     const sessionUserData = sessionStorage.getItem("userData");
@@ -89,6 +90,14 @@ const RelatedPage = () => {
         paper.authors.length > 0 &&
         (paper.authors[0].gender === "W" || paper.authors[paper.authors.length - 1].gender === "W");
     }
+    // Filter for woman in first or last position
+    if (filterFirstAndLastWoman) {
+      include =
+        include &&
+        paper.authors &&
+        paper.authors.length > 0 &&
+        (paper.authors[0].gender === "W" && paper.authors[paper.authors.length - 1].gender === "W");
+    }
     return include;
   });
 
@@ -122,23 +131,35 @@ const RelatedPage = () => {
             </div>
 
             {/* Filter Options */}
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-8 mb-6">
+
               <label className="text-white">
                 <input
                   type="checkbox"
-                  checked={filterAnyWoman}
-                  onChange={(e) => setFilterAnyWoman(e.target.checked)}
+                  checked={filterFirstAndLastWoman}
+                  onChange={(e) => setFilterFirstAndLastWoman(e.target.checked)}
                 />{" "}
-                At least one woman author
+                Woman in first AND last position
               </label>
+
               <label className="text-white">
                 <input
                   type="checkbox"
                   checked={filterFirstOrLastWoman}
                   onChange={(e) => setFilterFirstOrLastWoman(e.target.checked)}
                 />{" "}
-                Woman in first or last position
+                Woman in first OR last position
               </label>
+
+              <label className="text-white">
+                <input
+                  type="checkbox"
+                  checked={filterAnyWoman}
+                  onChange={(e) => setFilterAnyWoman(e.target.checked)}
+                />{" "}
+                At least ONE woman author
+              </label>
+
             </div>
 
             {filteredData.length === 0 ? (
