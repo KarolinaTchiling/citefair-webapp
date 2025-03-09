@@ -8,6 +8,7 @@ import RelatedPage from './pages/RelatedPage';
 import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
+import SaveGuestPage from './pages/SaveGuestPage';
 import './input.css';
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
           <Route path="/statements" element={<StatementPage />} />
           <Route path="/related" element={<RelatedPage />} /> 
           <Route path="/reference-list" element={< ReferenceListPage/>} />
-
+          <Route path="/save-guest" element={< SaveGuestPage/>} />
           <Route path="/results" element={<ResultsPage />} />
 
         </Routes>

@@ -1,5 +1,4 @@
 import admin from "firebase-admin";
-
 import fs from "fs";
 import "dotenv/config";
 
@@ -13,8 +12,9 @@ admin.initializeApp({
 });
 
 // Export database references
+const auth = admin.auth(); 
 const db = admin.database();
 const bucket = admin.storage().bucket();
 
-export { db, bucket ,admin};
+export { db, bucket ,admin, auth};
 
