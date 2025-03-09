@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import { Navigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route }  from 'react-router-dom';
-import DashBoardPage from './pages/DashBoardPage';
+import DashBoardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
 import RelatedPage from './pages/RelatedPage';
