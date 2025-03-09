@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogButton from './LogButton'
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -23,11 +24,8 @@ const Navbar = () => {
                     About us
                 </button>
 
-                <button 
-                    className="px-8 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
-                    onClick={() => navigate('/login')}>
-                    Log in
-                </button>
+                <LogButton />
+
 
             </div>
             

@@ -5,7 +5,6 @@ import DashBoardPage from './pages/DashBoardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
 import RelatedPage from './pages/RelatedPage';
-import TestPage from './pages/TestPage';
 import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
@@ -21,7 +20,6 @@ function App() {
           <Route path="/dashboard" element={<DashBoardPage />} />
           <Route path="/statements" element={<StatementPage />} />
           <Route path="/related" element={<RelatedPage />} /> 
-          <Route path="/test" element={<TestPage />} />
           <Route path="/reference-list" element={< ReferenceListPage/>} />
 
           <Route path="/results" element={<ResultsPage />} />

@@ -40,9 +40,14 @@ export const AuthProvider = ({ children }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = async () => {
-    await signOut(auth);
-    sessionStorage.clear();
+  const logout = async (navigate) => {
+    try {
+        await signOut(auth);
+        sessionStorage.clear();
+        navigate("/"); 
+    } catch (error) {
+        console.error("Error logging out:", error);
+    }
   };
 
   const registerGuest = async (uid, firstName, middleName, lastName) => {

@@ -8,7 +8,7 @@ const Footer = () => {
 
     const handleLogout = async () => {
         try {
-          await logout();
+          await logout(navigate);
           console.log("User logged out!");
         } catch (error) {
           console.error("Logout failed:", error.message);
@@ -32,11 +32,6 @@ const Footer = () => {
                     About us
                 </button>
 
-                <button 
-                    className="px-8 py-1 text-md text-white bg-red font-[500] rounded-md hover:bg-red/80 transition duration-200"
-                    onClick={handleLogout}>
-                    Log Out
-                </button>
 
             </div>
             
