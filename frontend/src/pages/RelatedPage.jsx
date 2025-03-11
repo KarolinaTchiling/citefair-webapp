@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar.jsx";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
-import Typewriter from "../components/Typewriter";
+import Typewriter from "../components/TypewriterRelated";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
