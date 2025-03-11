@@ -93,7 +93,7 @@ const ResultsPage = () => {
         : [];
 
     // Define colors for each gender category
-    const colors1 = ["#FF6384", "#29C2E0", "#E0E0E0"]; // W (Pink), M (Blue), X (Grey)
+    const colors1 = ["#29C2E0", "#FF6384", "#E0E0E0"]; // W (Pink), M (Blue), X (Grey)
 
     const genderLabels = {
         W: "Women Authors",
