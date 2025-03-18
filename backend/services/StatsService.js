@@ -8,7 +8,6 @@ import { bucket, db } from "../firebaseConfig.js";
 import pkg from "bibtex";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-import { formControlClasses } from "@mui/material";
 
 dotenv.config();
 
@@ -51,7 +50,7 @@ const extractTitlesFromBib = (fileContent) => {
 
 // Step 4: Fetch paper details from OpenAlex API
 const fetchPaper = async (title) => {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -99,6 +98,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
             title_not_found += 1;
         } else {
             const matchedTitle = result.results[0]?.display_name;
+            const doi = result.results[0]?.doi;
             const authors = (result.results[0]?.authorships || []).map(auth => ({
                 name: auth.author?.display_name
             }));
@@ -117,6 +117,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
             if (!selfCitation) {
                 results.push({
+                    doi,
                     title,
                     matchedTitle,
                     authors,
