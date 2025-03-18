@@ -13,7 +13,7 @@ dotenv.config();
 
 const { parseBibFile } = pkg;
 
-// 🔹 Step 1: Get file content from Firebase
+// Step 1: Get file content from Firebase
 export const getFileContent = async (fileName, userId) => {
     const file = bucket.file(`users/${userId}/uploads/${fileName}`);
 
@@ -24,13 +24,13 @@ export const getFileContent = async (fileName, userId) => {
     return fileContent.toString("utf-8");
 };
 
-// 🔹 Step 2: Extract and process titles from the .bib file
+// Step 2: Extract and process titles from the .bib file
 export const getTitles = async (fileName, userId) => {
     const fileContent = await getFileContent(fileName, userId);
     return extractTitlesFromBib(fileContent);
 };
 
-// 🔹 Step 3: Parse .bib content and extract titles
+// Step 3: Parse .bib content and extract titles
 const extractTitlesFromBib = (fileContent) => {
     const bibFile = parseBibFile(fileContent);
     const entries = bibFile["entries$"];
@@ -48,9 +48,9 @@ const extractTitlesFromBib = (fileContent) => {
         .filter(Boolean); // Removes null/undefined values
 };
 
-// 🔹 Step 4: Fetch paper details from OpenAlex API
+// Step 4: Fetch paper details from OpenAlex API
 const fetchPaper = async (title) => {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,display_name,relevance_score,authorships&mailto=k.tchiling@gmail.com`;
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -67,10 +67,8 @@ const fetchPaper = async (title) => {
     }
 };
 
-// Utility function to add a delay (to avoid rate limits)
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// 🔹 Step 5: Process multiple titles by fetching related papers
+// Step 5: Process multiple titles by fetching related papers
 // this is used to get author data
 // this also removes self-citations 
 export const getPapers = async (titles, firstName, middleName, lastName) => {
@@ -90,8 +88,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
     console.log(fullName);
 
-    for (const [index, title] of cleanedTitles.entries()) {
-        if (index > 0) await delay(100); // 100ms delay to respect rate limits
+    for (const [title] of cleanedTitles.entries()) {
 
         const result = await fetchPaper(title);
         total_papers += 1;
@@ -131,7 +128,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
     return { results, number_of_self_citations, title_not_found, total_papers };
 };
 
-// 🔹 Step 6: Fetch author gender from Gender-API
+//  Step 6: Fetch author gender from Gender-API
 export const fetchAuthorGender = async (papers) => {
     const baseUrl = "https://gender-api.com/get";
     const apiKey = process.env.GENDER_API_KEY;
@@ -193,7 +190,7 @@ export const fetchAuthorGender = async (papers) => {
     return result;
 };
 
-// 🔹 Step 7: Calculate gender statistics
+// Step 7: Calculate gender statistics
 export const calculatePercentages = (data) => {
     let total = 0, countW = 0, countM = 0, countX = 0;
 
@@ -234,7 +231,7 @@ export const calculateCategories = (data) => {
     return { MM: `${((countMM / total) * 100).toFixed(2)}%`, MW: `${((countMW / total) * 100).toFixed(2)}%`, WM: `${((countWM / total) * 100).toFixed(2)}%`, WW: `${((countWW / total) * 100).toFixed(2)}%`, X: `${((countX / total) * 100).toFixed(2)}%` };
 };
 
-// 🔹 Final Step: Fully Automated Bibliography Processing
+// Final Step: Fully Automated Bibliography Processing
 export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
     const titles = await getTitles(fileName, userId);
     const papersData = await getPapers(titles, firstName, middleName, lastName);
