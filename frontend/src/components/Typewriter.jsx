@@ -26,10 +26,10 @@ const Typewriter = () => {
 
         if (nextText === currentMessage) {
           // Full text reached, pause then start deleting
-          setDelay(1500);
+          setDelay(1000);
           setIsDeleting(true);
         } else {
-          setDelay(100);
+          setDelay(50);
         }
       } else {
         // Deleting phase: remove one character
@@ -40,7 +40,7 @@ const Typewriter = () => {
           // Finished deleting, switch to next message after a brief pause
           setIsDeleting(false);
           setMessageIndex((prev) => (prev + 1) % messages.length);
-          setDelay(500);
+          setDelay(300);
         } else {
           setDelay(50);
         }
