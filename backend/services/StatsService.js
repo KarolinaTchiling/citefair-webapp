@@ -8,6 +8,7 @@ import { bucket, db } from "../firebaseConfig.js";
 import pkg from "bibtex";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import { formControlClasses } from "@mui/material";
 
 dotenv.config();
 
@@ -88,7 +89,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
     console.log(fullName);
 
-    for (const [title] of cleanedTitles.entries()) {
+    for (const title of cleanedTitles) {
 
         const result = await fetchPaper(title);
         total_papers += 1;
@@ -107,7 +108,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
 
             for (const author of authors){
-                if (author.name == fullName){
+                if (author.name.toLowerCase().trim() === fullName.toLowerCase().trim()) {
                     selfCitation = true;
                     number_of_self_citations += 1;
                     break;
@@ -128,67 +129,111 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
     return { results, number_of_self_citations, title_not_found, total_papers };
 };
 
+// Helper function to split an array into chunks
+const chunkArray = (array, size) => {
+    return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
+        array.slice(index * size, index * size + size)
+    );
+};
+
 //  Step 6: Fetch author gender from Gender-API
 export const fetchAuthorGender = async (papers) => {
-    const baseUrl = "https://gender-api.com/get";
+    const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
     const apiKey = process.env.GENDER_API_KEY;
 
     if (!apiKey) {
         throw new Error("API key is missing. Make sure it is set in the .env file.");
     }
 
-    const result = []; // To store the final transformed data
-
+    // Collect all authors from all papers
+    const authorRequests = [];
+    let authorId = 1;
     for (const paper of papers) {
-        // Skip papers with errors
-        if (paper.error) {
-            console.warn(`Skipping paper: ${paper.title} (Error: ${paper.error})`);
-            result.push(paper);
-            continue;
-        }
-
-        console.log(`Processing paper: ${paper.title}`);
-
-        const authorsGender = []; // To store genders for authors in the current paper
+        if (paper.error) continue; // Skip papers with errors
 
         for (const author of paper.authors) {
-            try {
-                // Fetch gender for the author
-                const response = await fetch(
-                    `${baseUrl}?name=${encodeURIComponent(author.name)}&key=${apiKey}`
-                );
-                const genderData = await response.json();
+            authorRequests.push({
+                id: authorId.toString(), // Keep original unique ID
+                full_name: author.name.trim()
+            });
+            authorId++;
+        }
+    }
 
-                // Assign gender based on accuracy and response
-                let gender = "X"; // Default to "X" for uncertain cases
-                if (genderData.accuracy >= 70) {
-                    gender = genderData.gender === "male" ? "M" : genderData.gender === "female" ? "W" : "X";
+    if (authorRequests.length === 0) return papers;
+
+    const BATCH_SIZE = 50;
+    const batches = chunkArray(authorRequests, BATCH_SIZE);
+
+    try {
+        const genderMap = new Map(); // Store all responses across batches
+
+        for (let i = 0; i < batches.length; i++) {
+            const batch = batches[i];
+            console.log(`Processing batch ${i + 1}/${batches.length} (Size: ${batch.length})`);
+
+            const response = await fetch(baseUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(batch)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    console.error(`Gender-API Error: ${errorJson.title} - ${errorJson.detail}`);
+                } catch (e) {
+                    console.error(`Gender-API Error: ${errorText}`);
                 }
+                throw new Error(`Error fetching gender data: ${response.statusText}`);
+            }
 
-                authorsGender.push({
-                    name: author.name,
-                    gender: gender,
-                });
-            } catch (error) {
-                console.error(`Failed to fetch gender for ${author.name}:`, error);
-                authorsGender.push({
-                    name: author.name,
-                    gender: "X", // Default to "X" if an error occurs
-                });
+            const genderResults = await response.json();
+            console.log(`Received ${genderResults.length} results in batch ${i + 1}`);
+
+            // Store results in a map for easy lookup
+            for (const result of genderResults) {
+                if (result?.input?.id) {
+                    genderMap.set(result.input.id, result);
+                }
             }
         }
 
-        // Push the transformed paper object to the result array
-        result.push({
-            title: paper.title,
-            matchedTitle: paper.matchedTitle,
-            authors: authorsGender,
-            relevance_score: paper.relevance_score,
-        });
+        // Map gender results back to authors in papers
+        for (const paper of papers) {
+            if (paper.error) continue;
+
+            for (const author of paper.authors) {
+                const genderData = genderMap.get(authorRequests.find(a => a.full_name === author.name)?.id);
+
+                if (!genderData) {
+                    console.warn(`No gender data found for: ${author.name}`);
+                    author.gender = "X";  // Assign "X" if missing
+                    author.prob = 0;
+                } else {
+                    // console.log("Mapped Gender Data:", genderData);
+
+                    let gender = "X";
+                    if (genderData?.result_found) {
+                        gender = genderData.gender === "male" ? "M" : genderData.gender === "female" ? "W" : "X";
+                    }
+
+                    author.gender = gender;
+                    author.prob = genderData.probability ?? 0;  // Default to 0 if missing
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Failed to fetch batch gender data:", error);
     }
 
-    return result;
+    return papers;
 };
+
 
 // Step 7: Calculate gender statistics
 export const calculatePercentages = (data) => {
