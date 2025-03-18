@@ -33,22 +33,22 @@ const RelatedPage = () => {
 
     const fetchData = async () => {
       // Try GET request first
-      try {
-        const storedResponse = await fetch(
-          `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
-        );
-        if (storedResponse.ok) {
-          const storedData = await storedResponse.json();
-          if (storedData) {
-            console.log("Using stored data:", storedData);
-            setData(storedData);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn("No stored data found, processing new request...");
-      }
+      // try {
+      //   const storedResponse = await fetch(
+      //     `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
+      //   );
+      //   if (storedResponse.ok) {
+      //     const storedData = await storedResponse.json();
+      //     if (storedData) {
+      //       console.log("Using stored data:", storedData);
+      //       setData(storedData);
+      //       setLoading(false);
+      //       return;
+      //     }
+      //   }
+      // } catch (error) {
+      //   console.warn("No stored data found, processing new request...");
+      // }
 
       // Fallback to POST request if no stored data
       try {

@@ -4,10 +4,13 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 
+// Main function which runs: 
+// 1. getting dois from the realtime DB
+// 2. calls Sematic Scholar Recommendation API
+// 3. labels related papers with Gender-API
 export const getRelatedWorks = async (fileName, userId) => {
-    const titles = await getTitles(fileName, userId);
-    const ss_ids = await getIds(titles);
-    const related_papers = await fetchRecommendedPapers(50, ss_ids);
+    const dois = await getDois(fileName, userId);
+    const related_papers = await fetchRecommendedPapers(50, dois);
     const result = await fetchAuthorGender(related_papers);
 
     // Save results to Realtime Database
@@ -20,78 +23,39 @@ export const getRelatedWorks = async (fileName, userId) => {
     return result;
 };
 
-async function getTitles (fileName, userId)  {
-    let data;
-    try {
-      // Use the Realtime Database API to get the data snapshot
-      const dataRef = db.ref(`users/${userId}/data/${fileName}/processedBib`);
-      const snapshot = await dataRef.once("value");
-      data = snapshot.val();
-      if (!data) {
-        throw new Error("No data found at processedBib");
-      }
-    } catch (error) {
-      console.error("Error retrieving field value:", error);
-      throw error;
-    }
-  
-    const titles = data.papers.map(paper => paper.title);
-    // console.log(titles);
-    return titles;
-};
+// FUNCTIONS -------------------------------------------------------------------------------------
 
-async function fetchPaperByTitle(title) {
-    const apiUrl = `https://api.semanticscholar.org/graph/v1/paper/search/match?query=${encodeURIComponent(title)}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-  
-    try {
-      const response = await fetch(apiUrl, { headers });
-  
-      if (response.status === 404) {
-        console.log(`No match found for title: "${title}"`);
-        return { title, error: "Title match not found" };
+// 1. gets DOIs from realtime DB
+async function getDois(fileName, userId) {
+  console.log("Fetching DOIs for file:", fileName);
+
+  const ref = db.ref(`users/${userId}/data/${fileName}/processedBib/papers`);
+  const snapshot = await ref.once("value");
+
+  if (snapshot.exists()) {
+    const papers = snapshot.val();
+    const dois = [];
+
+    // Iterate over all papers and collect DOIs if they exist
+    Object.values(papers).forEach((paper) => {
+      if (paper.doi) {
+        const formattedDOI = `doi:${paper.doi.replace(/^https:\/\/doi\.org\//, "")}`;
+        dois.push(formattedDOI);
       }
-  
-      if (!response.ok) {
-        console.error(`Error fetching data for title "${title}":`, response.statusText);
-        return { title, error: response.statusText };
-      }
-  
-      const data = await response.json();
-      console.log(`Raw API response for "${title}":`, data);
-  
-      // Return the first result from the API
-      const bestMatch = data.data[0];
-      return {
-        title, // Original query title
-        paperId: bestMatch.paperId,
-        matchedTitle: bestMatch.title,
-        matchScore: bestMatch.matchScore,
-      };
-    } catch (error) {
-      console.error(`Error processing title "${title}":`, error.message);
-      return { title, error: error.message };
-    }
+    });
+
+    return dois;
   }
 
-// Get all response data from semantic scholar - but return only paper ids
-async function getIds(titles) {
-    const results = [];
-    for (const title of titles) {
-        const result = await fetchPaperByTitle(title);
-        if (result.paperId) {
-        results.push(result.paperId); // Append only the paperId
-        } else {
-        // console.warn(`No paperId found for title: "${title}"`);
-        }
-    }
-    return results;
+  console.log("No DOIs found.");
+  return [];
 }
 
-// Function to call the Semantic Scholar Recommendations API
+
+// 2. Call the Semantic Scholar Recommendations API 
 async function fetchRecommendedPapers(limit = 5, positivePaperIds = [], negativePaperIds = []) {
+    console.log("Calling Semantic Scholar with the following positive papers....")
+    console.log(positivePaperIds);
     const apiUrl = "https://api.semanticscholar.org/recommendations/v1/papers/";
     const params = new URLSearchParams({
       fields: "title,url,publicationDate,authors,citationCount",
@@ -124,14 +88,14 @@ async function fetchRecommendedPapers(limit = 5, positivePaperIds = [], negative
     }
   }
 
-  // Helper function to split an array into chunks
+// Helper function to split an array into chunks
 const chunkArray = (array, size) => {
   return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
       array.slice(index * size, index * size + size)
   );
 };
 
-// label the related papers with genders in batches of 50
+// 3.  label the related papers with genders in batches of 50
 async function fetchAuthorGender(data) {
   const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
   const apiKey = process.env.GENDER_API_KEY;
@@ -213,8 +177,4 @@ async function fetchAuthorGender(data) {
       return data.recommendedPapers; // Return original data if API fails
   }
 }
-
-
-
-
 

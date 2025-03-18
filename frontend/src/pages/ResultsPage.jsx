@@ -39,21 +39,21 @@ const ResultsPage = () => {
 
         const fetchData = async () => {
             // Step 1: Check if data exists in Firebase
-            try {
-                const storedResponse = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+            // try {
+            //     const storedResponse = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
 
-                if (storedResponse.ok){
-                    const storedData = await storedResponse.json();
-                    if (storedData) {
-                        console.log("Using stored data:", storedData);
-                        setData(storedData);
-                        setLoading(false);
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.warn("No stored data found, processing new request...");
-            }
+            //     if (storedResponse.ok){
+            //         const storedData = await storedResponse.json();
+            //         if (storedData) {
+            //             console.log("Using stored data:", storedData);
+            //             setData(storedData);
+            //             setLoading(false);
+            //             return;
+            //         }
+            //     }
+            // } catch (error) {
+            //     console.warn("No stored data found, processing new request...");
+            // }
 
             // Step 2: If no stored data, call processBib API
             try {
