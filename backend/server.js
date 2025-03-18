@@ -7,8 +7,6 @@ import relatedWorksRoutes from "./routes/RelatedWorksRoutes.js";
 import guestRoutes from "./routes/GuestRoutes.js";
 import userRoutes from "./routes/UserRoutes.js";
 
-import testingRoutes from "./routes/TestingRoutes.js";
-
 
 const app = express();
 
@@ -22,8 +20,6 @@ app.use("/cds", statementRoutes);
 app.use("/related", relatedWorksRoutes);
 app.use("/guest", guestRoutes);
 app.use("/user", userRoutes);
-
-app.use("/testing", testingRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

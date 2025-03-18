@@ -4,7 +4,7 @@ import { db } from "../firebaseConfig.js";
 
 const router = express.Router();
 
-
+// Creates the related works from the statsService 
 router.post("/processBib", async (req, res) => {
     try {
         const { fileName, userId, firstName, middleName, lastName } = req.body;
@@ -18,6 +18,7 @@ router.post("/processBib", async (req, res) => {
     }
 });
 
+// Fetches stats from the realtime Firebase db
 router.get("/getProcessedBib", async (req, res) => {
     try {
         const { fileName, userId } = req.query;

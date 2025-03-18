@@ -4,7 +4,12 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 
-// Main function which runs: 
+/**
+ * This service includes the entire workflow to get related papers.
+ * It is used in: ../routes/RelatedWorksRoutes.js
+ */
+
+// MAIN function ----------------------------------------------------------------------------
 // 1. getting dois from the realtime DB
 // 2. calls Sematic Scholar Recommendation API
 // 3. labels related papers with Gender-API

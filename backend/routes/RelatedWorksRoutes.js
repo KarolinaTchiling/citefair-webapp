@@ -4,6 +4,7 @@ import { db } from "../firebaseConfig.js";
 
 const router = express.Router();
 
+// Creates the related works from the relatedWorksService 
 router.post("/process-related-works", async (req, res) => {
     try {
         const { fileName, userId } = req.body;
@@ -17,6 +18,7 @@ router.post("/process-related-works", async (req, res) => {
     }
 });
 
+// Fetches related works from the realtime Firebase db
 router.get("/get-related-works", async (req, res) => {
     try {
         const { fileName, userId } = req.query;

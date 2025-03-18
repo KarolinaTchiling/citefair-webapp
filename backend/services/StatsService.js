@@ -1,20 +1,54 @@
-// These service includes the entire workflow to get gender statistics from the uploaded bib
-//      downloading file from db -> extracting titles -> getting author data from Open Alex 
-//          -> labelling gender using Gender-API -> calculating gender stats 
-// All of these are run from the processBibliography function which takes a fileName and userId
-
-
 import { bucket, db } from "../firebaseConfig.js";
 import pkg from "bibtex";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const { parseBibFile } = pkg;
 
+/**
+ * These service includes the entire workflow to get gender statistics from the uploaded bib
+ *      downloading file from db -> extracting titles -> getting author data from Open Alex 
+ *       -> labelling gender using Gender-API -> calculating gender stats 
+ * All of these are run from the processBibliography function which takes a fileName and userId
+ * 
+ * It is used in: ../routes/StatsRoutes.js
+ */
+
+// MAIN function --------------------------------------------------------------------------------
+// Fully Automated Bibliography Processing
+export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
+    const titles = await getTitles(fileName, userId);
+    const papersData = await getPapers(titles, firstName, middleName, lastName);
+    const papers = papersData.results
+    const papersWithGender = await fetchAuthorGender(papers);
+
+    // Calculate gender statistics
+    const genderStats = calculatePercentages(papersWithGender);
+    const categoryStats = calculateCategories(papersWithGender);
+
+    // Prepare the final processed data
+    const processedData = {
+        papers: papersWithGender,
+        genders: genderStats,
+        categories: categoryStats,
+        number_of_self_citations: papersData.number_of_self_citations,
+        title_not_found: papersData.title_not_found,
+        total_papers: papersData.total_papers,
+        processedAt: new Date().toISOString(),
+    };
+
+    // **Save results to Firebase**
+    await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
+        ...processedData,
+    });
+ 
+    return processedData;
+};
+
+// FUNCTIONS ------------------------------------------------------------------------------
 // Step 1: Get file content from Firebase
-export const getFileContent = async (fileName, userId) => {
+async function getFileContent(fileName, userId) {
     const file = bucket.file(`users/${userId}/uploads/${fileName}`);
 
     const [exists] = await file.exists();
@@ -25,13 +59,13 @@ export const getFileContent = async (fileName, userId) => {
 };
 
 // Step 2: Extract and process titles from the .bib file
-export const getTitles = async (fileName, userId) => {
+async function getTitles(fileName, userId) {
     const fileContent = await getFileContent(fileName, userId);
     return extractTitlesFromBib(fileContent);
 };
 
 // Step 3: Parse .bib content and extract titles
-const extractTitlesFromBib = (fileContent) => {
+function extractTitlesFromBib(fileContent) {
     const bibFile = parseBibFile(fileContent);
     const entries = bibFile["entries$"];
 
@@ -49,7 +83,7 @@ const extractTitlesFromBib = (fileContent) => {
 };
 
 // Step 4: Fetch paper details from OpenAlex API
-const fetchPaper = async (title) => {
+async function fetchPaper(title) {
     const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
@@ -71,7 +105,7 @@ const fetchPaper = async (title) => {
 // Step 5: Process multiple titles by fetching related papers
 // this is used to get author data
 // this also removes self-citations 
-export const getPapers = async (titles, firstName, middleName, lastName) => {
+async function getPapers(titles, firstName, middleName, lastName) {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
     let number_of_self_citations = 0;
@@ -131,14 +165,15 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 };
 
 // Helper function to split an array into chunks
-const chunkArray = (array, size) => {
+
+function chunkArray(array, size) {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
         array.slice(index * size, index * size + size)
     );
 };
 
 //  Step 6: Fetch author gender from Gender-API
-export const fetchAuthorGender = async (papers) => {
+async function fetchAuthorGender(papers) {
     const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
     const apiKey = process.env.GENDER_API_KEY;
 
@@ -237,7 +272,7 @@ export const fetchAuthorGender = async (papers) => {
 
 
 // Step 7: Calculate gender statistics
-export const calculatePercentages = (data) => {
+function calculatePercentages(data) {
     let total = 0, countW = 0, countM = 0, countX = 0;
 
     for (const paper of data) {
@@ -256,8 +291,7 @@ export const calculatePercentages = (data) => {
         X: `${((countX / total) * 100).toFixed(2)}%`
     };
 };
-
-export const calculateCategories = (data) => {
+function calculateCategories(data) {
     let total = 0, countMM = 0, countMW = 0, countWM = 0, countWW = 0, countX = 0;
 
     for (const paper of data) {
@@ -277,32 +311,3 @@ export const calculateCategories = (data) => {
     return { MM: `${((countMM / total) * 100).toFixed(2)}%`, MW: `${((countMW / total) * 100).toFixed(2)}%`, WM: `${((countWM / total) * 100).toFixed(2)}%`, WW: `${((countWW / total) * 100).toFixed(2)}%`, X: `${((countX / total) * 100).toFixed(2)}%` };
 };
 
-// Final Step: Fully Automated Bibliography Processing
-export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
-    const titles = await getTitles(fileName, userId);
-    const papersData = await getPapers(titles, firstName, middleName, lastName);
-    const papers = papersData.results
-    const papersWithGender = await fetchAuthorGender(papers);
-
-    // Calculate gender statistics
-    const genderStats = calculatePercentages(papersWithGender);
-    const categoryStats = calculateCategories(papersWithGender);
-
-    // Prepare the final processed data
-    const processedData = {
-        papers: papersWithGender,
-        genders: genderStats,
-        categories: categoryStats,
-        number_of_self_citations: papersData.number_of_self_citations,
-        title_not_found: papersData.title_not_found,
-        total_papers: papersData.total_papers,
-        processedAt: new Date().toISOString(),
-    };
-
-    // **Save results to Firebase**
-    await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
-        ...processedData,
-    });
- 
-    return processedData;
-};
