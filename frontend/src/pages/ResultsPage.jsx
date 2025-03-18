@@ -92,15 +92,6 @@ const ResultsPage = () => {
             }))
         : [];
 
-    // Define colors for each gender category
-    const colors1 = ["#29C2E0", "#FF6384", "#E0E0E0"]; // W (Pink), M (Blue), X (Grey)
-
-    const genderLabels = {
-        W: "Women Authors",
-        M: "Men Authors",
-        X: "Unknown Gender",
-    };
-
     // Convert gender distribution data to a format that Recharts can use
     const catData = data?.categories
         ? Object.entries(data.categories).map(([categories, percentage]) => ({
@@ -108,19 +99,19 @@ const ResultsPage = () => {
                 value: parseFloat(percentage), // Convert percentage string to a number
             }))
         : [];
+
+    const authorMap = {
+        W: { label: "Women Authors", color: "#FF6384" }, // Pink
+        M: { label: "Men Authors", color: "#29C2E0" },   // Blue
+        X: { label: "Unknown", color: "#E0E0E0" }, // Grey
     
-
-    // Define colors for each gender category
-    const colors2 = ["#29C2E0", "#FFCE56", "#AD85FF", "#FF6384", "#E0E0E0"]; // MM (Blue), MW (Yellow), MW (Purple), WW (Pink), X (Grey)
-
-    const catLabels = {
-        MM: "First and last authors are men",
-        MW: "Man first author and woman last author",
-        WM: "Woman first author and man last author",
-        WW: "First and last authors are women",
-        X: "Unknown Category",
+        MM: { label: "First and last authors are men", color: "#29C2E0" },  // Blue
+        MW: { label: "Man first author and woman last author", color: "#FFCE56" },  // Yellow
+        WM: { label: "Woman first author and man last author", color: "#AD85FF" },  // Purple
+        WW: { label: "First and last authors are women", color: "#FF6384" },  // Pink
     };
-
+    
+    
 
     return (
         <div className="flex flex-col">
@@ -178,7 +169,7 @@ const ResultsPage = () => {
                                     <div className="mt-6 p-4 bg-indigo rounded-md">
                                         <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
                                         {genderData.length > 0 ? (
-                                            <ResponsiveContainer width={400} height={330}>
+                                            <ResponsiveContainer width="100%" height={330}>
                                                 <PieChart>
                                                     <Pie
                                                         data={genderData}
@@ -191,12 +182,15 @@ const ResultsPage = () => {
                                                         dataKey="value"
                                                     >
                                                         {genderData.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={colors1[index % colors1.length]} />
+                                                            <Cell 
+                                                                key={`cell-${index}`} 
+                                                                fill={authorMap[entry.name]?.color || "#000000"} // Use color from authorMap
+                                                            />
                                                         ))}
                                                     </Pie>
                                                     <Tooltip />
                                                     <Legend
-                                                        formatter={(value) => genderLabels[value] || value} 
+                                                        formatter={(value) => authorMap[value]?.label || value}
                                                     />
                                                 </PieChart>
                                             </ResponsiveContainer>
@@ -208,7 +202,7 @@ const ResultsPage = () => {
                                     <div className="mt-6 p-4 bg-indigo rounded-md">
                                         <h2 className="text-2xl text-white text-center font-semibold pb-2">Distribution of Gender Categories</h2>
                                         {catData.length > 0 ? (
-                                            <ResponsiveContainer width={400} height={400}>
+                                            <ResponsiveContainer width="100%" height={400}>
                                                 <PieChart>
                                                     <Pie
                                                         data={catData}
@@ -221,12 +215,15 @@ const ResultsPage = () => {
                                                         dataKey="value"
                                                     >
                                                         {catData.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={colors2[index % colors2.length]} />
+                                                            <Cell 
+                                                                key={`cell-${index}`} 
+                                                                fill={authorMap[entry.name]?.color || "#000000"} // Use color from authorMap
+                                                            />
                                                         ))}
                                                     </Pie>
                                                     <Tooltip />
                                                     <Legend
-                                                        formatter={(value) => catLabels[value] || value} 
+                                                        formatter={(value) => authorMap[value]?.label || value}
                                                     />
                                                 </PieChart>
                                             </ResponsiveContainer>
