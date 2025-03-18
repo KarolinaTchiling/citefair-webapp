@@ -177,7 +177,6 @@ const RelatedPage = () => {
                     <p className="mt-2 text-sm">
                       Publication Date: {paper.publicationDate || "N/A"}
                     </p>
-                    <p className="mt-2 text-sm">Citation Count: {paper.citationCount}</p>
                     <a
                       href={paper.url}
                       target="_blank"
@@ -192,29 +191,17 @@ const RelatedPage = () => {
                         <ul className="list-disc list-inside">
                           {paper.authors.map((author, idx) => (
                             <li key={idx}>
-                              <span
-                                className={`font-semibold ${
-                                  author.gender === "M"
-                                    ? "text-[#29C2E0]"
-                                    : author.gender === "W"
-                                    ? "text-[#FF6384]"
-                                    : "text-gray-400"
-                                }`}
-                              >
-                                {author.name}
-                              </span>{" "}
-                              <span
-                                className={`text-sm ${
-                                  author.gender === "M"
-                                    ? "text-[#29C2E0]"
-                                    : author.gender === "W"
-                                    ? "text-[#FF6384]"
-                                    : "text-gray-400"
-                                }`}
-                              >
-                                ({author.gender || "Unknown"})
-                              </span>
-                              
+                                <span
+                                    className={`text-sm ${
+                                        author.gender === "M"
+                                            ? "text-[#29C2E0]"
+                                            : author.gender === "W"
+                                            ? "text-[#FF6384]"
+                                            : "text-gray-400"
+                                    }`}
+                                >
+                                    {author.name} - {author.gender} ({author.prob})
+                                </span>
                             </li>
                           ))}
                         </ul>

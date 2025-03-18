@@ -86,6 +86,17 @@ const ReferenceListPage = () => {
                             {papers.map((paper, index) => (
                                 <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
                                     <h2 className="text-lg font-semibold">{paper.title}</h2>
+                                    <h4 className="text-sm pt-1">
+                                        <a 
+                                            href={`https://doi.org/${paper.doi}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-blue-600 hover:underline"
+                                        >
+                                            {paper.doi}
+                                        </a>
+                                    </h4>
+
 
                                     <div className="mt-3">
                                         <p className="font-semibold">Authors:</p>
@@ -94,27 +105,17 @@ const ReferenceListPage = () => {
                                                 {paper.authors.map((author, idx) => (
                                                 <li key={idx}>
                                                 <span
-                                                    className={`font-medium ${
-                                                    author.gender === "M"
-                                                        ? "text-[#29C2E0]"
-                                                        : author.gender === "W"
-                                                        ? "text-[#FF6384]"
-                                                        : "text-gray-400"
-                                                    }`}
-                                                >
-                                                    {author.name}
-                                                </span>{" "}
-                                                <span
                                                     className={`text-sm ${
-                                                    author.gender === "M"
-                                                        ? "text-[#29C2E0]"
-                                                        : author.gender === "W"
-                                                        ? "text-[#FF6384]"
-                                                        : "text-gray-400"
+                                                        author.gender === "M"
+                                                            ? "text-[#29C2E0]"
+                                                            : author.gender === "W"
+                                                            ? "text-[#FF6384]"
+                                                            : "text-gray-400"
                                                     }`}
                                                 >
-                                                    ({author.gender || "Unknown"})
+                                                    {author.name} - {author.gender} ({author.prob})
                                                 </span>
+                                                    
                                                 </li>
                                                 ))}
                                             </ul>
