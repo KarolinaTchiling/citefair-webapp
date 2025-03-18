@@ -112,7 +112,6 @@ async function getPapers(titles, firstName, middleName, lastName) {
     let title_not_found = 0;
     let total_papers = 0;
 
-
     let fullName;
     if (!middleName){
         fullName = firstName + " " + lastName; 
@@ -140,7 +139,6 @@ async function getPapers(titles, firstName, middleName, lastName) {
 
             let selfCitation = false;
 
-
             for (const author of authors){
                 if (author.name.toLowerCase().trim() === fullName.toLowerCase().trim()) {
                     selfCitation = true;
@@ -149,15 +147,25 @@ async function getPapers(titles, firstName, middleName, lastName) {
                 }
             }
 
-            if (!selfCitation) {
+            if (selfCitation) {
                 results.push({
+                    selfCitation: true,
                     doi,
                     title,
                     matchedTitle,
                     authors,
                     relevance_score
                 });
-            } 
+            } else {
+                results.push({
+                    selfCitation: false,
+                    doi,
+                    title,
+                    matchedTitle,
+                    authors,
+                    relevance_score
+                });
+            }
         }
     }
 
@@ -165,7 +173,6 @@ async function getPapers(titles, firstName, middleName, lastName) {
 };
 
 // Helper function to split an array into chunks
-
 function chunkArray(array, size) {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
         array.slice(index * size, index * size + size)
@@ -277,6 +284,7 @@ function calculatePercentages(data) {
 
     for (const paper of data) {
         if (paper.error) continue;
+        if (paper.selfCitation) continue; // skip self citation
         for (const author of paper.authors) {
             total++;
             if (author.gender === "W") countW++;
@@ -296,6 +304,7 @@ function calculateCategories(data) {
 
     for (const paper of data) {
         if (paper.error) continue;
+        if (paper.selfCitation) continue; // skip self citation
         const first = paper.authors[0]?.gender;
         const last = paper.authors[paper.authors.length - 1]?.gender;
 
