@@ -34,7 +34,7 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
             formData.append("file", file);
             formData.append("userId", user.uid); // Send only userId
 
-            const response = await fetch(`${API_BASE_URL}/upload/guest-upload`, {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: "POST",
                 body: formData,
             });
