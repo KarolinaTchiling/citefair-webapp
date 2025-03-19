@@ -11,11 +11,11 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     // Handle file input change
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
-        if (selectedFile && selectedFile.name.endsWith(".bib")) {
+        if (selectedFile && selectedFile.name.endsWith(".bib") || selectedFile.name.endsWith(".txt")) {
             setFile(selectedFile);
             setUploadStatus(""); // Clear previous status
         } else {
-            setUploadStatus("Please upload a valid .bib file");
+            setUploadStatus("Please upload a valid .bib or .txt file");
         }
     };
 
@@ -58,11 +58,11 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     return (
         <div className="mb-4">
             <label htmlFor="fileInput" className="block text-sm font-medium text-gray-700 mb-2">
-                Upload your .bib file:
+                Upload your .bib or .txt file:
             </label>
             <input
                 type="file"
-                accept=".bib"
+                accept=".bib,.txt"
                 onChange={handleFileChange}
                 id="fileInput"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

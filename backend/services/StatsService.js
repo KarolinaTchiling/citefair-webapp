@@ -1,21 +1,23 @@
-import { bucket, db } from "../firebaseConfig.js";
-import pkg from "bibtex";
+import { db } from "../firebaseConfig.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import { getTitles } from "./ParseFileService.js"
 
 dotenv.config();
-const { parseBibFile } = pkg;
+
 
 /**
- * These service includes the entire workflow to get gender statistics from the uploaded bib
- *      downloading file from db -> extracting titles -> getting author data from Open Alex 
- *       -> labelling gender using Gender-API -> calculating gender stats 
- * All of these are run from the processBibliography function which takes a fileName and userId
+ * These service gets analyzes the gender statistics of a bibliography.
+ * The service starts with a list of titles preprocessed with the ParseFileService.js
+ * 
+ * PIPELINE:
+ * Get author data from Open Alex  -> labelling gender using Gender-API -> calculating gender stats 
  * 
  * It is used in: ../routes/StatsRoutes.js
  */
 
 // MAIN function --------------------------------------------------------------------------------
+
 // Fully Automated Bibliography Processing
 export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
     const titles = await getTitles(fileName, userId);
@@ -47,42 +49,8 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
 };
 
 // FUNCTIONS ------------------------------------------------------------------------------
-// Step 1: Get file content from Firebase
-async function getFileContent(fileName, userId) {
-    const file = bucket.file(`users/${userId}/uploads/${fileName}`);
 
-    const [exists] = await file.exists();
-    if (!exists) throw new Error(`File '${fileName}' not found for user '${userId}'`);
-
-    const [fileContent] = await file.download();
-    return fileContent.toString("utf-8");
-};
-
-// Step 2: Extract and process titles from the .bib file
-async function getTitles(fileName, userId) {
-    const fileContent = await getFileContent(fileName, userId);
-    return extractTitlesFromBib(fileContent);
-};
-
-// Step 3: Parse .bib content and extract titles
-function extractTitlesFromBib(fileContent) {
-    const bibFile = parseBibFile(fileContent);
-    const entries = bibFile["entries$"];
-
-    if (!entries || typeof entries !== "object") {
-        throw new Error("Invalid .bib file structure.");
-    }
-
-    return Object.keys(entries)
-        .map((key) => {
-            const entry = entries[key];
-            const titleData = entry.fields?.title?.data;
-            return Array.isArray(titleData) ? titleData.join("").trim() : null;
-        })
-        .filter(Boolean); // Removes null/undefined values
-};
-
-// Step 4: Fetch paper details from OpenAlex API
+// Fetch paper details from OpenAlex API
 async function fetchPaper(title) {
     const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
@@ -102,7 +70,7 @@ async function fetchPaper(title) {
 };
 
 
-// Step 5: Process multiple titles by fetching related papers
+// Step 1: Process multiple titles by calling @fetchPapers
 // this is used to get author data
 // this also removes self-citations 
 async function getPapers(titles, firstName, middleName, lastName) {
@@ -179,7 +147,7 @@ function chunkArray(array, size) {
     );
 };
 
-//  Step 6: Fetch author gender from Gender-API
+//  Step 2: Fetch author gender from Gender-API
 async function fetchAuthorGender(papers) {
     const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
     const apiKey = process.env.GENDER_API_KEY;
@@ -278,7 +246,7 @@ async function fetchAuthorGender(papers) {
 };
 
 
-// Step 7: Calculate gender statistics
+// Step 3: Calculate gender statistics
 function calculatePercentages(data) {
     let total = 0, countW = 0, countM = 0, countX = 0;
 
