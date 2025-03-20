@@ -20,7 +20,13 @@ export async function getTitles(fileName, userId) {
     if (fileName.endsWith("_txt")) {
         return extractTitlesFromTxt(fileContent);
     } else if (fileName.endsWith("_bib")) {
-        return extractTitlesFromBib(fileContent);
+        const result = extractTitlesFromBib(fileContent);
+        
+        if (result.error) {
+            throw new Error(result.error); // Convert the error object to a thrown error
+        }
+
+        return result.titles; // Only return the titles array
     } else {
         throw new Error("Unsupported file type. Expected filename to end with '_txt' or '_bib'.");
     }
@@ -43,21 +49,29 @@ export async function getFileContent(fileName, userId) {
 // Step 2: Extract titles from .bib or .txt 
 
 function extractTitlesFromBib(fileContent) {
-    const bibFile = parseBibFile(fileContent);
-    const entries = bibFile["entries$"];
+    try {
+        const bibFile = parseBibFile(fileContent);
+        console.log(bibFile);
+        const entries = bibFile["entries$"];
 
-    if (!entries || typeof entries !== "object") {
-        throw new Error("Invalid .bib file structure.");
+        if (!entries || typeof entries !== "object") {
+            return { error: "Invalid .bib file structure." };
+        }
+
+        const titles = Object.keys(entries)
+            .map((key) => {
+                const entry = entries[key];
+                const titleData = entry.fields?.title?.data;
+                return Array.isArray(titleData) ? titleData.join("").trim() : null;
+            })
+            .filter(Boolean); // Removes null/undefined values
+
+        return { titles }; // Return an object instead of just an array
+    } catch (error) {
+        console.error("Error processing bibliography:", error.message);
+        return { error: error.message }; // Return the error message instead of throwing it
     }
-
-    return Object.keys(entries)
-        .map((key) => {
-            const entry = entries[key];
-            const titleData = entry.fields?.title?.data;
-            return Array.isArray(titleData) ? titleData.join("").trim() : null;
-        })
-        .filter(Boolean); // Removes null/undefined values
-};
+}
 
 function extractTitlesFromTxt(fileContent) {
     // Use regex to find all substrings inside double quotes

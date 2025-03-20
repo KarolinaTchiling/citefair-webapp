@@ -20,32 +20,51 @@ dotenv.config();
 
 // Fully Automated Bibliography Processing
 export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
-    const titles = await getTitles(fileName, userId);
-    const papersData = await getPapers(titles, firstName, middleName, lastName);
-    const papers = papersData.results
-    const papersWithGender = await fetchAuthorGender(papers);
+    try {
+        // Get Titles
+        const titles = await getTitles(fileName, userId);
+        
+        if (!titles || titles.length === 0) {
+            throw new Error("No titles extracted. Please check the file.");
+        }
 
-    // Calculate gender statistics
-    const genderStats = calculatePercentages(papersWithGender);
-    const categoryStats = calculateCategories(papersWithGender);
+        // Get Papers Data
+        const papersData = await getPapers(titles, firstName, middleName, lastName);
+        if (!papersData || !papersData.results) {
+            throw new Error("No papers found. Unable to process bibliography.");
+        }
 
-    // Prepare the final processed data
-    const processedData = {
-        papers: papersWithGender,
-        genders: genderStats,
-        categories: categoryStats,
-        number_of_self_citations: papersData.number_of_self_citations,
-        title_not_found: papersData.title_not_found,
-        total_papers: papersData.total_papers,
-        processedAt: new Date().toISOString(),
-    };
+        const papers = papersData.results;
+        const papersWithGender = await fetchAuthorGender(papers);
 
-    // **Save results to Firebase**
-    await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
-        ...processedData,
-    });
- 
-    return processedData;
+        // Calculate gender statistics
+        const genderStats = calculatePercentages(papersWithGender);
+        const categoryStats = calculateCategories(papersWithGender);
+
+        // Prepare the final processed data
+        const processedData = {
+            papers: papersWithGender,
+            genders: genderStats,
+            categories: categoryStats,
+            number_of_self_citations: papersData.number_of_self_citations,
+            title_not_found: papersData.title_not_found,
+            total_papers: papersData.total_papers,
+            processedAt: new Date().toISOString(),
+        };
+
+        // **Save results to Firebase**
+        await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
+            ...processedData,
+        });
+
+        return processedData;
+
+    } catch (error) {
+        console.error("Error in processBibliography:", error.message);
+
+        // Pass the error up the chain to the route handler
+        return { error: error.message };
+    }
 };
 
 // FUNCTIONS ------------------------------------------------------------------------------

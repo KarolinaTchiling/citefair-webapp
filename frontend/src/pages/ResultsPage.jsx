@@ -22,7 +22,7 @@ const ResultsPage = () => {
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, steError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null); 
 
     useEffect(() => {
 
@@ -50,7 +50,8 @@ const ResultsPage = () => {
                         setLoading(false);
                         return;
                     }
-                }
+                } 
+
             } catch (error) {
                 console.warn("No stored data found, processing new request...");
             }
@@ -64,30 +65,17 @@ const ResultsPage = () => {
                     },
                     body: JSON.stringify(userData),
                 });
-        
+                
+                const result = await response.json(); 
                 if (!response.ok) {
-                    let errorMessage = "An unknown error occurred";
-            
-                    // Handle specific error codes
-                    if (response.status === 400) {
-                        errorMessage = "Bad Request: Missing or invalid data.";
-                    } else if (response.status === 401) {
-                        errorMessage = "Unsuccessful parsing: No papers found in the bibliography. Try another file.";
-                    } else if (response.status === 500) {
-                        errorMessage = "Server Error: Something went wrong on the backend.";
-                    } else {
-                        errorMessage = `Unexpected Error: ${response.statusText} (Code ${response.status})`;
-                    }
-            
-                    throw new Error(errorMessage);
+                    throw new Error(result.error || "An unknown error occurred.");
                 }
         
-                const result = await response.json(); 
                 setData(result); //store data in state
         
             } catch (error) {
                 console.error("Error:", error);
-                steError(error.message);
+                setErrorMessage(error.message);;
             } finally {
                 setLoading(false);
             }
@@ -148,15 +136,15 @@ const ResultsPage = () => {
                 
                     </>
                     
-                    ) : error ? (
+                    ) : errorMessage ? (
                         <>
                         <div className="flex flex-col items-center justify-center">
                             <p className="text-6xl text-white font-semibold text-center pt-28">Uh-Oh!</p>
-                            <p className="text-4xl text-white font-semibold text-center pt-6 pb-12">{error}</p>
+                            <p className="text-4xl text-white font-semibold text-center pt-6 pb-12">{errorMessage}</p>
                             <button
                                 className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
                                 onClick={() => window.history.back()}>
-                                Go Back 
+                                Try Again
                             </button>
                         </div>
                         </>
