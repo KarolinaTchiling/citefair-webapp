@@ -66,7 +66,20 @@ const ResultsPage = () => {
                 });
         
                 if (!response.ok) {
-                    throw new Error("Failed to fetch data");
+                    let errorMessage = "An unknown error occurred";
+            
+                    // Handle specific error codes
+                    if (response.status === 400) {
+                        errorMessage = "Bad Request: Missing or invalid data.";
+                    } else if (response.status === 401) {
+                        errorMessage = "Unsuccessful parsing: No papers found in the bibliography. Try another file.";
+                    } else if (response.status === 500) {
+                        errorMessage = "Server Error: Something went wrong on the backend.";
+                    } else {
+                        errorMessage = `Unexpected Error: ${response.statusText} (Code ${response.status})`;
+                    }
+            
+                    throw new Error(errorMessage);
                 }
         
                 const result = await response.json(); 
@@ -116,7 +129,6 @@ const ResultsPage = () => {
     return (
         <div className="flex flex-col">
             <Navbar />
-            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
             <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
 
@@ -137,9 +149,22 @@ const ResultsPage = () => {
                     </>
                     
                     ) : error ? (
-                        <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
-                    ) : (
                         <>
+                        <div className="flex flex-col items-center justify-center">
+                            <p className="text-6xl text-white font-semibold text-center pt-28">Uh-Oh!</p>
+                            <p className="text-4xl text-white font-semibold text-center pt-6 pb-12">{error}</p>
+                            <button
+                                className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
+                                onClick={() => window.history.back()}>
+                                Go Back 
+                            </button>
+                        </div>
+                        </>
+                        
+                    ) : (
+                        
+                        <>
+                        <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
                         {/* Heading Section (20% of screen height) */}
                         <div className="h-[20vh] flex items-center justify-center">
                         <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
