@@ -60,6 +60,9 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
             <label htmlFor="fileInput" className="block text-sm font-medium text-gray-700 mb-2">
                 Upload your .bib or .txt file:
             </label>
+            <label htmlFor="fileInput" className="block text-sm font-medium text-red mb-2">
+                Note: CiteFairly currently has limited parsing functionality for .txt files. It can correctly parse .txt files that follow the IEEE Referencing Style or where only titles are enclosed in double quotes (""). For other reference styles, consider converting your bibliography to a .bib file format for better compatibility.
+            </label>
             <input
                 type="file"
                 accept=".bib,.txt"
