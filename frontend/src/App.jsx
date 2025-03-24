@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import DashBoardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
-import RelatedPage from './pages/RelatedPage';
+import RecommendedPage from './pages/RecommendedPage';
 import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
@@ -43,10 +43,10 @@ function App() {
           }
         />
         <Route
-          path="/related"
+          path="/recommended"
           element={
             <PrivateRoute>
-              <RelatedPage />
+              <RecommendedPage />
             </PrivateRoute>
           }
         />
