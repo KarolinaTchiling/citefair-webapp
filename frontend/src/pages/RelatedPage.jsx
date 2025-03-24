@@ -174,9 +174,6 @@ const RelatedPage = () => {
                     className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30"
                   >
                     <h2 className="text-lg font-semibold">{paper.title}</h2>
-                    <p className="mt-2 text-sm">
-                      Publication Date: {paper.publicationDate || "N/A"}
-                    </p>
                     <a
                       href={paper.url}
                       target="_blank"

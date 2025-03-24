@@ -15,7 +15,7 @@ dotenv.config();
 // 3. labels related papers with Gender-API
 export const getRelatedWorks = async (fileName, userId) => {
     const dois = await getDois(fileName, userId);
-    const related_papers = await fetchRecommendedPapers(50, dois);
+    const related_papers = await fetchRecommendedPapers(5, dois);
     const result = await fetchAuthorGender(related_papers);
 
     // Save results to Realtime Database
@@ -63,7 +63,7 @@ async function fetchRecommendedPapers(limit = 5, positivePaperIds = [], negative
     console.log(positivePaperIds);
     const apiUrl = "https://api.semanticscholar.org/recommendations/v1/papers/";
     const params = new URLSearchParams({
-      fields: "title,url,publicationDate,authors,citationCount",
+      fields: "title,url,authors,citationStyles",
       limit: limit.toString(),
     });
   
@@ -164,8 +164,7 @@ async function fetchAuthorGender(data) {
           paperId: paper.paperId,
           title: paper.title,
           url: paper.url,
-          citationCount: paper.citationCount,
-          publicationDate: paper.publicationDate,
+          bibtex: paper.citationStyles.bibtex,
           authors: paper.authors.map(author => {
               const genderData = genderMap.get(author.name.trim());
               return {
