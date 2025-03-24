@@ -39,6 +39,16 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
         }
 
         const papers = papersData.results;
+
+        // Extract only the bibtex strings
+        const bibEntries = papers
+        .filter(paper => paper.bibtex) // in case some are null/undefined
+        .map(paper => paper.bibtex);
+
+        // Save array of BibTeX entries to Firebase
+        await db.ref(`users/${userId}/data/${fileName}/references`).set(bibEntries);
+
+
         const papersWithGender = await fetchAuthorGender(papers);
 
         // Calculate gender statistics
@@ -92,11 +102,50 @@ async function fetchPaper(title) {
     }
 };
 
+/**
+ * Gets BibTeX from DOI or falls back to Semantic Scholar search
+ * @param {string} title - The paper title
+ * @param {string|null} doi - The paper DOI (can be null)
+ * @returns {Promise<string|null>} - BibTeX string or null
+ */
+export async function getBibtex(title, doi) {
+    let bibtex = null;
+  
+    if (!doi) {
+      // Fallback: Try Semantic Scholar
+      try {
+        const ssRes = await fetch(
+          `https://api.semanticscholar.org/graph/v1/paper/search/match?query=${encodeURIComponent(title)}&fields=citationStyles`
+        );
+        const ssData = await ssRes.json();
+  
+        const citation = ssData?.data?.[0]?.citationStyles?.bibtex;
+        if (citation) {
+          bibtex = citation;
+        } else {
+          console.warn(`No BibTeX found in Semantic Scholar for: ${title}`);
+        }
+      } catch (error) {
+        console.error("Semantic Scholar fallback failed:", error);
+      }
+    } else {
+      // Use Citation.js to fetch BibTeX from DOI
+      try {
+        const cite = await Cite.async(doi);
+        bibtex = cite.format("bibtex");
+      } catch (err) {
+        console.error(`Failed to generate BibTeX for DOI ${doi}:`, err);
+      }
+    }
+  
+    return bibtex;
+};
+
 
 // Step 1: Process multiple titles by calling @fetchPapers
 // this is used to get author data
 // this also removes self-citations 
-// this also gets BibTeX citation using citation.js
+// this also gets BibTeX citation using citation.js or semantic scholar 
 async function getPapers(titles, firstName, middleName, lastName) {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
@@ -125,16 +174,8 @@ async function getPapers(titles, firstName, middleName, lastName) {
             }));
 
             const doi = result.results[0]?.doi;
+            const bibtex = await getBibtex(title, doi);
 
-            // Get BibTeX from citation.js
-            let bibtex = null;
-            try {
-                const cite = await Cite.async(doi);
-                bibtex = cite.format('bibtex');
-            } catch (err) {
-                console.error(`Failed to generate BibTeX for ${doi}:`, err);
-            }
-            
             let selfCitation = authors.some(
                 author => author.name?.toLowerCase().trim() === fullName.toLowerCase().trim()
               );
