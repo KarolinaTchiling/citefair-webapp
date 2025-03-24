@@ -10,6 +10,7 @@ import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
 import './input.css';
 import { useAuth } from "./AuthContext";
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <div>
+      <Toaster position="bottom-right" reverseOrder={false} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />

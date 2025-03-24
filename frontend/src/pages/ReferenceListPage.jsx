@@ -34,11 +34,13 @@ const ReferenceListPage = () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+                const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
                 
                 if (!response.ok) {
                     throw new Error("Failed to fetch data");
                 }
+
+                console.log(response);
 
                 const result = await response.json();
                 setData(result);
@@ -54,8 +56,10 @@ const ReferenceListPage = () => {
         fetchData();
     }, [navigate]);
 
+    console.log(data)
 
-    const papers = data?.papers || [];
+
+    const papers = data || [];
 
     return (
         <div>
@@ -85,44 +89,56 @@ const ReferenceListPage = () => {
                         <div className="space-y-6 w-full max-w-4xl mb-20">
                             {papers.map((paper, index) => (
                                 <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
-                                    <h2 className="text-lg font-semibold">{paper.title}</h2>
+                                    {paper.url && (
+                                    <h2 className="text-2xl text-center font-semibold text-yellow-400">★★ New ★★</h2>
+                                    )}
+                                    <h2 className="text-lg font-semibold">{paper.title} </h2>
                                     <h4 className="text-sm pt-1">
                                         <a 
                                             href={`https://doi.org/${paper.doi}`} 
                                             target="_blank" 
                                             rel="noopener noreferrer" 
-                                            className="text-blue-600 hover:underline"
+                                            className="text-yellow/80 hover:underline"
                                         >
                                             {paper.doi}
+                                        </a>
+                                    </h4>
+                                    <h4 className="text-sm pt-1">
+                                        <a 
+                                            href={`${paper.url}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-yellow/80 hover:underline"
+                                        >
+                                            {paper.url}
                                         </a>
                                     </h4>
 
 
                                     <div className="mt-3">
-                                        <p className="font-semibold">Authors:</p>
+                                        <p className="font-semibold mb-1">Authors:</p>
                                         {paper.authors && paper.authors.length > 0 ? (
-                                            <ul className="list-disc list-inside">
-                                                {paper.authors.map((author, idx) => (
-                                                <li key={idx}>
+                                            <div className="flex flex-wrap gap-2">
+                                            {paper.authors.map((author, idx) => (
                                                 <span
-                                                    className={`text-sm ${
-                                                        author.gender === "M"
-                                                            ? "text-[#29C2E0]"
-                                                            : author.gender === "W"
-                                                            ? "text-[#FF6384]"
-                                                            : "text-gray-400"
-                                                    }`}
+                                                key={idx}
+                                                className={`text-sm ${
+                                                    author.gender === "M"
+                                                    ? "text-[#29C2E0]"
+                                                    : author.gender === "W"
+                                                    ? "text-[#FF6384]"
+                                                    : "text-gray-400"
+                                                }`}
                                                 >
-                                                    {author.name} - {author.gender} ({author.prob})
+                                                {author.name} - {author.gender} ({author.prob})
+                                                {idx < paper.authors.length - 1 && <span>,</span>}
                                                 </span>
-                                                    
-                                                </li>
-                                                ))}
-                                            </ul>
+                                            ))}
+                                            </div>
                                         ) : (
                                             <p className="text-gray-400">No match found.</p>
                                         )}
-                                    </div>
+                                        </div>
                                 </div>
                             ))}
                         </div>

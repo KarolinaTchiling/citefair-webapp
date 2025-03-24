@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import Footer from "../components/Footer.jsx";
 import Loader from "../components/Loader.jsx";
 import Typewriter from "../components/TypewriterRelated.jsx";
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -74,6 +75,37 @@ const RecommendedPage = () => {
 
     fetchData();
   }, [navigate]);
+
+  const handleAddReference = async (paperId) => {
+    const sessionUserData = sessionStorage.getItem("userData");
+    if (!sessionUserData) {
+      console.error("Missing user data");
+      return;
+    }
+  
+    const { userId, fileName } = JSON.parse(sessionUserData);
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/ref/add-ref`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: userId, fileName, paperId }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log("Paper added to reference list:", data.paper);
+        toast.success("Article added to reference list!");
+      } else {
+        console.error("Error adding reference:", data.error);
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+    }
+  };
 
   // Filter the data based on selected filter options.
   const filteredData = data.filter((paper) => {
@@ -236,7 +268,9 @@ const RecommendedPage = () => {
 
 
                     <div className="self-end font-semibold -mt-8">
-                      <button className="border border-gray-300 h-10 w-10 rounded-full shadow-md text-white bg-black/80 hover:bg-yellow hover:text-black transition duration-200">+</button>
+                      <button 
+                      onClick={() => handleAddReference(paper.paperId)}
+                      className="border border-gray-300 h-10 w-10 rounded-full shadow-md text-white bg-black/80 hover:bg-yellow hover:text-black transition duration-200">+</button>
                     </div>
 
                   </div>

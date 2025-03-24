@@ -39,17 +39,10 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
         }
 
         const papers = papersData.results;
-
-        // Extract only the bibtex strings
-        const bibEntries = papers
-        .filter(paper => paper.bibtex) // in case some are null/undefined
-        .map(paper => paper.bibtex);
-
-        // Save array of BibTeX entries to Firebase
-        await db.ref(`users/${userId}/data/${fileName}/references`).set(bibEntries);
-
-
         const papersWithGender = await fetchAuthorGender(papers);
+
+        // Save papers to references in firebase
+        await db.ref(`users/${userId}/data/${fileName}/references`).set(papersWithGender);
 
         // Calculate gender statistics
         const genderStats = calculatePercentages(papersWithGender);
