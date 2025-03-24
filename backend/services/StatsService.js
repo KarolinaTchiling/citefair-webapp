@@ -2,6 +2,10 @@ import { db } from "../firebaseConfig.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { getTitles } from "./ParseFileService.js"
+import { Cite } from '@citation-js/core'
+import '@citation-js/plugin-doi'
+import '@citation-js/plugin-csl'
+import '@citation-js/plugin-bibtex';
 
 dotenv.config();
 
@@ -71,7 +75,7 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
 
 // Fetch paper details from OpenAlex API
 async function fetchPaper(title) {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,authorships,publication_year,biblio,type,primary_location&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -92,6 +96,7 @@ async function fetchPaper(title) {
 // Step 1: Process multiple titles by calling @fetchPapers
 // this is used to get author data
 // this also removes self-citations 
+// this also gets BibTeX citation using citation.js
 async function getPapers(titles, firstName, middleName, lastName) {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
@@ -99,12 +104,9 @@ async function getPapers(titles, firstName, middleName, lastName) {
     let title_not_found = 0;
     let total_papers = 0;
 
-    let fullName;
-    if (!middleName){
-        fullName = firstName + " " + lastName; 
-    } else {
-        fullName = firstName + " " + middleName + " " + lastName;
-    }
+    const fullName = middleName
+    ? `${firstName} ${middleName} ${lastName}`
+    : `${firstName} ${lastName}`;
 
     console.log(fullName);
 
@@ -123,51 +125,30 @@ async function getPapers(titles, firstName, middleName, lastName) {
             }));
 
             const doi = result.results[0]?.doi;
-            const journal = result.results[0]?.primary_location?.source?.display_name;
-            const volume = result.results[0]?.biblio?.volume;
-            const firstPage = result.results[0]?.biblio?.first_page;
-            const lastPage = result.results[0]?.biblio?.last_page;
-            const pages = firstPage && lastPage ? `${firstPage}-${lastPage}` : null;
-            const year = result.results[0]?.publication_year;
-            const type = result.results[0]?.type;
+
+            // Get BibTeX from citation.js
+            let bibtex = null;
+            try {
+                const cite = await Cite.async(doi);
+                bibtex = cite.format('bibtex');
+            } catch (err) {
+                console.error(`Failed to generate BibTeX for ${doi}:`, err);
+            }
             
-            let selfCitation = false;
+            let selfCitation = authors.some(
+                author => author.name?.toLowerCase().trim() === fullName.toLowerCase().trim()
+              );
+        
+            if (selfCitation) number_of_self_citations += 1;
 
-            for (const author of authors){
-                if (author.name.toLowerCase().trim() === fullName.toLowerCase().trim()) {
-                    selfCitation = true;
-                    number_of_self_citations += 1;
-                    break;
-                }
-            }
-
-            if (selfCitation) {
-                results.push({
-                    selfCitation: true,
-                    doi,
-                    title,
-                    matchedTitle,
-                    authors,
-                    journal,
-                    volume,
-                    pages,
-                    year,
-                    type,
-                });
-            } else {
-                results.push({
-                    selfCitation: false,
-                    doi,
-                    title,
-                    matchedTitle,
-                    authors,
-                    journal,
-                    volume,
-                    pages,
-                    year,
-                    type,
-                });
-            }
+            results.push({
+                selfCitation,
+                doi,
+                title,
+                matchedTitle,
+                authors,
+                bibtex,
+            });
         }
     }
 
