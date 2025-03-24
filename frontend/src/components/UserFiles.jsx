@@ -41,6 +41,8 @@ const UserFiles = () => {
     fetchFiles();
   }, [user]);
 
+  console.log(files);
+
   // Navigate to the results page and pass `fileName` & `userId`
   const handleSeeResults = (fileName) => {
     navigate("/results", {
@@ -62,21 +64,23 @@ const UserFiles = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border border-gray-300 px-4 py-2 text-left">Filename</th>
+                <th className="border border-gray-300 px-4 py-2 text-center">Upload Date</th>
                 <th className="border border-gray-300 px-4 py-2 text-center">Download</th>
                 <th className="border border-gray-300 px-4 py-2 text-center">See Results</th>
               </tr>
             </thead>
             <tbody>
-              {files.map(({ fileName, downloadUrl }, index) => (
+              {files.map(({ fileName, ogName, uploadDate, downloadUrl }, index) => (
                 <tr key={index} className="border border-gray-300">
-                  <td className="border border-gray-300 px-4 py-2">{fileName}</td>
+                  <td className="border border-gray-300 px-4 py-2">{ogName}</td>
+                  <td className="border border-gray-300 px-4 py-2">{uploadDate}</td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {downloadUrl ? (
                       <a
                         href={downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
+                        className="text-blue hover:underline"
                       >
                         Download
                       </a>
@@ -87,7 +91,7 @@ const UserFiles = () => {
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <button
                       onClick={() => handleSeeResults(fileName)}
-                      className="text-blue-500 hover:underline"
+                      className="text-blue hover:underline"
                     >
                       See Results
                     </button>

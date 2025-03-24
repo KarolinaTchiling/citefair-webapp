@@ -54,10 +54,10 @@ function DashBoardPage() {
 
              <div className="flex flex-row gap-6">
 
-                <div className="flex-[50%]">
+                <div className="flex-[60%]">
                   <UserFiles />
                 </div>
-                <div className="flex-[50%]">
+                <div className="flex-[40%]">
                   <FileUploadAnalysis />
                 </div>
 
