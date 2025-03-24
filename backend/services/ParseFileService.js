@@ -51,7 +51,7 @@ export async function getFileContent(fileName, userId) {
 function extractTitlesFromBib(fileContent) {
     try {
         const bibFile = parseBibFile(fileContent);
-        console.log(bibFile);
+        // console.log(bibFile);
         const entries = bibFile["entries$"];
 
         if (!entries || typeof entries !== "object") {

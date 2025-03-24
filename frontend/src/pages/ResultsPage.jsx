@@ -25,6 +25,10 @@ const ResultsPage = () => {
     const [errorMessage, setErrorMessage] = useState(null); 
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+
+    useEffect(() => {
 
         if (!userData) {
             console.error("No result data, redirecting...");
