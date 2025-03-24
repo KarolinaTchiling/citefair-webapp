@@ -89,4 +89,44 @@ router.post("/add-ref", async (req, res) => {
   }
 });
 
+router.post("/delete-ref", async (req, res) => {
+  try {
+    const { uid, fileName, title } = req.body;
+
+    if (!uid || !fileName || !title) {
+      return res.status(400).json({ error: "uid, fileName, and title are required" });
+    }
+
+    const refsPath = `users/${uid}/data/${fileName}/references`;
+    const refsSnapshot = await db.ref(refsPath).once("value");
+
+    if (!refsSnapshot.exists()) {
+      return res.status(404).json({ error: "No reference list found." });
+    }
+
+    let currentRefs = refsSnapshot.val();
+
+    if (!Array.isArray(currentRefs)) {
+      currentRefs = Object.values(currentRefs); // Normalize if it's a keyed object
+    }
+
+    // Filter out the paper with matching title
+    const updatedRefs = currentRefs.filter(ref => ref.title !== title);
+
+    // If nothing was removed
+    if (updatedRefs.length === currentRefs.length) {
+      return res.status(404).json({ error: "No matching paper found to delete." });
+    }
+
+    // Save updated reference list
+    await db.ref(refsPath).set(updatedRefs);
+
+    return res.status(200).json({ message: `Paper with title "${title}" removed from reference list.` });
+
+  } catch (error) {
+    console.error("Error deleting paper from reference list:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;

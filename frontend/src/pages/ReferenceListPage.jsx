@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar.jsx';
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,48 +16,74 @@ const ReferenceListPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // const sessionUserData = sessionStorage.getItem("userData");
-
-    useEffect(() => {
-
+    const fetchData = async () => {
         const sessionUserData = sessionStorage.getItem("userData");
-
- 
+      
         if (!sessionUserData) {
-            console.error("Missing required session data, redirecting...");
-            navigate("/");
-            return;
+          console.error("Missing required session data, redirecting...");
+          navigate("/");
+          return;
         }
-
+      
         const userData = JSON.parse(sessionUserData);
         const fileName = userData.fileName;
         const userId = userData.userId;
-
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
-                
-                if (!response.ok) {
-                    throw new Error("Failed to fetch data");
-                }
-
-                console.log(response);
-
-                const result = await response.json();
-                setData(result);
-            
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError("Failed to load reference list.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
+      
+        try {
+          const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
+      
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+      
+          const result = await response.json();
+          setData(result);
+        } catch (err) {
+          console.error("Error fetching data:", err);
+          setError("Failed to load reference list.");
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+    useEffect(() => {
         fetchData();
-    }, [navigate]);
+      }, [navigate]);
+    
 
-    console.log(data)
+    const handleDeleteReference = async (title) => {
+        const sessionUserData = sessionStorage.getItem("userData");
+        if (!sessionUserData) {
+          console.error("Missing user data");
+          return;
+        }
+      
+        const { userId, fileName } = JSON.parse(sessionUserData);
+      
+        try {
+          const response = await fetch(`${API_BASE_URL}/ref/delete-ref`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ uid: userId, fileName, title }),
+          });
+      
+          const data = await response.json();
+      
+          if (response.ok) {
+            console.log("Article deleted from reference list:", data.paper);
+            toast.success("Article deleted from reference list!");
+            fetchData();
+
+          } else {
+            console.error("Error adding reference:", data.error);
+            toast.error(data.error);
+          }
+        } catch (error) {
+          console.error("Request failed:", error);
+        }
+      };
 
 
     const papers = data || [];
@@ -88,7 +115,7 @@ const ReferenceListPage = () => {
                     ) : (
                         <div className="space-y-6 w-full max-w-4xl mb-20">
                             {papers.map((paper, index) => (
-                                <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
+                                <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30 flex flex-col">
                                     {paper.url && (
                                     <h2 className="text-2xl text-center font-semibold text-yellow-400">★★ New ★★</h2>
                                     )}
@@ -139,6 +166,12 @@ const ReferenceListPage = () => {
                                             <p className="text-gray-400">No match found.</p>
                                         )}
                                         </div>
+
+                                    <div className="self-end">
+                                        <button 
+                                        onClick={() => handleDeleteReference(paper.title)}
+                                        className="border border-gray-300 h-8 w-8 rounded-full shadow-md text-white bg-black/80 hover:bg-red hover:text-white transition duration-200">✖</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>

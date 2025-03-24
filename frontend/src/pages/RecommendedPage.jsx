@@ -101,6 +101,7 @@ const RecommendedPage = () => {
         toast.success("Article added to reference list!");
       } else {
         console.error("Error adding reference:", data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       console.error("Request failed:", error);
