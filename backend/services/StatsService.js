@@ -71,7 +71,7 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
 
 // Fetch paper details from OpenAlex API
 async function fetchPaper(title) {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,authorships,publication_year,biblio,type,primary_location&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -118,12 +118,19 @@ async function getPapers(titles, firstName, middleName, lastName) {
             title_not_found += 1;
         } else {
             const matchedTitle = result.results[0]?.display_name;
-            const doi = result.results[0]?.doi;
             const authors = (result.results[0]?.authorships || []).map(auth => ({
                 name: auth.author?.display_name
             }));
-            const relevance_score = result.results[0]?.relevance_score;
 
+            const doi = result.results[0]?.doi;
+            const journal = result.results[0]?.primary_location?.source?.display_name;
+            const volume = result.results[0]?.biblio?.volume;
+            const firstPage = result.results[0]?.biblio?.first_page;
+            const lastPage = result.results[0]?.biblio?.last_page;
+            const pages = firstPage && lastPage ? `${firstPage}-${lastPage}` : null;
+            const year = result.results[0]?.publication_year;
+            const type = result.results[0]?.type;
+            
             let selfCitation = false;
 
             for (const author of authors){
@@ -141,7 +148,11 @@ async function getPapers(titles, firstName, middleName, lastName) {
                     title,
                     matchedTitle,
                     authors,
-                    relevance_score
+                    journal,
+                    volume,
+                    pages,
+                    year,
+                    type,
                 });
             } else {
                 results.push({
@@ -150,7 +161,11 @@ async function getPapers(titles, firstName, middleName, lastName) {
                     title,
                     matchedTitle,
                     authors,
-                    relevance_score
+                    journal,
+                    volume,
+                    pages,
+                    year,
+                    type,
                 });
             }
         }
