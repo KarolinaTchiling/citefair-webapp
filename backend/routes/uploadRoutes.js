@@ -5,7 +5,7 @@ import { uploadFileToFirebase } from "../services/uploadService.js";
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/guest-upload", upload.single("file"), async (req, res) => {
+router.post("/", upload.single("file"), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 

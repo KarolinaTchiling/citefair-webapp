@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     continueAsGuest,
     signInWithGoogle,
-    isAuthenticated: !!user // True only if logged in and not a guest
+    isAuthenticated: !!user
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

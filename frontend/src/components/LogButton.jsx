@@ -9,7 +9,7 @@ const LogButton = () => {
   const navigate = useNavigate();
   const [isGuest, setIsGuest] = useState(false);
 
-  // ✅ Fetch guest status
+  // Fetch guest status
   useEffect(() => {
     const fetchGuestStatus = async () => {
       if (user?.uid) {
@@ -27,7 +27,7 @@ const LogButton = () => {
     fetchGuestStatus();
   }, [user]);
 
-  // ✅ Handle "End Session" (Delete Guest Account)
+  // Handle "End Session" (Delete Guest Account)
   const handleEndSession = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/guest/deleteGuest`, {
@@ -52,7 +52,7 @@ const LogButton = () => {
     <div>
       {user ? (
         isGuest ? (
-          // 🔹 Show "End Session" If User Is a Guest
+          // Show "End Session" If User Is a Guest
           <button
             className="px-8 py-1 text-md text-black bg-yellow font-[500] rounded-md hover:bg-yellow-600 transition duration-200"
             onClick={handleEndSession}
@@ -60,7 +60,7 @@ const LogButton = () => {
             End Session
           </button>
         ) : (
-          // 🔹 Show "Log Out" If User Is Logged In & Not a Guest
+          // Show "Log Out" If User Is Logged In & Not a Guest
           <button
             className="px-8 py-1 text-md text-white bg-red font-[500] rounded-md hover:bg-red/80 transition duration-200"
             onClick={() => logout(navigate)}
@@ -69,7 +69,7 @@ const LogButton = () => {
           </button>
         )
       ) : (
-        // 🔹 Show "Log In" If User Is Logged Out
+        // Show "Log In" If User Is Logged Out
         <button
           className="px-8 py-1 text-md text-white bg-blue font-[500] rounded-md hover:bg-blue/80 transition duration-200"
           onClick={() => navigate("/login")}

@@ -1,56 +1,77 @@
-// These service includes the entire workflow to get gender statistics from the uploaded bib
-//      downloading file from db -> extracting titles -> getting author data from Open Alex 
-//          -> labelling gender using Gender-API -> calculating gender stats 
-// All of these are run from the processBibliography function which takes a fileName and userId
-
-
-import { bucket, db } from "../firebaseConfig.js";
-import pkg from "bibtex";
+import { db } from "../firebaseConfig.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import { getTitles } from "./ParseFileService.js"
 
 dotenv.config();
 
-const { parseBibFile } = pkg;
 
-// 🔹 Step 1: Get file content from Firebase
-export const getFileContent = async (fileName, userId) => {
-    const file = bucket.file(`users/${userId}/uploads/${fileName}`);
+/**
+ * These service gets analyzes the gender statistics of a bibliography.
+ * The service starts with a list of titles preprocessed with the ParseFileService.js
+ * 
+ * PIPELINE:
+ * Get author data from Open Alex  -> labelling gender using Gender-API -> calculating gender stats 
+ * 
+ * It is used in: ../routes/StatsRoutes.js
+ */
 
-    const [exists] = await file.exists();
-    if (!exists) throw new Error(`File '${fileName}' not found for user '${userId}'`);
+// MAIN function --------------------------------------------------------------------------------
 
-    const [fileContent] = await file.download();
-    return fileContent.toString("utf-8");
-};
+// Fully Automated Bibliography Processing
+export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
+    try {
+        // Get Titles
+        const titles = await getTitles(fileName, userId);
+        
+        if (!titles || titles.length === 0) {
+            throw new Error("No titles extracted. Please check the file.");
+        }
 
-// 🔹 Step 2: Extract and process titles from the .bib file
-export const getTitles = async (fileName, userId) => {
-    const fileContent = await getFileContent(fileName, userId);
-    return extractTitlesFromBib(fileContent);
-};
+        // Get Papers Data
+        const papersData = await getPapers(titles, firstName, middleName, lastName);
+        if (!papersData || !papersData.results) {
+            throw new Error("No papers found. Unable to process bibliography.");
+        }
 
-// 🔹 Step 3: Parse .bib content and extract titles
-const extractTitlesFromBib = (fileContent) => {
-    const bibFile = parseBibFile(fileContent);
-    const entries = bibFile["entries$"];
+        const papers = papersData.results;
+        const papersWithGender = await fetchAuthorGender(papers);
 
-    if (!entries || typeof entries !== "object") {
-        throw new Error("Invalid .bib file structure.");
+        // Calculate gender statistics
+        const genderStats = calculatePercentages(papersWithGender);
+        const categoryStats = calculateCategories(papersWithGender);
+
+        // Prepare the final processed data
+        const processedData = {
+            papers: papersWithGender,
+            genders: genderStats,
+            categories: categoryStats,
+            number_of_self_citations: papersData.number_of_self_citations,
+            title_not_found: papersData.title_not_found,
+            total_papers: papersData.total_papers,
+            processedAt: new Date().toISOString(),
+        };
+
+        // **Save results to Firebase**
+        await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
+            ...processedData,
+        });
+
+        return processedData;
+
+    } catch (error) {
+        console.error("Error in processBibliography:", error.message);
+
+        // Pass the error up the chain to the route handler
+        return { error: error.message };
     }
-
-    return Object.keys(entries)
-        .map((key) => {
-            const entry = entries[key];
-            const titleData = entry.fields?.title?.data;
-            return Array.isArray(titleData) ? titleData.join("").trim() : null;
-        })
-        .filter(Boolean); // Removes null/undefined values
 };
 
-// 🔹 Step 4: Fetch paper details from OpenAlex API
-const fetchPaper = async (title) => {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,display_name,relevance_score,authorships&mailto=k.tchiling@gmail.com`;
+// FUNCTIONS ------------------------------------------------------------------------------
+
+// Fetch paper details from OpenAlex API
+async function fetchPaper(title) {
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -67,19 +88,16 @@ const fetchPaper = async (title) => {
     }
 };
 
-// Utility function to add a delay (to avoid rate limits)
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// 🔹 Step 5: Process multiple titles by fetching related papers
+// Step 1: Process multiple titles by calling @fetchPapers
 // this is used to get author data
 // this also removes self-citations 
-export const getPapers = async (titles, firstName, middleName, lastName) => {
+async function getPapers(titles, firstName, middleName, lastName) {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
     let number_of_self_citations = 0;
     let title_not_found = 0;
     let total_papers = 0;
-
 
     let fullName;
     if (!middleName){
@@ -90,8 +108,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
     console.log(fullName);
 
-    for (const [index, title] of cleanedTitles.entries()) {
-        if (index > 0) await delay(100); // 100ms delay to respect rate limits
+    for (const title of cleanedTitles) {
 
         const result = await fetchPaper(title);
         total_papers += 1;
@@ -101,6 +118,7 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
             title_not_found += 1;
         } else {
             const matchedTitle = result.results[0]?.display_name;
+            const doi = result.results[0]?.doi;
             const authors = (result.results[0]?.authorships || []).map(auth => ({
                 name: auth.author?.display_name
             }));
@@ -108,97 +126,152 @@ export const getPapers = async (titles, firstName, middleName, lastName) => {
 
             let selfCitation = false;
 
-
             for (const author of authors){
-                if (author.name == fullName){
+                if (author.name.toLowerCase().trim() === fullName.toLowerCase().trim()) {
                     selfCitation = true;
                     number_of_self_citations += 1;
                     break;
                 }
             }
 
-            if (!selfCitation) {
+            if (selfCitation) {
                 results.push({
+                    selfCitation: true,
+                    doi,
                     title,
                     matchedTitle,
                     authors,
                     relevance_score
                 });
-            } 
+            } else {
+                results.push({
+                    selfCitation: false,
+                    doi,
+                    title,
+                    matchedTitle,
+                    authors,
+                    relevance_score
+                });
+            }
         }
     }
 
     return { results, number_of_self_citations, title_not_found, total_papers };
 };
 
-// 🔹 Step 6: Fetch author gender from Gender-API
-export const fetchAuthorGender = async (papers) => {
-    const baseUrl = "https://gender-api.com/get";
+// Helper function to split an array into chunks
+function chunkArray(array, size) {
+    return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
+        array.slice(index * size, index * size + size)
+    );
+};
+
+//  Step 2: Fetch author gender from Gender-API
+async function fetchAuthorGender(papers) {
+    const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
     const apiKey = process.env.GENDER_API_KEY;
 
     if (!apiKey) {
         throw new Error("API key is missing. Make sure it is set in the .env file.");
     }
 
-    const result = []; // To store the final transformed data
-
+    // Collect all authors from all papers
+    const authorRequests = [];
+    let authorId = 1;
     for (const paper of papers) {
-        // Skip papers with errors
-        if (paper.error) {
-            console.warn(`Skipping paper: ${paper.title} (Error: ${paper.error})`);
-            result.push(paper);
-            continue;
-        }
-
-        console.log(`Processing paper: ${paper.title}`);
-
-        const authorsGender = []; // To store genders for authors in the current paper
+        if (paper.error) continue; // Skip papers with errors
 
         for (const author of paper.authors) {
-            try {
-                // Fetch gender for the author
-                const response = await fetch(
-                    `${baseUrl}?name=${encodeURIComponent(author.name)}&key=${apiKey}`
-                );
-                const genderData = await response.json();
+            authorRequests.push({
+                id: authorId.toString(), // Keep original unique ID
+                full_name: author.name.trim()
+            });
+            authorId++;
+        }
+    }
 
-                // Assign gender based on accuracy and response
-                let gender = "X"; // Default to "X" for uncertain cases
-                if (genderData.accuracy >= 70) {
-                    gender = genderData.gender === "male" ? "M" : genderData.gender === "female" ? "W" : "X";
+    if (authorRequests.length === 0) return papers;
+
+    const BATCH_SIZE = 50;
+    const batches = chunkArray(authorRequests, BATCH_SIZE);
+
+    try {
+        const genderMap = new Map(); // Store all responses across batches
+
+        for (let i = 0; i < batches.length; i++) {
+            const batch = batches[i];
+            console.log(`Processing batch ${i + 1}/${batches.length} (Size: ${batch.length})`);
+
+            const response = await fetch(baseUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(batch)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    console.error(`Gender-API Error: ${errorJson.title} - ${errorJson.detail}`);
+                } catch (e) {
+                    console.error(`Gender-API Error: ${errorText}`);
                 }
+                throw new Error(`Error fetching gender data: ${response.statusText}`);
+            }
 
-                authorsGender.push({
-                    name: author.name,
-                    gender: gender,
-                });
-            } catch (error) {
-                console.error(`Failed to fetch gender for ${author.name}:`, error);
-                authorsGender.push({
-                    name: author.name,
-                    gender: "X", // Default to "X" if an error occurs
-                });
+            const genderResults = await response.json();
+            console.log(`Received ${genderResults.length} results in batch ${i + 1}`);
+
+            // Store results in a map for easy lookup
+            for (const result of genderResults) {
+                if (result?.input?.id) {
+                    genderMap.set(result.input.id, result);
+                }
             }
         }
 
-        // Push the transformed paper object to the result array
-        result.push({
-            title: paper.title,
-            matchedTitle: paper.matchedTitle,
-            authors: authorsGender,
-            relevance_score: paper.relevance_score,
-        });
+        // Map gender results back to authors in papers
+        for (const paper of papers) {
+            if (paper.error) continue;
+
+            for (const author of paper.authors) {
+                const genderData = genderMap.get(authorRequests.find(a => a.full_name === author.name)?.id);
+
+                if (!genderData) {
+                    console.warn(`No gender data found for: ${author.name}`);
+                    author.gender = "X";  // Assign "X" if missing
+                    author.prob = 0;
+                } else {
+                    // console.log("Mapped Gender Data:", genderData);
+
+                    let gender = "X";
+                    if (genderData?.result_found) {
+                        gender = genderData.gender === "male" ? "M" : genderData.gender === "female" ? "W" : "X";
+                    }
+
+                    author.gender = gender;
+                    author.prob = genderData.probability ?? 0;  // Default to 0 if missing
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Failed to fetch batch gender data:", error);
     }
 
-    return result;
+    return papers;
 };
 
-// 🔹 Step 7: Calculate gender statistics
-export const calculatePercentages = (data) => {
+
+// Step 3: Calculate gender statistics
+function calculatePercentages(data) {
     let total = 0, countW = 0, countM = 0, countX = 0;
 
     for (const paper of data) {
         if (paper.error) continue;
+        if (paper.selfCitation) continue; // skip self citation
         for (const author of paper.authors) {
             total++;
             if (author.gender === "W") countW++;
@@ -213,12 +286,12 @@ export const calculatePercentages = (data) => {
         X: `${((countX / total) * 100).toFixed(2)}%`
     };
 };
-
-export const calculateCategories = (data) => {
+function calculateCategories(data) {
     let total = 0, countMM = 0, countMW = 0, countWM = 0, countWW = 0, countX = 0;
 
     for (const paper of data) {
         if (paper.error) continue;
+        if (paper.selfCitation) continue; // skip self citation
         const first = paper.authors[0]?.gender;
         const last = paper.authors[paper.authors.length - 1]?.gender;
 
@@ -234,32 +307,3 @@ export const calculateCategories = (data) => {
     return { MM: `${((countMM / total) * 100).toFixed(2)}%`, MW: `${((countMW / total) * 100).toFixed(2)}%`, WM: `${((countWM / total) * 100).toFixed(2)}%`, WW: `${((countWW / total) * 100).toFixed(2)}%`, X: `${((countX / total) * 100).toFixed(2)}%` };
 };
 
-// 🔹 Final Step: Fully Automated Bibliography Processing
-export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {
-    const titles = await getTitles(fileName, userId);
-    const papersData = await getPapers(titles, firstName, middleName, lastName);
-    const papers = papersData.results
-    const papersWithGender = await fetchAuthorGender(papers);
-
-    // Calculate gender statistics
-    const genderStats = calculatePercentages(papersWithGender);
-    const categoryStats = calculateCategories(papersWithGender);
-
-    // Prepare the final processed data
-    const processedData = {
-        papers: papersWithGender,
-        genders: genderStats,
-        categories: categoryStats,
-        number_of_self_citations: papersData.number_of_self_citations,
-        title_not_found: papersData.title_not_found,
-        total_papers: papersData.total_papers,
-        processedAt: new Date().toISOString(),
-    };
-
-    // **Save results to Firebase**
-    await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
-        ...processedData,
-    });
- 
-    return processedData;
-};

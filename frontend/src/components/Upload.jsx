@@ -11,11 +11,11 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     // Handle file input change
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
-        if (selectedFile && selectedFile.name.endsWith(".bib")) {
+        if (selectedFile && selectedFile.name.endsWith(".bib") || selectedFile.name.endsWith(".txt")) {
             setFile(selectedFile);
             setUploadStatus(""); // Clear previous status
         } else {
-            setUploadStatus("Please upload a valid .bib file");
+            setUploadStatus("Please upload a valid .bib or .txt file");
         }
     };
 
@@ -34,7 +34,7 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
             formData.append("file", file);
             formData.append("userId", user.uid); // Send only userId
 
-            const response = await fetch(`${API_BASE_URL}/upload/guest-upload`, {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: "POST",
                 body: formData,
             });
@@ -58,11 +58,14 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
     return (
         <div className="mb-4">
             <label htmlFor="fileInput" className="block text-sm font-medium text-gray-700 mb-2">
-                Upload your .bib file:
+                Upload your .bib or .txt file:
+            </label>
+            <label htmlFor="fileInput" className="block text-sm font-medium text-red mb-2">
+                Note: CiteFairly currently has limited parsing functionality for .txt files. It can correctly parse .txt files that follow the IEEE Referencing Style or where only titles are enclosed in double quotes (""). For other reference styles, consider converting your bibliography to a .bib file format for better compatibility.
             </label>
             <input
                 type="file"
-                accept=".bib"
+                accept=".bib,.txt"
                 onChange={handleFileChange}
                 id="fileInput"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

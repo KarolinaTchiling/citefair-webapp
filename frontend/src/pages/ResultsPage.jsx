@@ -22,7 +22,7 @@ const ResultsPage = () => {
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, steError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null); 
 
     useEffect(() => {
 
@@ -50,7 +50,8 @@ const ResultsPage = () => {
                         setLoading(false);
                         return;
                     }
-                }
+                } 
+
             } catch (error) {
                 console.warn("No stored data found, processing new request...");
             }
@@ -64,17 +65,17 @@ const ResultsPage = () => {
                     },
                     body: JSON.stringify(userData),
                 });
-        
+                
+                const result = await response.json(); 
                 if (!response.ok) {
-                    throw new Error("Failed to fetch data");
+                    throw new Error(result.error || "An unknown error occurred.");
                 }
         
-                const result = await response.json(); 
                 setData(result); //store data in state
         
             } catch (error) {
                 console.error("Error:", error);
-                steError(error.message);
+                setErrorMessage(error.message);;
             } finally {
                 setLoading(false);
             }
@@ -92,15 +93,6 @@ const ResultsPage = () => {
             }))
         : [];
 
-    // Define colors for each gender category
-    const colors1 = ["#29C2E0", "#FF6384", "#E0E0E0"]; // W (Pink), M (Blue), X (Grey)
-
-    const genderLabels = {
-        W: "Women Authors",
-        M: "Men Authors",
-        X: "Unknown Gender",
-    };
-
     // Convert gender distribution data to a format that Recharts can use
     const catData = data?.categories
         ? Object.entries(data.categories).map(([categories, percentage]) => ({
@@ -108,24 +100,23 @@ const ResultsPage = () => {
                 value: parseFloat(percentage), // Convert percentage string to a number
             }))
         : [];
+
+    const authorMap = {
+        W: { label: "Women Authors", color: "#FF6384" }, // Pink
+        M: { label: "Men Authors", color: "#29C2E0" },   // Blue
+        X: { label: "Unknown", color: "#E0E0E0" }, // Grey
     
-
-    // Define colors for each gender category
-    const colors2 = ["#29C2E0", "#FFCE56", "#AD85FF", "#FF6384", "#E0E0E0"]; // MM (Blue), MW (Yellow), MW (Purple), WW (Pink), X (Grey)
-
-    const catLabels = {
-        MM: "First and last authors are men",
-        MW: "Man first author and woman last author",
-        WM: "Woman first author and man last author",
-        WW: "First and last authors are women",
-        X: "Unknown Category",
+        MM: { label: "First and last authors are men", color: "#29C2E0" },  // Blue
+        MW: { label: "Man first author and woman last author", color: "#FFCE56" },  // Yellow
+        WM: { label: "Woman first author and man last author", color: "#AD85FF" },  // Purple
+        WW: { label: "First and last authors are women", color: "#FF6384" },  // Pink
     };
-
+    
+    
 
     return (
         <div className="flex flex-col">
             <Navbar />
-            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
             <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
 
@@ -145,10 +136,23 @@ const ResultsPage = () => {
                 
                     </>
                     
-                    ) : error ? (
-                        <p className="text-white text-lg bg-red-600 p-3 rounded-md">Error: {error}</p>
-                    ) : (
+                    ) : errorMessage ? (
                         <>
+                        <div className="flex flex-col items-center justify-center">
+                            <p className="text-6xl text-white font-semibold text-center pt-28">Uh-Oh!</p>
+                            <p className="text-4xl text-white font-semibold text-center pt-6 pb-12">{errorMessage}</p>
+                            <button
+                                className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
+                                onClick={() => window.history.back()}>
+                                Try Again
+                            </button>
+                        </div>
+                        </>
+                        
+                    ) : (
+                        
+                        <>
+                        <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
                         {/* Heading Section (20% of screen height) */}
                         <div className="h-[20vh] flex items-center justify-center">
                         <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
@@ -178,7 +182,7 @@ const ResultsPage = () => {
                                     <div className="mt-6 p-4 bg-indigo rounded-md">
                                         <h2 className="text-2xl text-white text-center font-semibold pb-2">Gender Distribution of all Authors</h2>
                                         {genderData.length > 0 ? (
-                                            <ResponsiveContainer width={400} height={330}>
+                                            <ResponsiveContainer width="100%" height={330}>
                                                 <PieChart>
                                                     <Pie
                                                         data={genderData}
@@ -191,12 +195,15 @@ const ResultsPage = () => {
                                                         dataKey="value"
                                                     >
                                                         {genderData.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={colors1[index % colors1.length]} />
+                                                            <Cell 
+                                                                key={`cell-${index}`} 
+                                                                fill={authorMap[entry.name]?.color || "#000000"} // Use color from authorMap
+                                                            />
                                                         ))}
                                                     </Pie>
                                                     <Tooltip />
                                                     <Legend
-                                                        formatter={(value) => genderLabels[value] || value} 
+                                                        formatter={(value) => authorMap[value]?.label || value}
                                                     />
                                                 </PieChart>
                                             </ResponsiveContainer>
@@ -208,7 +215,7 @@ const ResultsPage = () => {
                                     <div className="mt-6 p-4 bg-indigo rounded-md">
                                         <h2 className="text-2xl text-white text-center font-semibold pb-2">Distribution of Gender Categories</h2>
                                         {catData.length > 0 ? (
-                                            <ResponsiveContainer width={400} height={400}>
+                                            <ResponsiveContainer width="100%" height={400}>
                                                 <PieChart>
                                                     <Pie
                                                         data={catData}
@@ -221,12 +228,15 @@ const ResultsPage = () => {
                                                         dataKey="value"
                                                     >
                                                         {catData.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={colors2[index % colors2.length]} />
+                                                            <Cell 
+                                                                key={`cell-${index}`} 
+                                                                fill={authorMap[entry.name]?.color || "#000000"} // Use color from authorMap
+                                                            />
                                                         ))}
                                                     </Pie>
                                                     <Tooltip />
                                                     <Legend
-                                                        formatter={(value) => catLabels[value] || value} 
+                                                        formatter={(value) => authorMap[value]?.label || value}
                                                     />
                                                 </PieChart>
                                             </ResponsiveContainer>

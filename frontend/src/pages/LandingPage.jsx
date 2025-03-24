@@ -81,7 +81,7 @@ function LandingPage() {
                 number: "1",
                 title: "Upload your reference list",
                 caption:
-                  "Upload your reference list file. CiteFairly accepts .bib, .ris, .enw, .txt, and .xml.",
+                  "Upload your reference list file. CiteFairly accepts .bib and .txt.",
               },
               {
                 number: "2",

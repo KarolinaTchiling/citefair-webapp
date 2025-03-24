@@ -4,10 +4,18 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 
+/**
+ * This service includes the entire workflow to get related papers.
+ * It is used in: ../routes/RelatedWorksRoutes.js
+ */
+
+// MAIN function ----------------------------------------------------------------------------
+// 1. getting dois from the realtime DB
+// 2. calls Sematic Scholar Recommendation API
+// 3. labels related papers with Gender-API
 export const getRelatedWorks = async (fileName, userId) => {
-    const titles = await getTitles(fileName, userId);
-    const ss_ids = await getIds(titles);
-    const related_papers = await fetchRecommendedPapers(50, ss_ids);
+    const dois = await getDois(fileName, userId);
+    const related_papers = await fetchRecommendedPapers(50, dois);
     const result = await fetchAuthorGender(related_papers);
 
     // Save results to Realtime Database
@@ -20,78 +28,39 @@ export const getRelatedWorks = async (fileName, userId) => {
     return result;
 };
 
-async function getTitles (fileName, userId)  {
-    let data;
-    try {
-      // Use the Realtime Database API to get the data snapshot
-      const dataRef = db.ref(`users/${userId}/data/${fileName}/processedBib`);
-      const snapshot = await dataRef.once("value");
-      data = snapshot.val();
-      if (!data) {
-        throw new Error("No data found at processedBib");
-      }
-    } catch (error) {
-      console.error("Error retrieving field value:", error);
-      throw error;
-    }
-  
-    const titles = data.papers.map(paper => paper.title);
-    // console.log(titles);
-    return titles;
-};
+// FUNCTIONS -------------------------------------------------------------------------------------
 
-async function fetchPaperByTitle(title) {
-    const apiUrl = `https://api.semanticscholar.org/graph/v1/paper/search/match?query=${encodeURIComponent(title)}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-  
-    try {
-      const response = await fetch(apiUrl, { headers });
-  
-      if (response.status === 404) {
-        console.log(`No match found for title: "${title}"`);
-        return { title, error: "Title match not found" };
+// 1. gets DOIs from realtime DB
+async function getDois(fileName, userId) {
+  console.log("Fetching DOIs for file:", fileName);
+
+  const ref = db.ref(`users/${userId}/data/${fileName}/processedBib/papers`);
+  const snapshot = await ref.once("value");
+
+  if (snapshot.exists()) {
+    const papers = snapshot.val();
+    const dois = [];
+
+    // Iterate over all papers and collect DOIs if they exist
+    Object.values(papers).forEach((paper) => {
+      if (paper.doi) {
+        const formattedDOI = `doi:${paper.doi.replace(/^https:\/\/doi\.org\//, "")}`;
+        dois.push(formattedDOI);
       }
-  
-      if (!response.ok) {
-        console.error(`Error fetching data for title "${title}":`, response.statusText);
-        return { title, error: response.statusText };
-      }
-  
-      const data = await response.json();
-      console.log(`Raw API response for "${title}":`, data);
-  
-      // Return the first result from the API
-      const bestMatch = data.data[0];
-      return {
-        title, // Original query title
-        paperId: bestMatch.paperId,
-        matchedTitle: bestMatch.title,
-        matchScore: bestMatch.matchScore,
-      };
-    } catch (error) {
-      console.error(`Error processing title "${title}":`, error.message);
-      return { title, error: error.message };
-    }
+    });
+
+    return dois;
   }
 
-// Get all response data from semantic scholar - but return only paper ids
-async function getIds(titles) {
-    const results = [];
-    for (const title of titles) {
-        const result = await fetchPaperByTitle(title);
-        if (result.paperId) {
-        results.push(result.paperId); // Append only the paperId
-        } else {
-        // console.warn(`No paperId found for title: "${title}"`);
-        }
-    }
-    return results;
+  console.log("No DOIs found.");
+  return [];
 }
 
-// Function to call the Semantic Scholar Recommendations API
+
+// 2. Call the Semantic Scholar Recommendations API 
 async function fetchRecommendedPapers(limit = 5, positivePaperIds = [], negativePaperIds = []) {
+    console.log("Calling Semantic Scholar with the following positive papers....")
+    console.log(positivePaperIds);
     const apiUrl = "https://api.semanticscholar.org/recommendations/v1/papers/";
     const params = new URLSearchParams({
       fields: "title,url,publicationDate,authors,citationCount",
@@ -124,62 +93,93 @@ async function fetchRecommendedPapers(limit = 5, positivePaperIds = [], negative
     }
   }
 
+// Helper function to split an array into chunks
+const chunkArray = (array, size) => {
+  return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
+      array.slice(index * size, index * size + size)
+  );
+};
+
+// 3.  label the related papers with genders in batches of 50
 async function fetchAuthorGender(data) {
-    const baseUrl = "https://gender-api.com/get";
-    const apiKey = process.env.GENDER_API_KEY;
-  
-    if (!apiKey) {
+  const baseUrl = "https://gender-api.com/v2/gender/by-full-name-multiple";
+  const apiKey = process.env.GENDER_API_KEY;
+
+  if (!apiKey) {
       throw new Error("API key is missing. Make sure it is set in the .env file.");
-    }
-  
-    const result = []; // To store the final transformed data
-  
-    for (const paper of data.recommendedPapers) {
-      console.log(`Labelling Gender for paper: ${paper.paperId}`);
-  
-      const authorsGender = []; // To store genders for authors in the current paper
-  
+  }
+
+  // Collect all authors from recommended papers
+  const authorRequests = [];
+  for (const paper of data.recommendedPapers) {
       for (const author of paper.authors) {
-        // const firstName = author.name.split(" ")[0]; // Extract first name from full name
-  
-        try {
-          const response = await fetch(
-            `${baseUrl}?name=${encodeURIComponent(author.name)}&key=${apiKey}`
-          );
-          const genderData = await response.json();
-  
-          // Check gender and accuracy, and assign M, W, or X
-          if (genderData.accuracy >= 70) {
-            if (genderData.gender === "male") {
-              authorsGender.push({ ...author, gender: "M" });
-            } else if (genderData.gender === "female") {
-              authorsGender.push({ ...author, gender: "W" });
-            } else {
-              authorsGender.push({ ...author, gender: "X" }); // Handle unexpected gender responses
-            }
-          } else {
-            authorsGender.push({ ...author, gender: "X" });
-          }
-        } catch (error) {
-          console.error(`Failed to fetch gender for ${author.name}:`, error);
-          authorsGender.push({ ...author, gender: "X" }); // Default to "X" if an error occurs
-        }
+          authorRequests.push({
+              id: author.name, // Use author's full name as unique ID
+              full_name: author.name.trim()
+          });
       }
-  
-      // Push the transformed paper object to the result array
-      result.push({
-        paperId: paper.paperId,
-        title: paper.title,
-        url: paper.url,
-        citationCount: paper.citationCount,
-        publicationDate: paper.publicationDate,
-        authors: authorsGender,
-      });
-    }
-    console.log(result);
-    return result; // Return the transformed data structure
+  }
+
+  if (authorRequests.length === 0) return { recommendedPapers: data.recommendedPapers }; // No authors to process
+
+  const BATCH_SIZE = 50; // API limit per request
+  const batches = chunkArray(authorRequests, BATCH_SIZE);
+  const genderMap = new Map(); // Store results for fast lookup
+
+  try {
+      for (const batch of batches) {
+          console.log(`Processing batch of ${batch.length} author names...`);
+
+          const response = await fetch(`${baseUrl}?key=${apiKey}`, {
+              method: "POST",
+              headers: { 
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${apiKey}` 
+              },
+              body: JSON.stringify(batch)
+          });
+
+          if (!response.ok) {
+              const errorText = await response.text();
+              try {
+                  const errorJson = JSON.parse(errorText);
+                  console.error(`Gender-API Error: ${errorJson.title} - ${errorJson.detail}`);
+              } catch (e) {
+                  console.error(`Gender-API Error: ${errorText}`);
+              }
+              throw new Error(`Error fetching gender data: ${response.statusText}`);
+          }
+
+          const genderResults = await response.json();
+          console.log(`Received ${genderResults.length} results`);
+
+          // Store results in a map for easy lookup
+          for (const result of genderResults) {
+              if (result?.input?.full_name) {
+                  genderMap.set(result.input.full_name, result);
+              }
+          }
+      }
+        return data.recommendedPapers.map(paper => ({
+          paperId: paper.paperId,
+          title: paper.title,
+          url: paper.url,
+          citationCount: paper.citationCount,
+          publicationDate: paper.publicationDate,
+          authors: paper.authors.map(author => {
+              const genderData = genderMap.get(author.name.trim());
+              return {
+                  name: author.name,
+                  gender: genderData?.result_found
+                      ? (genderData.gender === "male" ? "M" : genderData.gender === "female" ? "W" : "X")
+                      : "X",
+                  prob: genderData?.probability ?? 0
+              };
+          })
+      }));
+  } catch (error) {
+      console.error("Failed to fetch batch gender data:", error);
+      return data.recommendedPapers; // Return original data if API fails
+  }
 }
-
-
-
 
