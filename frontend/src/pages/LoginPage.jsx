@@ -14,6 +14,7 @@ const LoginPage = () => {
   const { login, signInWithGoogle  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
 
@@ -25,6 +26,7 @@ const LoginPage = () => {
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error.message);
+      setError("Incorrect credentials, try again."); 
     }
   };
 
@@ -69,7 +71,15 @@ const LoginPage = () => {
                 required
                 className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              
+              {error && (
+              <div className="text-red p-1">
+                {error}
+              </div>
+              )}
+              
             </div>
+
 
             <div className="flex flex-row items-center justify-between mx-3">
 
