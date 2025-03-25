@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import DashBoardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
-import RelatedPage from './pages/RelatedPage';
+import RecommendedPage from './pages/RecommendedPage';
 import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
 import './input.css';
 import { useAuth } from "./AuthContext";
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <div>
+      <Toaster position="bottom-right" reverseOrder={false} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -43,10 +45,10 @@ function App() {
           }
         />
         <Route
-          path="/related"
+          path="/recommended"
           element={
             <PrivateRoute>
-              <RelatedPage />
+              <RecommendedPage />
             </PrivateRoute>
           }
         />

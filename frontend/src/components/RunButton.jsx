@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
 const RunButton = ({ fileName, firstName, middleName, lastName, disabled }) => {
-    const navigate = useNavigate(); // Access the navigate function
+    const navigate = useNavigate(); 
     const { user } = useAuth();
 
     const handleClick = () => {

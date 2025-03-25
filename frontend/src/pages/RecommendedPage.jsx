@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
 import Sidebar from "../components/Sidebar.jsx";
-import Footer from "../components/Footer";
-import Loader from "../components/Loader";
-import Typewriter from "../components/TypewriterRelated";
+import Footer from "../components/Footer.jsx";
+import Loader from "../components/Loader.jsx";
+import Typewriter from "../components/TypewriterRelated.jsx";
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const RelatedPage = () => {
+const RecommendedPage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -16,6 +17,7 @@ const RelatedPage = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cleanName, setCleanName] = useState(null);
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
@@ -30,6 +32,8 @@ const RelatedPage = () => {
       return;
     }
     const { fileName, userId } = JSON.parse(sessionUserData);
+    const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+    setCleanName(cleanedName);
 
     const fetchData = async () => {
       // Try GET request first
@@ -74,6 +78,38 @@ const RelatedPage = () => {
 
     fetchData();
   }, [navigate]);
+
+  const handleAddReference = async (paperId) => {
+    const sessionUserData = sessionStorage.getItem("userData");
+    if (!sessionUserData) {
+      console.error("Missing user data");
+      return;
+    }
+  
+    const { userId, fileName } = JSON.parse(sessionUserData);
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/ref/add-ref`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: userId, fileName, paperId }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log("Paper added to reference list:", data.paper);
+        toast.success("Article added to reference list!");
+      } else {
+        console.error("Error adding reference:", data.error);
+        toast.error(data.error);
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+    }
+  };
 
   // Filter the data based on selected filter options.
   const filteredData = data.filter((paper) => {
@@ -126,9 +162,34 @@ const RelatedPage = () => {
           <>
             <div className="h-[13vh] flex items-center justify-center">
               <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                Related Articles
+                Recommended Articles - {cleanName}
               </h1>
             </div>
+            
+            <div className="text-md text-white text-center w-full max-w-5xl pb-8 px-4 flex flex-col gap-6">
+              <p>
+                The following articles are recommended by <span className="font-semibold">Semantic Scholar</span> based on their relevance to the papers in your reference list. These suggestions are generated using citation networks, content similarity, and co-authorship patterns. All articles have been published within the last 60 days, and author genders have been labeled using <span className="font-semibold">Gender-API</span>.
+              </p>
+
+              <div className="bg-white/10 rounded-lg p-4 text-left">
+                <h3 className="text-lg font-semibold text-yellow mb-2">How to Use:</h3>
+                <ul className="list-disc list-inside space-y-2 text-sm text-white">
+                  <li>
+                    Use the filters below to highlight articles by specific gender categories and discover new publications authored by women.
+                  </li>
+                  <li>
+                    Click the <span className="font-bold text-yellow"> &nbsp;+&nbsp; </span> button in the bottom right of each paper to add it to your reference list.
+                  </li>
+                  <li>
+                    Open the collapsible drawer to left and select <span className="italic text-yellow">&nbsp;"Reference List" &nbsp;</span> to view or edit your reference list.
+                  </li>
+                  <li>
+                    From there, export your updated references as a BibTeX file and re-run <span className="font-semibold text-yellow">&nbsp;CiteFairly&nbsp;</span> to generate an updated citation analysis and diversity statement.
+                  </li>
+                </ul>
+              </div>
+            </div>
+    
 
             {/* Filter Options */}
             <div className="flex gap-8 mb-6">
@@ -171,44 +232,51 @@ const RelatedPage = () => {
                 {filteredData.map((paper, index) => (
                   <div
                     key={index}
-                    className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30"
+                    className="flex flex-col justify-between border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30"
                   >
-                    <h2 className="text-lg font-semibold">{paper.title}</h2>
-                    <p className="mt-2 text-sm">
-                      Publication Date: {paper.publicationDate || "N/A"}
-                    </p>
-                    <a
-                      href={paper.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-2 text-blue-300 underline block"
-                    >
-                      View Paper
-                    </a>
-                    <div className="mt-3">
-                      <p className="font-medium">Authors:</p>
-                      {paper.authors && paper.authors.length > 0 ? (
-                        <ul className="list-disc list-inside">
-                          {paper.authors.map((author, idx) => (
-                            <li key={idx}>
-                                <span
-                                    className={`text-sm ${
-                                        author.gender === "M"
-                                            ? "text-[#29C2E0]"
-                                            : author.gender === "W"
-                                            ? "text-[#FF6384]"
-                                            : "text-gray-400"
-                                    }`}
-                                >
-                                    {author.name} - {author.gender} ({author.prob})
-                                </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-gray-400">No authors info.</p>
-                      )}
+                    <div>
+                      <h2 className="text-lg font-semibold">{paper.title}</h2>
+                      <a
+                        href={paper.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 text-blue-300 underline block"
+                      >
+                        View Paper
+                      </a>
+                      <div className="mt-3">
+                        <p className="font-medium">Authors:</p>
+                        {paper.authors && paper.authors.length > 0 ? (
+                          <ul className="list-disc list-inside">
+                            {paper.authors.map((author, idx) => (
+                              <li key={idx}>
+                                  <span
+                                      className={`text-sm ${
+                                          author.gender === "M"
+                                              ? "text-[#29C2E0]"
+                                              : author.gender === "W"
+                                              ? "text-[#FF6384]"
+                                              : "text-gray-400"
+                                      }`}
+                                  >
+                                      {author.name} - {author.gender} ({author.prob})
+                                  </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-400">No authors info.</p>
+                        )}
+                      </div>
                     </div>
+
+
+                    <div className="self-end font-semibold -mt-8">
+                      <button 
+                      onClick={() => handleAddReference(paper.paperId)}
+                      className="border border-gray-300 h-10 w-10 rounded-full shadow-md text-white bg-black/80 hover:bg-yellow hover:text-black transition duration-200">+</button>
+                    </div>
+
                   </div>
                 ))}
               </div>
@@ -222,4 +290,4 @@ const RelatedPage = () => {
   );
 };
 
-export default RelatedPage;
+export default RecommendedPage;

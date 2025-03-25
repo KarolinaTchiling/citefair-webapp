@@ -2,6 +2,10 @@ import { db } from "../firebaseConfig.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { getTitles } from "./ParseFileService.js"
+import { Cite } from '@citation-js/core'
+import '@citation-js/plugin-doi'
+import '@citation-js/plugin-csl'
+import '@citation-js/plugin-bibtex';
 
 dotenv.config();
 
@@ -37,6 +41,9 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
         const papers = papersData.results;
         const papersWithGender = await fetchAuthorGender(papers);
 
+        // Save papers to references in firebase
+        await db.ref(`users/${userId}/data/${fileName}/references`).set(papersWithGender);
+
         // Calculate gender statistics
         const genderStats = calculatePercentages(papersWithGender);
         const categoryStats = calculateCategories(papersWithGender);
@@ -71,7 +78,7 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
 
 // Fetch paper details from OpenAlex API
 async function fetchPaper(title) {
-    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,relevance_score,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
+    const apiURL = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(title)}&per_page=1&select=id,doi,display_name,authorships&mailto=citefairly@gmail.com&api_key=${process.env.OPEN_ALEX_API_KEY}`;
     
     try {
         console.log(`Fetching data for title: "${title}"`);
@@ -88,10 +95,50 @@ async function fetchPaper(title) {
     }
 };
 
+/**
+ * Gets BibTeX from DOI or falls back to Semantic Scholar search
+ * @param {string} title - The paper title
+ * @param {string|null} doi - The paper DOI (can be null)
+ * @returns {Promise<string|null>} - BibTeX string or null
+ */
+export async function getBibtex(title, doi) {
+    let bibtex = null;
+  
+    if (!doi) {
+      // Fallback: Try Semantic Scholar
+      try {
+        const ssRes = await fetch(
+          `https://api.semanticscholar.org/graph/v1/paper/search/match?query=${encodeURIComponent(title)}&fields=citationStyles`
+        );
+        const ssData = await ssRes.json();
+  
+        const citation = ssData?.data?.[0]?.citationStyles?.bibtex;
+        if (citation) {
+          bibtex = citation;
+        } else {
+          console.warn(`No BibTeX found in Semantic Scholar for: ${title}`);
+        }
+      } catch (error) {
+        console.error("Semantic Scholar fallback failed:", error);
+      }
+    } else {
+      // Use Citation.js to fetch BibTeX from DOI
+      try {
+        const cite = await Cite.async(doi);
+        bibtex = cite.format("bibtex");
+      } catch (err) {
+        console.error(`Failed to generate BibTeX for DOI ${doi}:`, err);
+      }
+    }
+  
+    return bibtex;
+};
+
 
 // Step 1: Process multiple titles by calling @fetchPapers
 // this is used to get author data
 // this also removes self-citations 
+// this also gets BibTeX citation using citation.js or semantic scholar 
 async function getPapers(titles, firstName, middleName, lastName) {
     const results = [];
     const cleanedTitles = titles.map(title => title.replace(/,/g, "")); // Remove commas
@@ -99,12 +146,9 @@ async function getPapers(titles, firstName, middleName, lastName) {
     let title_not_found = 0;
     let total_papers = 0;
 
-    let fullName;
-    if (!middleName){
-        fullName = firstName + " " + lastName; 
-    } else {
-        fullName = firstName + " " + middleName + " " + lastName;
-    }
+    const fullName = middleName
+    ? `${firstName} ${middleName} ${lastName}`
+    : `${firstName} ${lastName}`;
 
     console.log(fullName);
 
@@ -118,41 +162,27 @@ async function getPapers(titles, firstName, middleName, lastName) {
             title_not_found += 1;
         } else {
             const matchedTitle = result.results[0]?.display_name;
-            const doi = result.results[0]?.doi;
             const authors = (result.results[0]?.authorships || []).map(auth => ({
                 name: auth.author?.display_name
             }));
-            const relevance_score = result.results[0]?.relevance_score;
 
-            let selfCitation = false;
+            const doi = result.results[0]?.doi;
+            const bibtex = await getBibtex(title, doi);
 
-            for (const author of authors){
-                if (author.name.toLowerCase().trim() === fullName.toLowerCase().trim()) {
-                    selfCitation = true;
-                    number_of_self_citations += 1;
-                    break;
-                }
-            }
+            let selfCitation = authors.some(
+                author => author.name?.toLowerCase().trim() === fullName.toLowerCase().trim()
+              );
+        
+            if (selfCitation) number_of_self_citations += 1;
 
-            if (selfCitation) {
-                results.push({
-                    selfCitation: true,
-                    doi,
-                    title,
-                    matchedTitle,
-                    authors,
-                    relevance_score
-                });
-            } else {
-                results.push({
-                    selfCitation: false,
-                    doi,
-                    title,
-                    matchedTitle,
-                    authors,
-                    relevance_score
-                });
-            }
+            results.push({
+                selfCitation,
+                doi,
+                title,
+                matchedTitle,
+                authors,
+                bibtex,
+            });
         }
     }
 

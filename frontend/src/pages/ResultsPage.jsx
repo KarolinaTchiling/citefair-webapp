@@ -23,6 +23,11 @@ const ResultsPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null); 
+    const [cleanName, setCleanName] = useState(null);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
 
     useEffect(() => {
 
@@ -36,6 +41,9 @@ const ResultsPage = () => {
         sessionStorage.setItem("userData", JSON.stringify(userData));
 
         const { fileName, userId } = userData;
+
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
 
         const fetchData = async () => {
             // Step 1: Check if data exists in Firebase
@@ -118,7 +126,7 @@ const ResultsPage = () => {
         <div className="flex flex-col">
             <Navbar />
 
-            <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center h-[calc(100vh-64px)]">
+            <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center min-h-[calc(100vh-64px)]">
 
                 {loading ? (
                     <>
@@ -154,9 +162,9 @@ const ResultsPage = () => {
                         <>
                         <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
                         {/* Heading Section (20% of screen height) */}
-                        <div className="h-[20vh] flex items-center justify-center">
+                        <div className="h-[12vh] flex items-center justify-center">
                         <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                            Your Citation Analysis Results
+                            Your Citation Analysis Results - {cleanName}
                         </h1>
                         </div>
 

@@ -51,8 +51,15 @@ router.post("/files", async (req, res) => {
     const fileNames = userData.data ? Object.keys(userData.data) : [];
     const filesWithLinks = [];
 
-    // Fetch download URLs for each file
+    // Fetch download URLs and upload dates for each file
     for (const fileName of fileNames) {
+
+      const fileData = userData.data[fileName];
+      const rawDate = fileData.metadata.uploadedAt;
+      const uploadDate = new Date(rawDate).toLocaleString();
+      
+      const name = fileData.metadata.originalFileName;
+    
       const filePath = `users/${uid}/uploads/${fileName}`; // Adjust as per your storage structure
       const file = bucket.file(filePath);
 
@@ -62,17 +69,21 @@ router.post("/files", async (req, res) => {
         // Generate a signed URL for the file
         const [url] = await file.getSignedUrl({
           action: "read",
-          expires: Date.now() + 60 * 60 * 1000, // Link expires in 1 hour
+          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // Link expires in 7 days
         });
 
         filesWithLinks.push({
           fileName,
+          ogName: name,
           downloadUrl: url,
+          uploadDate: uploadDate,
         });
       } else {
         filesWithLinks.push({
           fileName,
+          ogName: name,
           downloadUrl: null, // Indicate that the file doesn't have a valid link
+          uploadDate: uploadDate,
         });
       }
     }

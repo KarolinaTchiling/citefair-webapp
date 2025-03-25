@@ -99,8 +99,8 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
 
             <button 
               className="w-full text-left transition duration-300 hover:scale-105"
-              onClick={() => navigate('/related')}>
-                Related Articles
+              onClick={() => navigate('/recommended')}>
+                Recommended Articles
             </button>
             
             <button 

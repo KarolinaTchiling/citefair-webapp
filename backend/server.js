@@ -6,12 +6,17 @@ import statementRoutes from "./routes/StatementRoutes.js";
 import relatedWorksRoutes from "./routes/RelatedWorksRoutes.js";
 import guestRoutes from "./routes/GuestRoutes.js";
 import userRoutes from "./routes/UserRoutes.js";
+import referencesRoutes from "./routes/ReferencesRoutes.js";
 
 import testingRoutes from "./routes/TestingRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "*", 
+    credentials: true,
+    exposedHeaders: ["Content-Disposition"] 
+  }));
 app.use(express.json());
 
 // Basic route (like CiteFairly API)
@@ -26,6 +31,7 @@ app.get("/", (req, res) => {
             related: "/related",
             guest: "/guest",
             user: "/user",
+            references: "/ref",
             test: "/test"
         }
     });
@@ -38,6 +44,7 @@ app.use("/cds", statementRoutes);
 app.use("/related", relatedWorksRoutes);
 app.use("/guest", guestRoutes);
 app.use("/user", userRoutes);
+app.use("/ref", referencesRoutes);
 
 app.use("/test", testingRoutes);
 
