@@ -12,7 +12,11 @@ import testingRoutes from "./routes/TestingRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "*", 
+    credentials: true,
+    exposedHeaders: ["Content-Disposition"] 
+  }));
 app.use(express.json());
 
 // Basic route (like CiteFairly API)

@@ -62,7 +62,7 @@ const ReferenceListPage = () => {
       
         try {
           const response = await fetch(`${API_BASE_URL}/ref/delete-ref`, {
-            method: "POST",
+            method: "DELETE",
             headers: {
               "Content-Type": "application/json",
             },
@@ -84,7 +84,61 @@ const ReferenceListPage = () => {
           console.error("Request failed:", error);
         }
       };
+    
 
+      const handleDownloadReference = async () => {
+        const sessionUserData = sessionStorage.getItem("userData");
+        if (!sessionUserData) {
+          console.error("Missing user data");
+          return;
+        }
+      
+        const { userId, fileName } = JSON.parse(sessionUserData);
+      
+        try {
+          const response = await fetch(`${API_BASE_URL}/ref/download-ref`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ uid: userId, fileName }),
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(errorData.error || "Failed to export references.");
+            return;
+          }
+      
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+      
+          let versionedFileName = "references.bib";
+          const contentDisposition = response.headers.get("Content-Disposition");
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+            if (filenameMatch && filenameMatch[1]) {
+              versionedFileName = filenameMatch[1];
+            }
+          }
+      
+          console.log("⬇Downloading as:", versionedFileName);
+      
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = versionedFileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+      
+          toast.success(`Downloaded ${versionedFileName}!`);
+        } catch (error) {
+          console.error("Request failed:", error);
+          toast.error("Something went wrong while exporting the file.");
+        }
+      };
+      
 
     const papers = data || [];
 
@@ -107,6 +161,36 @@ const ReferenceListPage = () => {
                     <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
                         Your References
                     </h1>
+                </div>
+                <div className="text-md text-white text-center w-full max-w-4xl flex flex-col gap-6">
+                    <p>
+                        The following is your reference list. It includes all the references from your originally uploaded bibliography, along with any additional articles you've added from the Recommended Articles page.
+                    </p>
+
+                    <div className="bg-white/10 rounded-lg p-4 text-left">
+                        <h3 className="text-lg font-semibold text-yellow mb-2">How to Use:</h3>
+                        <ul className="list-disc list-inside space-y-2 text-sm text-white">
+                        <li>
+                            Click the <span className="font-bold text-yellow">&nbsp;✖&nbsp;</span> button at the bottom right of any paper to remove it from your reference list.
+                        </li>
+                        <li>
+                            Open the collapsible drawer on the left and select <span className="italic text-yellow">&nbsp;"Recommended Articles"&nbsp;</span> to add more references. Newly added articles will appear at the bottom of this list with a <span className="font-bold text-white">&nbsp;★★ New ★★&nbsp;</span> label.
+                        </li>
+                        <li>
+                            Once you're happy with your updated reference list, click the <span className="font-semibold text-yellow">&nbsp;Download&nbsp;</span> button below to export it as a BibTeX file.
+                        </li>
+                        <li>
+                            Then return to your dashboard by opening the collapsible drawer on the left and selecting <span className="italic text-yellow">&nbsp;"Return to Dashboard"&nbsp;</span>. Upload your downloaded BibTeX file and re-run <span className="font-semibold text-yellow">&nbsp;CiteFairly&nbsp;</span> to generate an updated citation analysis and diversity statement.
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="self-center my-6">
+                    <button 
+                        onClick={() => handleDownloadReference()}
+                        className=" py-2 px-14 text-xl rounded-md shadow-md text-black bg-yellow hover:bg-yellow/60 hover:text-black transition duration-200">Download
+                    </button>
                 </div>
 
                 <div> 
@@ -177,6 +261,7 @@ const ReferenceListPage = () => {
                         </div>
                     )}
                 </div>
+                
                
                 </>
                  )}
