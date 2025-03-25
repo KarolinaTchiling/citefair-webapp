@@ -5,7 +5,6 @@ import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom';
 import GuestDashboard from "../components/GuestDashboard";
 
-
 function LandingPage() {
 
   const navigate = useNavigate();
