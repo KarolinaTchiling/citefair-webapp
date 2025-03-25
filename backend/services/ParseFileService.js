@@ -1,8 +1,7 @@
 import { bucket } from "../firebaseConfig.js";
-import pkg from "bibtex";
 import dotenv from "dotenv";
+import {parseString} from 'bibliography'
 
-const { parseBibFile } = pkg;
 dotenv.config();
 
 /**
@@ -47,31 +46,30 @@ export async function getFileContent(fileName, userId) {
 
 
 // Step 2: Extract titles from .bib or .txt 
-
 function extractTitlesFromBib(fileContent) {
     try {
-        const bibFile = parseBibFile(fileContent);
-        // console.log(bibFile);
-        const entries = bibFile["entries$"];
-
-        if (!entries || typeof entries !== "object") {
-            return { error: "Invalid .bib file structure." };
-        }
-
-        const titles = Object.keys(entries)
-            .map((key) => {
-                const entry = entries[key];
-                const titleData = entry.fields?.title?.data;
-                return Array.isArray(titleData) ? titleData.join("").trim() : null;
-            })
-            .filter(Boolean); // Removes null/undefined values
-
-        return { titles }; // Return an object instead of just an array
+      const bib = parseString(fileContent);
+      const entries = bib.entries;
+  
+      const titles = Object.keys(entries)
+        .map((key) => {
+          const title = entries[key].fields?.title?._unicode;
+          return title ? title.trim() : null;
+        })
+        .filter(Boolean); // Remove null/undefined
+  
+    //   // Print each title inside the function to verify
+    //   console.log(" Extracted Titles:");
+    //   titles.forEach((title, index) => {
+    //     console.log(`  ${index + 1}. ${title}`);
+    //   });
+  
+      return { titles };
     } catch (error) {
-        console.error("Error processing bibliography:", error.message);
-        return { error: error.message }; // Return the error message instead of throwing it
+      console.error("❌ Error processing bibliography:", error.message);
+      return { error: error.message };
     }
-}
+  }
 
 function extractTitlesFromTxt(fileContent) {
     // Use regex to find all substrings inside double quotes

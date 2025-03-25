@@ -163,9 +163,9 @@ const RecommendedPage = () => {
               </h1>
             </div>
             
-            <div className="text-md text-white text-center w-full max-w-4xl pb-8 px-4 flex flex-col gap-6">
+            <div className="text-md text-white text-center w-full max-w-5xl pb-8 px-4 flex flex-col gap-6">
               <p>
-                The following articles are recommended by <span className="font-semibold">Semantic Scholar</span> based on their relevance to the paper you submitted. These suggestions are generated using citation networks, content similarity, and co-authorship patterns. All articles have been published within the last 60 days, and author genders have been labeled using <span className="font-semibold">Gender-API</span>.
+                The following articles are recommended by <span className="font-semibold">Semantic Scholar</span> based on their relevance to the papers in your reference list. These suggestions are generated using citation networks, content similarity, and co-authorship patterns. All articles have been published within the last 60 days, and author genders have been labeled using <span className="font-semibold">Gender-API</span>.
               </p>
 
               <div className="bg-white/10 rounded-lg p-4 text-left">

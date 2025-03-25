@@ -180,7 +180,7 @@ const ReferenceListPage = () => {
                             Once you're happy with your updated reference list, click the <span className="font-semibold text-yellow">&nbsp;Download&nbsp;</span> button below to export it as a BibTeX file.
                         </li>
                         <li>
-                            Then return to your dashboard by opening the collapsible drawer on the left and selecting <span className="italic text-yellow">&nbsp;"Return to Dashboard"&nbsp;</span>. Upload your downloaded BibTeX file and re-run <span className="font-semibold text-yellow">&nbsp;CiteFairly&nbsp;</span> to generate an updated citation analysis and diversity statement.
+                            Return to your dashboard by opening the collapsible drawer on the left and selecting <span className="italic text-yellow">&nbsp;"Return to Dashboard"&nbsp;</span>. Upload your downloaded BibTeX file and re-run <span className="font-semibold text-yellow">&nbsp;CiteFairly&nbsp;</span> to generate an updated citation analysis and diversity statement.
                         </li>
                         </ul>
                     </div>
