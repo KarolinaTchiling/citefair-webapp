@@ -15,7 +15,7 @@ dotenv.config();
 // 3. labels related papers with Gender-API
 export const getRelatedWorks = async (fileName, userId) => {
     const dois = await getDois(fileName, userId);
-    const related_papers = await fetchRecommendedPapers(27, dois);
+    const related_papers = await fetchRecommendedPapers(50, dois);
     const result = await fetchAuthorGender(related_papers);
 
     // Save results to Realtime Database
