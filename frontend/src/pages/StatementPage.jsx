@@ -14,6 +14,7 @@ const StatementPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cleanName, setCleanName] = useState(null);
 
 
     useEffect(() => {
@@ -29,6 +30,9 @@ const StatementPage = () => {
         const userData = JSON.parse(sessionUserData);
         const fileName = userData.fileName;
         const userId = userData.userId;
+
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
 
         const fetchData = async () => {
             try {
@@ -76,7 +80,7 @@ const StatementPage = () => {
                 <>
                 <div className="h-[13vh] flex items-center justify-center">
                     <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                        Your Citation Diversity Statements 
+                        Your Citation Diversity Statements - {cleanName}
                     </h1>
                 </div>
 

@@ -17,6 +17,7 @@ const RecommendedPage = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cleanName, setCleanName] = useState(null);
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
@@ -31,6 +32,8 @@ const RecommendedPage = () => {
       return;
     }
     const { fileName, userId } = JSON.parse(sessionUserData);
+    const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+    setCleanName(cleanedName);
 
     const fetchData = async () => {
       // Try GET request first
@@ -159,7 +162,7 @@ const RecommendedPage = () => {
           <>
             <div className="h-[13vh] flex items-center justify-center">
               <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                Recommended Articles
+                Recommended Articles - {cleanName}
               </h1>
             </div>
             

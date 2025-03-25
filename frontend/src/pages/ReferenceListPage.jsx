@@ -15,6 +15,7 @@ const ReferenceListPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cleanName, setCleanName] = useState(null);
 
     const fetchData = async () => {
         const sessionUserData = sessionStorage.getItem("userData");
@@ -28,6 +29,9 @@ const ReferenceListPage = () => {
         const userData = JSON.parse(sessionUserData);
         const fileName = userData.fileName;
         const userId = userData.userId;
+
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
       
         try {
           const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
@@ -84,7 +88,6 @@ const ReferenceListPage = () => {
           console.error("Request failed:", error);
         }
       };
-    
 
       const handleDownloadReference = async () => {
         const sessionUserData = sessionStorage.getItem("userData");
@@ -139,7 +142,6 @@ const ReferenceListPage = () => {
         }
       };
       
-
     const papers = data || [];
 
     return (
@@ -159,7 +161,7 @@ const ReferenceListPage = () => {
                 <>
                 <div className="h-[13vh] flex items-center justify-center">
                     <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                        Your References
+                        Your References - {cleanName}
                     </h1>
                 </div>
                 <div className="text-md text-white text-center w-full max-w-4xl flex flex-col gap-6">
@@ -186,11 +188,15 @@ const ReferenceListPage = () => {
                     </div>
                 </div>
 
-                <div className="self-center my-6">
+                <div className="self-center gap-10 items-end flex flex-row my-6">
+                    <div className="text-white text-lg">
+                        Total References: {papers?.length || 0}
+                    </div>
                     <button 
                         onClick={() => handleDownloadReference()}
                         className=" py-2 px-14 text-xl rounded-md shadow-md text-black bg-yellow hover:bg-yellow/60 hover:text-black transition duration-200">Download
                     </button>
+                    
                 </div>
 
                 <div> 
