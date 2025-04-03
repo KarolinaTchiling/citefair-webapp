@@ -15,7 +15,7 @@ export default function NotFoundPage() {
             </div>
             <button 
                 className="mt-12 px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
-                onClick={() => navigate("/dashboard")}>
+                onClick={() => navigate("/")}>
                 Go Home
           </button>
     
