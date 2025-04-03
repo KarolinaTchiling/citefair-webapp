@@ -36,6 +36,6 @@ Cite.async('https://doi.org/10.1016/j.joi.2023.101460').then(cite => {
   const bibtex = cite.format('bibtex'); // no need to pass APA template here
   console.log("📄 BibTeX:\n", bibtex);
 
-  const cslJSON = cite.get({ type: 'json' }); // CSL-JSON citation object
-  console.log("🧩 CSL-JSON:\n", JSON.stringify(cslJSON, null, 2));
+  // const cslJSON = cite.get({ type: 'json' }); // CSL-JSON citation object
+  // console.log("🧩 CSL-JSON:\n", JSON.stringify(cslJSON, null, 2));
 });
