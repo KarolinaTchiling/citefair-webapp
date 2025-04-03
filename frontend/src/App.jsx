@@ -8,7 +8,7 @@ import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
-import NotFound from './pages/NotfoundPage';
+import NotFound from './pages/NotFoundPage';
 import './input.css';
 import { useAuth } from "./AuthContext";
 import { Toaster } from 'react-hot-toast';
