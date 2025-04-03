@@ -11,37 +11,57 @@ const UserFiles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchFiles = async () => {
-      if (user?.uid) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/user/files`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ uid: user.uid }),
-          });
+  const fetchFiles = async () => {
+    if (user?.uid) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user/files`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ uid: user.uid }),
+        });
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch files");
-          }
-
-          const data = await response.json();
-          setFiles(data.files || []);
-        } catch (err) {
-          console.error("Error fetching files:", err);
-          setError("Could not fetch files.");
-        } finally {
-          setLoading(false);
+        if (!response.ok) {
+          throw new Error("Failed to fetch files");
         }
-      }
-    };
 
+        const data = await response.json();
+        setFiles(data.files || []);
+      } catch (err) {
+        console.error("Error fetching files:", err);
+        setError("Could not fetch files.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  }
+
+  useEffect(() => {
     fetchFiles();
   }, [user]);
 
-  console.log(files);
+  const handleDeleteFile = async (fileName) => {
+    if (user?.uid && fileName) {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/upload/delete-file?userId=${user.uid}&fileName=${fileName}`,
+          {
+            method: "DELETE",
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to delete file");
+        }
+  
+        const data = await response.json();
+        fetchFiles();
+      } catch (err) {
+        console.error("Error deleting file:", err);
+      }
+    }
+  };
 
   // Navigate to the results page and pass `fileName` & `userId`
   const handleSeeResults = (fileName) => {
@@ -66,7 +86,7 @@ const UserFiles = () => {
                 <th className="border border-gray-300 px-4 py-2 text-left">Filename</th>
                 <th className="border border-gray-300 px-4 py-2 text-center">Upload Date</th>
                 <th className="border border-gray-300 px-4 py-2 text-center">Download</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">See Results</th>
+                <th className="border border-gray-300 px-4 py-2 text-center">Results</th>
               </tr>
             </thead>
             <tbody>
@@ -93,7 +113,14 @@ const UserFiles = () => {
                       onClick={() => handleSeeResults(fileName)}
                       className="text-blue hover:underline"
                     >
-                      See Results
+                      Open
+                    </button>
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <button 
+                      onClick={() => handleDeleteFile(fileName)}
+                      className="bg-red/70 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red transition">
+                      X
                     </button>
                   </td>
                 </tr>

@@ -32,5 +32,42 @@ router.post("/", upload.single("file"), async (req, res) => {
     }
 });
 
+router.delete("/delete-file", async (req, res) => {
+    try {
+        const { fileName, userId } = req.query;
+
+        if (!fileName || !userId) {
+            return res.status(400).json({ error: "fileName and userId are required"});
+
+        }
+
+        const refPath = `users/${userId}/data/${fileName}`;
+        const snapshot = await db.ref(refPath).once("value");
+    
+        if (!snapshot.exists()) {
+          return res.status(404).json({ error: "File not found in database" });
+        }
+    
+        // Delete from Firebase Realtime Database
+        await db.ref(refPath).remove();
+
+        // delete from firebase storage
+        const storagePath = `users/${userId}/uploads/${fileName}`;
+        try {
+            await bucket.file(storagePath).delete();
+            console.log(`Deleted file from Firebase Storage: ${storagePath}`);
+          } catch (err) {
+            console.warn("Warning: Failed to delete from Firebase Storage", err.message);
+          }
+
+          return res.json({ message: "File successfully deleted from database and storage." });
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        res.status(500).json({ error: "Failed to delete file" });
+    }
+
+});
+
+
 
 export default router;
