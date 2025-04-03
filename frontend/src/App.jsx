@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import DashBoardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import StatementPage from './pages/StatementPage';
@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import ResultsPage from './pages/ResultsPage';
 import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
+import NotFound from './pages/NotfoundPage';
 import './input.css';
 import { useAuth } from "./AuthContext";
 import { Toaster } from 'react-hot-toast';
@@ -26,6 +27,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<NotFound />} />
 
 
         <Route
