@@ -104,31 +104,8 @@ router.delete("/deleteGuest", async (req, res) => {
       return res.status(400).json({ error: "UID is required" });
     }
 
-    // Fetch user data from Firebase Realtime Database
-    const userSnapshot = await db.ref(`/users/${uid}`).once("value");
-    const userData = userSnapshot.val();
-
-    if (!userData || !userData.isGuest) {
-      return res.status(400).json({ error: "User is not a guest or does not exist" });
-    }
-
-    // Delete the file in firebase storage
-    const storagePath = `users/${uid}/uploads/`; // ✅ Corrected path
-    const [files] = await bucket.getFiles({ prefix: storagePath });
-    console.log(` Checking for files in: ${storagePath}`);
-    if (files.length > 0) {
-      // Delete all found files
-      await Promise.all(files.map((file) => file.delete()));
-      console.log(`Deleted all files in: ${storagePath}`);
-    } else {
-      console.log(` No files found in: ${storagePath}`);
-    }
-
     // Delete user from Firebase Authentication
     await admin.auth().deleteUser(uid);
-
-    // Remove user data from Firebase Realtime Database
-    await db.ref(`/users/${uid}`).remove();
 
     res.status(200).json({ message: "Guest session deleted successfully" });
 
