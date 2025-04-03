@@ -8,7 +8,7 @@ import { useAuth } from "../AuthContext"
 
 function LandingPage() {
 
-  const { isAuthenticated, isGuest, } = useAuth(); 
+  const { user } = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,6 +21,8 @@ function LandingPage() {
     }
   }, [location]);
 
+
+  
   const handleScroll = () => {
     const targetElement = document.getElementById("create-account");
     if (targetElement) {
@@ -67,19 +69,13 @@ function LandingPage() {
             </div>
           </div>
 
-          { !isAuthenticated ? (
+          { user?.isAnonymous || !user ? (
           <button 
             className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
             onClick={handleScroll}>
             Get Started
           </button>
-          ) : isGuest ? (
-          <button 
-            className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
-            onClick={handleScroll}>
-             Get Started
-          </button>
-          ) : (
+          ) :  (
           <button 
             className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
             onClick={() => navigate("/dashboard")}>
@@ -140,7 +136,7 @@ function LandingPage() {
         </div>
       </div>
 
-      {(!isAuthenticated || (isAuthenticated && isGuest)) && (
+      { user?.isAnonymous || !user ? (
       <div id="create-account"  className=" bg-indigo">
         {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
@@ -185,6 +181,8 @@ function LandingPage() {
         
     
       </div>
+      ) : (
+        <div></div>
       )}
 
       <Footer />
