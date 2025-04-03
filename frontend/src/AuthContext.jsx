@@ -26,13 +26,36 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(null); // null = unknown yet
 
   // Listen to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+  
+      if (firebaseUser) {
+        try {
+          const db = getDatabase();
+          const userRef = ref(db, `users/${firebaseUser.uid}`);
+          const snapshot = await get(userRef);
+  
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            setIsGuest(data.isGuest === true);
+          } else {
+            console.warn("User data not found.");
+            setIsGuest(false);
+          }
+        } catch (error) {
+          console.error("Error checking isGuest:", error);
+          setIsGuest(false);
+        }
+      } else {
+        setIsGuest(null); // user is not logged in
+      }
     });
+  
     return () => unsubscribe();
   }, []);
 
@@ -150,7 +173,9 @@ export const AuthProvider = ({ children }) => {
     signup,
     continueAsGuest,
     signInWithGoogle,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    isGuest,
+    
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

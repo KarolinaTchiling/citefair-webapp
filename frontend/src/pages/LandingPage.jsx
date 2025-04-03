@@ -8,7 +8,7 @@ import { useAuth } from "../AuthContext"
 
 function LandingPage() {
 
-  const { isAuthenticated } = useAuth(); 
+  const { isAuthenticated, isGuest, } = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -73,6 +73,12 @@ function LandingPage() {
             onClick={handleScroll}>
             Get Started
           </button>
+          ) : isGuest ? (
+          <button 
+            className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
+            onClick={handleScroll}>
+             Get Started
+          </button>
           ) : (
           <button 
             className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
@@ -134,7 +140,7 @@ function LandingPage() {
         </div>
       </div>
 
-      { !isAuthenticated ? (
+      {(!isAuthenticated || (isAuthenticated && isGuest)) && (
       <div id="create-account"  className=" bg-indigo">
         {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
@@ -179,8 +185,6 @@ function LandingPage() {
         
     
       </div>
-      ) : (
-        <div></div>
       )}
 
       <Footer />

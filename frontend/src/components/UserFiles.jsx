@@ -51,7 +51,7 @@ const UserFiles = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-white rounded-lg px-8 py-4">
+    <div className="h-full w-full flex flex-col bg-white rounded-lg pl-8 pr-4 py-4">
       <h1 className="text-3xl text-center pb-2">Previous Analyses</h1>
 
       {loading ? (
@@ -59,7 +59,7 @@ const UserFiles = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : files.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto pr-4">
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-100">
