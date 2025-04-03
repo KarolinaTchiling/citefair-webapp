@@ -5,7 +5,7 @@ import { useAuth } from "../AuthContext"; // Import auth context
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SaveGuest = () => {
-  const { user } = useAuth(); // ✅ Get the current user (guest)
+  const { user } = useAuth(); //  Get the current user (guest)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

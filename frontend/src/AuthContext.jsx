@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
   
     } catch (error) {
       console.error("Signup failed:", error);
+      throw error; 
     }
   };
 
@@ -142,6 +143,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Google Sign-In failed:", error);
     }
   };
+  
 
   const value = {
     user,

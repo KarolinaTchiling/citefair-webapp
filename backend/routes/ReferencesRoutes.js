@@ -78,7 +78,7 @@ router.post("/add-ref", async (req, res) => {
     }
 
     // Add full article object
-    currentRefs.push(matchedPaper);
+    currentRefs.unshift(matchedPaper);
 
     // Save updated reference list
     await db.ref(refsPath).set(currentRefs);

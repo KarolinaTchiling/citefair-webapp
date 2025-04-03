@@ -4,9 +4,11 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom';
 import GuestDashboard from "../components/GuestDashboard";
+import { useAuth } from "../AuthContext"
 
 function LandingPage() {
 
+  const { user } = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,6 +21,8 @@ function LandingPage() {
     }
   }, [location]);
 
+
+  
   const handleScroll = () => {
     const targetElement = document.getElementById("create-account");
     if (targetElement) {
@@ -65,11 +69,19 @@ function LandingPage() {
             </div>
           </div>
 
+          { user?.isAnonymous || !user ? (
           <button 
             className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
             onClick={handleScroll}>
             Get Started
           </button>
+          ) :  (
+          <button 
+            className="px-12 py-2 text-2xl md:text-3xl text-black bg-yellow font-[500] rounded-full hover:bg-yellow/70 hover:scale-110 transition duration-200"
+            onClick={() => navigate("/dashboard")}>
+            Go to Dashboard
+          </button>
+          )}
         </div>
 
         {/* Steps Section (35% of screen height) */}
@@ -124,8 +136,9 @@ function LandingPage() {
         </div>
       </div>
 
+      { user?.isAnonymous || !user ? (
       <div id="create-account"  className=" bg-indigo">
-      {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
+        {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
 
         {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
         <div className="flex flex-col items-center bg-indigo rounded-2xl mt-10 mx-20">
@@ -168,6 +181,9 @@ function LandingPage() {
         
     
       </div>
+      ) : (
+        <div></div>
+      )}
 
       <Footer />
   

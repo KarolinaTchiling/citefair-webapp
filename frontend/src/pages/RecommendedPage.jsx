@@ -18,12 +18,78 @@ const RecommendedPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cleanName, setCleanName] = useState(null);
+  const [addedReferences, setAddedReferences] = useState([]);
+  const [referencesLoading, setReferencesLoading] = useState(true);
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
   const [filterFirstOrLastWoman, setFilterFirstOrLastWoman] = useState(false);
   const [filterFirstAndLastWoman, setFilterFirstAndLastWoman] = useState(false);
 
+
+  // fetch related articles
+  const fetchRelated = async (fileName, userId) => {
+    // Try GET request first
+    try {
+      const storedResponse = await fetch(
+        `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
+      );
+      if (storedResponse.ok) {
+        const storedData = await storedResponse.json();
+        if (storedData) {
+          console.log("Using stored data:", storedData);
+          setData(storedData);
+          setLoading(false);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn("No stored data found, processing new request...");
+    }
+
+    // Fallback to POST request if no stored data
+    try {
+      const response = await fetch(`${API_BASE_URL}/related/process-related-works`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fileName, userId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // fetch references and isolate those which came from related papers (only they will have paperID field)
+  const fetchAddedReferences = async (fileName, userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
+      if (!response.ok) throw new Error("Failed to fetch reference list");
+  
+      const result = await response.json();
+  
+      const paperIds = result
+        .filter(ref => typeof ref.paperId === "string" && ref.paperId.trim() !== "")
+        .map(ref => ref.paperId);
+      
+      setAddedReferences(paperIds);
+    } catch (error) {
+      console.error("Error fetching added references:", error);
+    } finally {
+      setReferencesLoading(false);
+    }
+  };
+
+  // do both fetches at the same time
   useEffect(() => {
     const sessionUserData = sessionStorage.getItem("userData");
     if (!sessionUserData) {
@@ -33,51 +99,17 @@ const RecommendedPage = () => {
     }
     const { fileName, userId } = JSON.parse(sessionUserData);
     const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-    setCleanName(cleanedName);
+    setCleanName(cleanedName); 
 
-    const fetchData = async () => {
-      // Try GET request first
-      try {
-        const storedResponse = await fetch(
-          `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
-        );
-        if (storedResponse.ok) {
-          const storedData = await storedResponse.json();
-          if (storedData) {
-            console.log("Using stored data:", storedData);
-            setData(storedData);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn("No stored data found, processing new request...");
-      }
-
-      // Fallback to POST request if no stored data
-      try {
-        const response = await fetch(`${API_BASE_URL}/related/process-related-works`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ fileName, userId }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+    const runFetches = async () => {
+      await Promise.all([
+        fetchRelated(fileName, userId),
+        fetchAddedReferences(fileName, userId)
+      ]);
     };
-
-    fetchData();
+    runFetches();
   }, [navigate]);
+
 
   const handleAddReference = async (paperId) => {
     const sessionUserData = sessionStorage.getItem("userData");
@@ -102,6 +134,7 @@ const RecommendedPage = () => {
       if (response.ok) {
         console.log("Paper added to reference list:", data.paper);
         toast.success("Article added to reference list!");
+        setAddedReferences((prev) => [...prev, paperId])
       } else {
         console.error("Error adding reference:", data.error);
         toast.error(data.error);
@@ -143,7 +176,7 @@ const RecommendedPage = () => {
       <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
 
       <div className="px-8 md:px-20 pt-8 bg-indigo flex flex-col items-center min-h-[calc(100vh-64px)]">
-        {loading ? (
+        {loading || referencesLoading ? (
           <>
             <div className="h-[20vh] flex items-center justify-center">
               <div className="text-white flex flex-col text-center">
@@ -229,7 +262,9 @@ const RecommendedPage = () => {
               </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mb-20">
-                {filteredData.map((paper, index) => (
+                {filteredData.map((paper, index) => {
+                  const isAlreadyAdded = addedReferences.includes(paper.paperId);
+                 return (
                   <div
                     key={index}
                     className="flex flex-col justify-between border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30"
@@ -272,13 +307,21 @@ const RecommendedPage = () => {
 
 
                     <div className="self-end font-semibold -mt-8">
-                      <button 
-                      onClick={() => handleAddReference(paper.paperId)}
-                      className="border border-gray-300 h-10 w-10 rounded-full shadow-md text-white bg-black/80 hover:bg-yellow hover:text-black transition duration-200">+</button>
+                      
+                    <button
+                        onClick={() => handleAddReference(paper.paperId)}
+                        className={`border border-gray-300 h-10 w-10 rounded-full shadow-md transition duration-200 ${
+                          isAlreadyAdded
+                            ? "bg-gray-400 text-gray-700"
+                            : "bg-black/80 text-white hover:bg-yellow hover:text-black"
+                        }`}
+                      >
+                        {isAlreadyAdded ? "✓" : "+"}
+                      </button>
                     </div>
-
                   </div>
-                ))}
+                 );
+})}
               </div>
             )}
           </>

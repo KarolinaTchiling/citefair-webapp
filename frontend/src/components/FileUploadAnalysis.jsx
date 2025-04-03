@@ -43,7 +43,7 @@ function FileUploadAnalysis() {
   }, [user]);
 
   return (
-    <div className="">
+
       <div className="h-full w-full flex flex-col bg-white rounded-lg px-8 py-4">
 
         <div className="flex-grow flex flex-col">
@@ -70,7 +70,6 @@ function FileUploadAnalysis() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

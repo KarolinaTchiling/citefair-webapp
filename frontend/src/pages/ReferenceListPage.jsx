@@ -143,7 +143,8 @@ const ReferenceListPage = () => {
       };
       
     const papers = data || [];
-
+    console.log("References:");
+    console.log(data);
     return (
         <div>
             <Navbar />

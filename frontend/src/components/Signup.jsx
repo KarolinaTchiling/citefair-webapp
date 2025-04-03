@@ -16,9 +16,22 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
     try {
       await signup(email, password, firstName, middleName, lastName, navigate);
+
     } catch (error) {
+
+      console.error("Signup failed:", error.message);
+      if (error.message.includes("auth/email-already-in-use")) {
+        setError("That email is already registered. Please try logging in.");
+      } else if (error.message.includes("auth/invalid-email")) {
+        setError("The email address is not valid.");
+      } else if (error.message.includes("auth/weak-password")) {
+        setError("Your password must be at least 6 characters long.");
+      } else {
+        setError("Signup failed. Please try again.");
+      }
     }
   };
 
@@ -29,9 +42,7 @@ const Signup = () => {
       <p className="text-base text-center">
         Please use the name under which you publish in order to remove self-citation biases from our analysis.
       </p>
-      {/* Error & Success Messages */}
-      {error && <div className="text-red-500 text-center mb-2">{error}</div>}
-      {success && <div className="text-green-500 text-center mb-2">{success}</div>}
+
 
       {/* Form Section */}
       <form onSubmit={handleSignup} className="flex-grow flex flex-col">
@@ -94,9 +105,14 @@ const Signup = () => {
           />
         </div>
 
+        {error && (
+        <div className="text-red pb-3">
+          {error}
+        </div>
+        )}
+
         {/* Submit Button (Pushes to Bottom) */}
         <button
-          type="submit"
           className="mt-auto w-full bg-blue text-white font-medium py-2 px-4 rounded-md hover:bg-blue/80"
         >
           Sign Up
