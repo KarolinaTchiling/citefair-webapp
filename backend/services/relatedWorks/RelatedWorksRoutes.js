@@ -1,5 +1,5 @@
 import express from "express";
-import { getRelatedWorks } from "../services/RelatedWorksService.js";
+import { getRelatedWorks } from "../service/RelatedWorksService.js";
 import { db } from "../firebaseConfig.js";
 
 const router = express.Router();

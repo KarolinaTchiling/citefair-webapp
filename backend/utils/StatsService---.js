@@ -1,4 +1,4 @@
-import { db } from "../firebaseConfig.js";
+import { db } from "../../firebaseConfig.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { getTitles } from "./ParseFileService.js"
@@ -6,8 +6,6 @@ import { Cite } from '@citation-js/core'
 import '@citation-js/plugin-doi'
 import '@citation-js/plugin-csl'
 import '@citation-js/plugin-bibtex';
-
-dotenv.config();
 
 
 /**

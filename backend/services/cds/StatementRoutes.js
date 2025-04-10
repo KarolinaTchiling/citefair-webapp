@@ -1,5 +1,5 @@
 import express from "express";
-import { generateStatements} from "../services/StatementService.js";
+import { generateStatements} from "../service/StatementService.js";
 
 const router = express.Router();
 

@@ -1,10 +1,11 @@
-import { bucket } from "../firebaseConfig.js";
+import { bucket } from "../../../utils/firebaseConfig.js";
 import dotenv from "dotenv";
-import {parseString} from 'bibliography'
-
+import { parseString } from 'bibliography'
 dotenv.config();
 
 /**
+ * STEP 1 
+ * 
  * These service parses uploaded bibliographies to extract titles.
  * Currently supports .bib and .txt
  * 
@@ -12,7 +13,7 @@ dotenv.config();
  * 
  */
 
-// Main function -------------------------------------------------------------------------------
+// Main  -------------------------------------------------------------------------------
 export async function getTitles(fileName, userId) {
     const fileContent = await getFileContent(fileName, userId);
 
@@ -66,7 +67,7 @@ function extractTitlesFromBib(fileContent) {
   
       return { titles };
     } catch (error) {
-      console.error("❌ Error processing bibliography:", error.message);
+      console.error("Error processing bibliography:", error.message);
       return { error: error.message };
     }
   }

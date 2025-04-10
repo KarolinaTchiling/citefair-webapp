@@ -29,9 +29,14 @@ export const AuthProvider = ({ children }) => {
 
   // Listen to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        console.log(" Firebase ID Token:", token);
+      }
     });
     return () => unsubscribe();
   }, []);

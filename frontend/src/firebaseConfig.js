@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, getIdToken } from "firebase/auth";
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -17,5 +17,5 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
-export { auth };
+export { auth, getIdToken };
 

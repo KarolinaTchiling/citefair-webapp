@@ -12,14 +12,16 @@ const UserFiles = () => {
   const [error, setError] = useState("");
 
   const fetchFiles = async () => {
-    if (user?.uid) {
+    if (user) {
       try {
+        const token = await user.getIdToken();
+
         const response = await fetch(`${API_BASE_URL}/user/files`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ uid: user.uid }),
         });
 
         if (!response.ok) {

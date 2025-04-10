@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { uploadFileToFirebase } from "../services/uploadService.js";
+import { uploadFileToFirebase } from "../service/uploadService.js";
 import { db, bucket } from "../firebaseConfig.js";
 
 const router = express.Router();
