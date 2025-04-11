@@ -6,11 +6,19 @@ import Footer from "../components/Footer.jsx";
 import Loader from "../components/Loader.jsx";
 import Typewriter from "../components/TypewriterRelated.jsx";
 import toast from 'react-hot-toast';
+import { useAuth } from "../AuthContext";
+import { useSelectedFile } from "../SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const RecommendedPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { fileName } = useSelectedFile();
+
+
+  // console.log(fileName);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -18,8 +26,8 @@ const RecommendedPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cleanName, setCleanName] = useState(null);
-  const [addedReferences, setAddedReferences] = useState([]);
-  const [referencesLoading, setReferencesLoading] = useState(true);
+  // const [addedReferences, setAddedReferences] = useState([]);
+  const [referencesLoading, setReferencesLoading] = useState(false);  //** */
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
@@ -28,12 +36,21 @@ const RecommendedPage = () => {
 
 
   // fetch related articles
-  const fetchRelated = async (fileName, userId) => {
+  const fetchRelated = async (fileName) => {
+    const token = await user.getIdToken();
+
+    console.log(fileName);
+    console.log(token);
+
     // Try GET request first
     try {
-      const storedResponse = await fetch(
-        `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
-      );
+      const storedResponse = await fetch(`${API_BASE_URL}/related/get-related-work?fileName=${fileName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+      });
       if (storedResponse.ok) {
         const storedData = await storedResponse.json();
         if (storedData) {
@@ -49,12 +66,13 @@ const RecommendedPage = () => {
 
     // Fallback to POST request if no stored data
     try {
-      const response = await fetch(`${API_BASE_URL}/related/process-related-works`, {
+      const response = await fetch(`${API_BASE_URL}/related/run-related-work`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
         },
-        body: JSON.stringify({ fileName, userId }),
+        body: JSON.stringify({ fileName }),
       });
       if (!response.ok) {
         throw new Error("Failed to fetch data");
@@ -70,79 +88,87 @@ const RecommendedPage = () => {
   };
 
   // fetch references and isolate those which came from related papers (only they will have paperID field)
-  const fetchAddedReferences = async (fileName, userId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch reference list");
+  // const fetchAddedReferences = async (fileName, userId) => {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
+  //     if (!response.ok) throw new Error("Failed to fetch reference list");
   
-      const result = await response.json();
+  //     const result = await response.json();
   
-      const paperIds = result
-        .filter(ref => typeof ref.paperId === "string" && ref.paperId.trim() !== "")
-        .map(ref => ref.paperId);
+  //     const paperIds = result
+  //       .filter(ref => typeof ref.paperId === "string" && ref.paperId.trim() !== "")
+  //       .map(ref => ref.paperId);
       
-      setAddedReferences(paperIds);
-    } catch (error) {
-      console.error("Error fetching added references:", error);
-    } finally {
-      setReferencesLoading(false);
-    }
-  };
+  //     setAddedReferences(paperIds);
+  //   } catch (error) {
+  //     console.error("Error fetching added references:", error);
+  //   } finally {
+  //     setReferencesLoading(false);
+  //   }
+  // };
 
   // do both fetches at the same time
-  useEffect(() => {
-    const sessionUserData = sessionStorage.getItem("userData");
-    if (!sessionUserData) {
-      console.error("Missing required session data, redirecting...");
-      navigate("/");
-      return;
-    }
-    const { fileName, userId } = JSON.parse(sessionUserData);
-    const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-    setCleanName(cleanedName); 
+  // useEffect(() => {
+  //   const sessionUserData = sessionStorage.getItem("userData");
+  //   if (!sessionUserData) {
+  //     console.error("Missing required session data, redirecting...");
+  //     navigate("/");
+  //     return;
+  //   }
+  //   const { fileName, userId } = JSON.parse(sessionUserData);
+  //   const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+  //   setCleanName(cleanedName); 
 
+  //   const runFetches = async () => {
+  //     await Promise.all([
+  //       fetchRelated(fileName),
+  //       fetchAddedReferences(fileName)
+  //     ]);
+  //   };
+  //   runFetches();
+  // }, [navigate]);
+
+  useEffect(() => {
     const runFetches = async () => {
-      await Promise.all([
-        fetchRelated(fileName, userId),
-        fetchAddedReferences(fileName, userId)
-      ]);
+      await fetchRelated(fileName); // ✅ Only this runs
+      // await fetchAddedReferences(fileName);
     };
     runFetches();
   }, [navigate]);
 
 
-  const handleAddReference = async (paperId) => {
-    const sessionUserData = sessionStorage.getItem("userData");
-    if (!sessionUserData) {
-      console.error("Missing user data");
-      return;
-    }
+  // const handleAddReference = async (paperId) => {
+  //   const sessionUserData = sessionStorage.getItem("userData");
+  //   if (!sessionUserData) {
+  //     console.error("Missing user data");
+  //     return;
+  //   }
   
-    const { userId, fileName } = JSON.parse(sessionUserData);
+  //   const { userId, fileName } = JSON.parse(sessionUserData);
   
-    try {
-      const response = await fetch(`${API_BASE_URL}/ref/add-ref`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uid: userId, fileName, paperId }),
-      });
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/ref/add-ref`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ uid: userId, fileName, paperId }),
+  //     });
   
-      const data = await response.json();
+  //     const data = await response.json();
   
-      if (response.ok) {
-        console.log("Paper added to reference list:", data.paper);
-        toast.success("Article added to reference list!");
-        setAddedReferences((prev) => [...prev, paperId])
-      } else {
-        console.error("Error adding reference:", data.error);
-        toast.error(data.error);
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       console.log("Paper added to reference list:", data.paper);
+  //       toast.success("Article added to reference list!");
+  //       setAddedReferences((prev) => [...prev, paperId])
+  //     } else {
+  //       console.error("Error adding reference:", data.error);
+  //       toast.error(data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Request failed:", error);
+  //   }
+  // };
 
   // Filter the data based on selected filter options.
   const filteredData = data.filter((paper) => {
@@ -263,7 +289,7 @@ const RecommendedPage = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mb-20">
                 {filteredData.map((paper, index) => {
-                  const isAlreadyAdded = addedReferences.includes(paper.paperId);
+                  // const isAlreadyAdded = addedReferences.includes(paper.paperId);
                  return (
                   <div
                     key={index}
@@ -308,7 +334,7 @@ const RecommendedPage = () => {
 
                     <div className="self-end font-semibold -mt-8">
                       
-                    <button
+                    {/* <button
                         onClick={() => handleAddReference(paper.paperId)}
                         className={`border border-gray-300 h-10 w-10 rounded-full shadow-md transition duration-200 ${
                           isAlreadyAdded
@@ -317,7 +343,7 @@ const RecommendedPage = () => {
                         }`}
                       >
                         {isAlreadyAdded ? "✓" : "+"}
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                  );

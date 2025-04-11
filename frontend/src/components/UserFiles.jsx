@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-import { useNavigate } from "react-router-dom"; // Import navigation hook
+import { useNavigate } from "react-router-dom"; 
+import { useSelectedFile } from "../SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const UserFiles = () => {
   const { user } = useAuth();
+  const { setFileName } = useSelectedFile();
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,9 +74,8 @@ const UserFiles = () => {
 
   // Navigate to the results page and pass `fileName`
   const handleSeeResults = (fileName) => {
-    navigate("/results", {
-      state: { fileName},
-    });
+    setFileName(fileName);
+    navigate("/results");
   };
 
   return (

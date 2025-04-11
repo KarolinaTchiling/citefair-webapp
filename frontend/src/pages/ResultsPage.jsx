@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Loader from '../components/Loader.jsx';
 import Typewriter from '../components/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import Footer from "../components/Footer";
 import { useAuth } from "../AuthContext";
+import { useSelectedFile } from "../SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResultsPage = () => {
     const location = useLocation();
     const postData = location.state?.postData;                          
-    const fileName = postData?.fileName || location.state?.fileName;    // postData comes from uploading a new file, fileName comes from viewing prev. analyses
+    // const fileName = postData?.fileName || location.state?.fileName;    // postData comes from uploading a new file, fileName comes from viewing prev. analyses
 
+    const { fileName } = useSelectedFile();
     const { user, fullName } = useAuth();
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); 
 
     const [data, setData] = useState(null);

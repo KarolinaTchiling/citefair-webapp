@@ -1,5 +1,5 @@
-import { getRelatedWorks } from "../service/RelatedWorksService.js";
-import { db } from "../firebaseConfig.js";
+import { runRelatedWorks } from "../services/RelatedWorksService.js";
+import { db } from "../../../utils/firebaseConfig.js";
 
 
 // Creates the related works from the relatedWorksService 
@@ -9,7 +9,7 @@ export const relatedWorks = async (req, res) => {
         const { fileName } = req.body;
         if (!fileName || !userId) return res.status(400).json({ error: "fileName and userId are required" });
 
-        const finalData = await getRelatedWorks(fileName, userId );
+        const finalData = await runRelatedWorks(fileName, userId );
         res.json(finalData);
     } catch (error) {
         console.error("Error generating related works:", error.message);

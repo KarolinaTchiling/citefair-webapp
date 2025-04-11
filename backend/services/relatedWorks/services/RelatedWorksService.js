@@ -15,7 +15,7 @@ import { fetchAuthorGender } from "./GenderService.js";
  *              -> Save the results to the firebase DB                   (RelatedWorksService.js)
  */
 
-export const getRelatedWorks = async (fileName, userId) => {
+export const runRelatedWorks = async (fileName, userId) => {
     const dois = await getDois(fileName, userId);
     const related_papers = await fetchRecommendedPapers(50, dois);
     const result = await fetchAuthorGender(related_papers);
