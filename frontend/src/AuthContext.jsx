@@ -25,6 +25,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [fullName, setFullName] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Listen to auth state changes
@@ -34,12 +35,41 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
 
       if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        console.log(" Firebase ID Token:", token);
+        try {
+          const token = await firebaseUser.getIdToken();
+          // console.log(token); // for debugging
+
+          // store the user's name in the context so easy access on other pages
+          const response = await fetch(`${API_BASE_URL}/user/name`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setFullName({
+              first: data.firstName || "",
+              middle: data.middleName || "",
+              last: data.lastName || ""
+            });
+          } else {
+            console.warn("Failed to fetch user name.");
+          }
+        } catch (err) {
+          console.error("Error fetching user name:", err);
+        }
+      } else {
+        setFullName(null); // logout
       }
     });
+
     return () => unsubscribe();
   }, []);
+
+
 
   const login = async (email, password) => {
     await signInWithEmailAndPassword(auth, email, password);
@@ -157,7 +187,8 @@ export const AuthProvider = ({ children }) => {
     signup,
     continueAsGuest,
     signInWithGoogle,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    fullName,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

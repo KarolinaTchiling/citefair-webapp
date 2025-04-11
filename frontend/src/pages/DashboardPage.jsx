@@ -1,44 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FileUploadAnalysis from "../components/FileUploadAnalysis";
 import UserFiles from "../components/UserFiles";
 import { useAuth } from "../AuthContext"
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 function DashBoardPage() {
 
-  const { user } = useAuth(); 
-  const [fullName, setFullName] = useState("");
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (user?.uid) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/user/name`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ uid: user.uid }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch user name");
-          }
-
-          const data = await response.json();
-          setFullName(`${data.firstName} ${data.lastName}`);
-        } catch (error) {
-          console.error("Error fetching user name:", error);
-        }
-      }
-    };
-
-    fetchUserName();
-  }, [user]);
-
+  const { fullName } = useAuth(); 
 
   return (
     <div className="flex flex-col">
@@ -48,7 +17,7 @@ function DashBoardPage() {
 
               <div className="h-[13vh] flex items-center justify-center">
                 <h1 className="text-6xl md:text-5xl text-white font-semibold text-center">
-                  Welcome, {fullName}!
+                  Welcome, {fullName.first} {fullName.last}!
                 </h1>
              </div>
 

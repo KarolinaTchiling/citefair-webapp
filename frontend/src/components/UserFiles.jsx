@@ -65,10 +65,10 @@ const UserFiles = () => {
     }
   };
 
-  // Navigate to the results page and pass `fileName` & `userId`
+  // Navigate to the results page and pass `fileName`
   const handleSeeResults = (fileName) => {
     navigate("/results", {
-      state: { userData: { fileName, userId: user.uid } },
+      state: { fileName},
     });
   };
 

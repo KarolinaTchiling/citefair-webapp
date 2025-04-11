@@ -6,17 +6,15 @@ import Loader from '../components/Loader.jsx';
 import Typewriter from '../components/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import Footer from "../components/Footer";
+import { useAuth } from "../AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResultsPage = () => {
     const location = useLocation();
-    const navigate = useNavigate();
+    const fileName = location.state?.fileName;
+    const { user, fullName } = useAuth();
 
-    const [userData, setUserData] = useState(() => {
-        return location.state?.userData || JSON.parse(sessionStorage.getItem("userData")) || null;
-    });
-   
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
 
@@ -25,35 +23,37 @@ const ResultsPage = () => {
     const [errorMessage, setErrorMessage] = useState(null); 
     const [cleanName, setCleanName] = useState(null);
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-      }, []);
 
     useEffect(() => {
-
-        if (!userData) {
-            console.error("No result data, redirecting...");
-            navigate("/");
-            return;
+        if (fileName) {
+          const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+          setCleanName(cleanedName);
         }
+      }, [fileName]);
+      
 
-        // Store `userData` in sessionStorage for persistence
-        sessionStorage.setItem("userData", JSON.stringify(userData));
-
-        const { fileName, userId } = userData;
-
-        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-        setCleanName(cleanedName);
+    useEffect(() => {
+        if (!user || !fileName) return;
 
         const fetchData = async () => {
+            const token = await user.getIdToken();
+
+            console.log(token)
+            console.log(fileName)
+            
             // Step 1: Check if data exists in Firebase
             try {
-                const storedResponse = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+                const storedResponse = await fetch(`${API_BASE_URL}/processBib/getProcessedBib?fileName=${fileName}`, {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`, 
+                    },
+                  });
 
                 if (storedResponse.ok){
                     const storedData = await storedResponse.json();
                     if (storedData) {
-                        console.log("Using stored data:", storedData);
                         setData(storedData);
                         setLoading(false);
                         return;
@@ -66,12 +66,17 @@ const ResultsPage = () => {
 
             // Step 2: If no stored data, call processBib API
             try {
-                const response = await fetch(`${API_BASE_URL}/stats/processBib`, {
+                const response = await fetch(`${API_BASE_URL}/processBib/processBib`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(userData),
+                    body: JSON.stringify({
+                        fileName,
+                        firstName: fullName.first,
+                        middleName: fullName.middle,
+                        lastName: fullName.last,
+                      }),
                 });
                 
                 const result = await response.json(); 
@@ -79,7 +84,7 @@ const ResultsPage = () => {
                     throw new Error(result.error || "An unknown error occurred.");
                 }
         
-                setData(result); //store data in state
+                setData(result);
         
             } catch (error) {
                 console.error("Error:", error);
@@ -91,7 +96,7 @@ const ResultsPage = () => {
         };
 
         fetchData();
-    }, [userData, navigate]);
+    },[user, fileName]);
 
     // Convert gender distribution data to a format that Recharts can use
     const genderData = data?.genders
