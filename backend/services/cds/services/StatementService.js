@@ -1,7 +1,4 @@
-import { db } from "../../utils/firebaseConfig.js";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { db } from "../../../utils/firebaseConfig.js";
 
 export const generateStatements = async (fileName, userId) => {
   let data;

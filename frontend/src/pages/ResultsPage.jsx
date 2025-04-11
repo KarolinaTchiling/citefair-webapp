@@ -14,8 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ResultsPage = () => {
     const location = useLocation();
     const postData = location.state?.postData;                          
-    // const fileName = postData?.fileName || location.state?.fileName;    // postData comes from uploading a new file, fileName comes from viewing prev. analyses
-
+    
     const { fileName } = useSelectedFile();
     const { user, fullName } = useAuth();
 
@@ -72,7 +71,7 @@ const ResultsPage = () => {
                         Authorization: `Bearer ${token}`, 
                       },
                     body: JSON.stringify({
-                        fileName: postData?.fileName,
+                        fileName: fileName,
                         firstName: postData?.firstName || fullName?.first,
                         middleName: postData?.middleName || fullName?.middle,
                         lastName: postData?.lastName || fullName?.last,

@@ -136,6 +136,13 @@ const RecommendedPage = () => {
     runFetches();
   }, [navigate]);
 
+  useEffect(() => {
+      if (fileName) {
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
+      }
+    }, [fileName]);
+
 
   // const handleAddReference = async (paperId) => {
   //   const sessionUserData = sessionStorage.getItem("userData");

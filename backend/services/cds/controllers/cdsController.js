@@ -1,11 +1,10 @@
-import express from "express";
-import { generateStatements} from "../service/StatementService.js";
+import { generateStatements} from "../services/StatementService.js";
 
-const router = express.Router();
-
-router.post("/generateCds", async (req, res) => {
+export const getCds = async (req, res) => {
     try {
-        const { fileName, userId } = req.body;
+        const { fileName } = req.query;
+        const userId = req.user.uid; 
+
         if (!fileName || !userId) return res.status(400).json({ error: "fileName and userId are required" });
 
         const finalData = await generateStatements(fileName, userId );
@@ -14,7 +13,4 @@ router.post("/generateCds", async (req, res) => {
         console.error("Error generating CDSs:", error.message);
         res.status(500).json({ error: error.message || "Internal Server Error" });
     }
-});
-
-
-export default router;
+}

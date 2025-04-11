@@ -4,6 +4,7 @@ import processBibRoutes from '../services/processBib/index.js';
 import userRoutes from '../services/user/index.js';
 import fileRoutes from "../services/files/index.js";
 import relatedWorksRoutes from "../services/relatedWorks/index.js";
+import cdsRoutes from "../services/cds/index.js";
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.use('/process', verifyFirebaseToken, processBibRoutes);
 router.use('/user', verifyFirebaseToken, userRoutes);
 router.use('/file', verifyFirebaseToken, fileRoutes);
 router.use('/related', verifyFirebaseToken, relatedWorksRoutes);
+router.use('/cds', verifyFirebaseToken, cdsRoutes);
 
 // // Public routes
 // router.use('/guest', require('../routes/GuestRoutes'));

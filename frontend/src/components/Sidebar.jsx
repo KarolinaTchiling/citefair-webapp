@@ -4,6 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../AuthContext";
+import { useSelectedFile } from "../SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const drawerWidth = 250; // Set width of the Drawer
@@ -11,7 +12,9 @@ const drawerWidth = 250; // Set width of the Drawer
 const Sidebar = ({ isOpen, toggleDrawer }) => {
   const navigate = useNavigate();
   const { user } = useAuth(); // Get the authenticated user
+  const { fileName } = useSelectedFile();
   const [isGuest, setIsGuest] = useState(false);
+  const [cleanName, setCleanName] = useState(null);
 
   useEffect(() => {
     const fetchGuestStatus = async () => {
@@ -33,6 +36,13 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
 
     fetchGuestStatus();
   }, [user]);
+
+  useEffect(() => {
+      if (fileName) {
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
+      }
+    }, [fileName]);
 
   return (
     <>
@@ -90,6 +100,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
         {/* Sidebar Content */}
         <Box>
           <h2 className="text-lg pl-4 font-semibold mt-5">Menu</h2>
+          <h2 className="text-lg pl-4 font-thin mt-1 mb-10 italic">{cleanName}</h2>
           <ul className="pl-4 mt-4 space-y-5">
             <button 
               className="w-full text-left transition duration-300 hover:scale-105"

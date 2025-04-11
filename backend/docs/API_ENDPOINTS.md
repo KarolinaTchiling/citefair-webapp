@@ -42,6 +42,14 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
+### 📂 `/cds`
+
+| Method | Endpoint       | Description                        | Auth Required |
+|--------|----------------|------------------------------------|---------------|
+| GET   | `/user/get-statements`   | Retrieves citation diversity statements | ✅             |
+
+---
+
 ## 🌐 Public Endpoints
 
 ### 📂 `/guest`
