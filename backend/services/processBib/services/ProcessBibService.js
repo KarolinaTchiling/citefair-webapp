@@ -7,11 +7,14 @@ import { calculatePercentages, calculateCategories } from "./StatsCalculationSer
 /**
  * MAIN function
  * 
- * This is the main function of the entire bib processing workflow
+ * This is the main function of the entire bib processing pipeline
  * 
  * PIPELINE:
- * Get author data from Open Alex  -> labelling gender using Gender-API -> calculating gender stats --> Saving to firebase DB
- * 
+ *  1. Extract titles from the uploaded file        (ParseBibService.js)
+ *      2. Get author data from Open Alex               (PaperService.js)
+ *          3.  labelling gender using Gender-API           (GenderService.js) 
+ *              4. calculating gender stats                     (StatsCalculationService.js)
+ *                    --> Saving to firebase DB                     (ProcessBibService.js)
  */
 
 export const processBibliography = async (fileName, userId, firstName, middleName, lastName) => {

@@ -3,6 +3,7 @@ import admin from 'firebase-admin';
 import processBibRoutes from '../services/processBib/index.js'; 
 import userRoutes from '../services/user/index.js';
 import fileRoutes from "../services/files/index.js";
+import relatedWorksRoutes from "../services/relatedWorks/index.js";
 
 const router = express.Router();
 
@@ -26,15 +27,10 @@ async function verifyFirebaseToken(req, res, next) {
 }
 
 
-// Apply the auth middleware to protected routes
-// router.use('/references', verifyFirebaseToken, require('../routes/ReferencesRoutes'));
-// router.use('/related', verifyFirebaseToken, require('../routes/RelatedWorksRoutes'));
-// router.use('/statement', verifyFirebaseToken, require('../routes/StatementRoutes'));
-
-// Use your new service:
 router.use('/process', verifyFirebaseToken, processBibRoutes);
 router.use('/user', verifyFirebaseToken, userRoutes);
 router.use('/file', verifyFirebaseToken, fileRoutes);
+router.use('/related', verifyFirebaseToken, relatedWorksRoutes);
 
 // // Public routes
 // router.use('/guest', require('../routes/GuestRoutes'));

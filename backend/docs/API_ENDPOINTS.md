@@ -1,4 +1,4 @@
-# 📡 CiteFair API – Endpoint Reference
+# CiteFair API – Endpoint Reference
 
 This file lists all current API endpoints in the project, organized by module and route purpose. Authentication is required for protected routes via Firebase ID tokens (`Authorization: Bearer <token>`).
 
@@ -16,20 +16,30 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
-### 📂 `/process`
-
-| Method | Endpoint                        | Description                                          | Auth Required |
-|--------|----------------------------------|------------------------------------------------------|---------------|
-| POST   | `/process/run-process-bib`        | Processes bibliography and stores results in DB      | ✅             |
-| GET    | `/process/get-process-bib`   | Retrieves previously processed bibliography results  | ✅             |
-
----
-
 ### 📂 `/user`
 
 | Method | Endpoint       | Description                        | Auth Required |
 |--------|----------------|------------------------------------|---------------|
 | POST   | `/user/name`   | Retrieves first, middle, and last name of the user | ✅             |
+
+---
+
+### 📂 `/process`
+
+| Method | Endpoint                        | Description                                          | Auth Required |
+|--------|----------------------------------|------------------------------------------------------|---------------|
+| POST   | `/process/run-process-bib`        | Run the processes bibliography pipeline and stores results in DB      | ✅             |
+| GET    | `/process/get-process-bib`   | Retrieves previously processed bibliography results  | ✅             |
+
+---
+
+### 📂 `/related`
+
+| Method | Endpoint                        | Description                                          | Auth Required |
+|--------|----------------------------------|------------------------------------------------------|---------------|
+| POST   | `/related/run-related-works`        | Runs the related works pipeline and stores results in DB      | ✅             |
+| GET    | `/related/get-related-works`   | Retrieves previously fetched related work results  | ✅             |
+
 ---
 
 ## 🌐 Public Endpoints
