@@ -1,4 +1,4 @@
-import { db } from "../../../utils/firebaseConfig.js";
+import { db, admin } from "../../../utils/firebaseConfig.js";
 
 export const registerGuest = async ({ uid, firstName, middleName, lastName }) => {
   if (!uid) throw new Error("UID is required");

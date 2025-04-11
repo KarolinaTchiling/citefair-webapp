@@ -4,7 +4,6 @@ import FileUploadComponent from "./Upload";
 import RunButton from "./RunButton";
 
 function GuestDashboard() {
-  const { user } = useAuth();
   const [firstName, setFirstName] = useState(""); // User enters first name
   const [middleName, setMiddleName] = useState(""); // User enters first name
   const [lastName, setLastName] = useState(""); // User enters last name

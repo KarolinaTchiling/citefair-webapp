@@ -8,11 +8,11 @@ const LogButton = () => {
   const { user, logout } = useAuth(); // Get user & logout function from context
   const navigate = useNavigate();
 
+
   // Handle "End Session" (Delete Guest Account)
   const handleEndSession = async () => {
     try {
-      const token = await user.getIdToken();
-      
+      const token = await user.getIdToken();      
       const response = await fetch(`${API_BASE_URL}/guest/delete`, {
         method: "DELETE",
         headers: {

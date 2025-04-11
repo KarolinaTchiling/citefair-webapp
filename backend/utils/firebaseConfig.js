@@ -16,5 +16,5 @@ const auth = admin.auth();
 const db = admin.database();
 const bucket = admin.storage().bucket();
 
-export { db, bucket ,admin, auth};
+export { db, bucket, admin, auth};
 

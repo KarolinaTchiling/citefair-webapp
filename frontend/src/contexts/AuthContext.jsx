@@ -70,9 +70,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
 
-
   const login = async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    setUser(userCredential.user); 
   };
 
   const logout = async (navigate) => {
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerGuest = async (firstName, middleName, lastName) => {
     try {
-      const token = await firebaseUser.getIdToken();
+      const token = await auth.currentUser.getIdToken();
       const response = await fetch(`${API_BASE_URL}/guest/register`, {
         method: "POST",
         headers: {
@@ -105,9 +105,8 @@ export const AuthProvider = ({ children }) => {
 
   const continueAsGuest = async (firstName, middleName, lastName) => {
     try {
-      const result = await signInAnonymously(auth);
-      const guestUID = result.user.uid;
-      await registerGuest(guestUID, firstName, middleName, lastName);
+      await signInAnonymously(auth);
+      await registerGuest( firstName, middleName, lastName);
     } catch (error) {
       console.error("Error during guest sign-in:", error);
     }
