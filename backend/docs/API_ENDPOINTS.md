@@ -4,7 +4,7 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
-## 🔐 Protected Endpoints
+## Protected Endpoints
 
 ### 📂 `/file`
 
@@ -21,6 +21,17 @@ This file lists all current API endpoints in the project, organized by module an
 | Method | Endpoint       | Description                        | Auth Required |
 |--------|----------------|------------------------------------|---------------|
 | POST   | `/user/name`   | Retrieves first, middle, and last name of the user | ✅             |
+
+---
+
+### 📂 `/guest`
+
+| Method | Endpoint              | Description                                                   | Auth Required |
+|--------|-----------------------|---------------------------------------------------------------|---------------|
+| POST   | `/guest/register`     | Registers a new guest user with first, middle, and last name  | ✅             |
+| GET    | `/guest/is-guest`     | Checks if the current user is a guest                         | ✅             |
+| POST   | `/guest/save`         | Upgrades a guest account to a permanent account (adds email & password) | ✅      |
+| DELETE | `/guest/delete`       | Deletes a guest user from Firebase Authentication + all files in db and storage           | ✅             |
 
 ---
 
@@ -46,19 +57,10 @@ This file lists all current API endpoints in the project, organized by module an
 
 | Method | Endpoint       | Description                        | Auth Required |
 |--------|----------------|------------------------------------|---------------|
-| GET   | `/user/get-statements`   | Retrieves citation diversity statements | ✅             |
+| GET   | `/cds/get-statements`   | Retrieves citation diversity statements | ✅             |
 
 ---
 
-## 🌐 Public Endpoints
-
-### 📂 `/guest`
-
-| Method | Endpoint                 | Description                 | Auth Required |
-|--------|--------------------------|-----------------------------|---------------|
-| POST   | `/guest/registerGuest`   | Register anonymous user     | ❌             |
-
----
 
 ## 🔐 Authentication Notes
 

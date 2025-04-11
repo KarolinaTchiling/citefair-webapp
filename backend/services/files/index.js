@@ -1,1 +1,1 @@
-export { default } from "../files/routes/index.js";
+export { default } from "./routes/index.js";
