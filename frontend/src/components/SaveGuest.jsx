@@ -47,7 +47,7 @@ const SaveGuest = () => {
           Want to Save your Results?
       </h1>
       <h1 className="text-4xl text-white text-center mt-5">
-          Create an Account 
+          Create an Account
       </h1>
       <div className="self-center bg-white rounded-lg p-8 w-full mt-10">
       <form onSubmit={handleSaveGuest} className="flex-grow flex flex-col">

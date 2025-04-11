@@ -6,6 +6,7 @@ import fileRoutes from "../services/files/index.js";
 import relatedWorksRoutes from "../services/relatedWorks/index.js";
 import cdsRoutes from "../services/cds/index.js";
 import guestRoutes from "../services/guests/index.js";
+import referenceRoutes from "../services/references/index.js";
 
 const router = express.Router();
 
@@ -35,5 +36,6 @@ router.use('/file', verifyFirebaseToken, fileRoutes);
 router.use('/related', verifyFirebaseToken, relatedWorksRoutes);
 router.use('/cds', verifyFirebaseToken, cdsRoutes);
 router.use('/guest', verifyFirebaseToken, guestRoutes);
+router.use('/ref', verifyFirebaseToken, referenceRoutes);
 
 export default router;
