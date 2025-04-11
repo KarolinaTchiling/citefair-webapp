@@ -30,12 +30,15 @@ const FileUploadComponent = ({ setUploadedFile, setFileUploaded }) => {
         }
 
         try {
+            const token = await user.getIdToken();
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("userId", user.uid); // Send only userId
 
             const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
                 body: formData,
             });
 

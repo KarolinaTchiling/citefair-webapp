@@ -2,6 +2,7 @@ import express from 'express';
 import admin from 'firebase-admin';
 import processBibRoutes from '../services/processBib/index.js'; 
 import userRoutes from '../services/user/index.js';
+import uploadRoutes from "../services/upload/index.js";
 
 const router = express.Router();
 
@@ -33,6 +34,7 @@ async function verifyFirebaseToken(req, res, next) {
 // Use your new service:
 router.use('/processBib', verifyFirebaseToken, processBibRoutes);
 router.use('/user', verifyFirebaseToken, userRoutes);
+router.use('/upload', verifyFirebaseToken, uploadRoutes);
 
 // // Public routes
 // router.use('/guest', require('../routes/GuestRoutes'));
