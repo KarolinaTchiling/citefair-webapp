@@ -16,12 +16,12 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
-### 📂 `/processBib`
+### 📂 `/process`
 
 | Method | Endpoint                        | Description                                          | Auth Required |
 |--------|----------------------------------|------------------------------------------------------|---------------|
-| POST   | `/processBib/processBib`        | Processes bibliography and stores results in DB      | ✅             |
-| GET    | `/processBib/getProcessedBib`   | Retrieves previously processed bibliography results  | ✅             |
+| POST   | `/process/run-process-bib`        | Processes bibliography and stores results in DB      | ✅             |
+| GET    | `/process/get-process-bib`   | Retrieves previously processed bibliography results  | ✅             |
 
 ---
 

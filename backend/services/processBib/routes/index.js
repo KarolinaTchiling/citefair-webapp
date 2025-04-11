@@ -3,7 +3,7 @@ import { processBib, getProcessedBib } from "../controllers/processBibController
 
 const router = express.Router();
 
-router.post("/processBib", processBib);
-router.get("/getProcessedBib", getProcessedBib);
+router.post("/run-process-bib", processBib);
+router.get("/get-process-bib", getProcessedBib);
 
 export default router;

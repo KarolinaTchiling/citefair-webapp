@@ -32,7 +32,7 @@ async function verifyFirebaseToken(req, res, next) {
 // router.use('/statement', verifyFirebaseToken, require('../routes/StatementRoutes'));
 
 // Use your new service:
-router.use('/processBib', verifyFirebaseToken, processBibRoutes);
+router.use('/process', verifyFirebaseToken, processBibRoutes);
 router.use('/user', verifyFirebaseToken, userRoutes);
 router.use('/file', verifyFirebaseToken, fileRoutes);
 

@@ -12,17 +12,18 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResultsPage = () => {
     const location = useLocation();
-    const fileName = location.state?.fileName;
+    const postData = location.state?.postData;                          
+    const fileName = postData?.fileName || location.state?.fileName;    // postData comes from uploading a new file, fileName comes from viewing prev. analyses
+
     const { user, fullName } = useAuth();
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); 
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null); 
     const [cleanName, setCleanName] = useState(null);
-
 
     useEffect(() => {
         if (fileName) {
@@ -30,20 +31,16 @@ const ResultsPage = () => {
           setCleanName(cleanedName);
         }
       }, [fileName]);
-      
-
+    
     useEffect(() => {
         if (!user || !fileName) return;
 
         const fetchData = async () => {
             const token = await user.getIdToken();
 
-            console.log(token)
-            console.log(fileName)
-            
             // Step 1: Check if data exists in Firebase
             try {
-                const storedResponse = await fetch(`${API_BASE_URL}/processBib/getProcessedBib?fileName=${fileName}`, {
+                const storedResponse = await fetch(`${API_BASE_URL}/process/get-process-bib?fileName=${fileName}`, {
                     method: "GET",
                     headers: {
                       "Content-Type": "application/json",
@@ -66,18 +63,20 @@ const ResultsPage = () => {
 
             // Step 2: If no stored data, call processBib API
             try {
-                const response = await fetch(`${API_BASE_URL}/processBib/processBib`, {
+                const response = await fetch(`${API_BASE_URL}/process/run-process-bib`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
-                    },
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, 
+                      },
                     body: JSON.stringify({
-                        fileName,
-                        firstName: fullName.first,
-                        middleName: fullName.middle,
-                        lastName: fullName.last,
+                        fileName: postData?.fileName,
+                        firstName: postData?.firstName || fullName?.first,
+                        middleName: postData?.middleName || fullName?.middle,
+                        lastName: postData?.lastName || fullName?.last,
                       }),
                 });
+                console.log(response);
                 
                 const result = await response.json(); 
                 if (!response.ok) {
