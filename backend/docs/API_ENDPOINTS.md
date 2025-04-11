@@ -37,8 +37,8 @@ This file lists all current API endpoints in the project, organized by module an
 
 | Method | Endpoint                        | Description                                          | Auth Required |
 |--------|----------------------------------|------------------------------------------------------|---------------|
-| POST   | `/related/run-related-works`        | Runs the related works pipeline and stores results in DB      | ✅             |
-| GET    | `/related/get-related-works`   | Retrieves previously fetched related work results  | ✅             |
+| POST   | `/related/run-related-work`        | Runs the related works pipeline and stores results in DB      | ✅             |
+| GET    | `/related/get-related-work`   | Retrieves previously fetched related work results  | ✅             |
 
 ---
 
