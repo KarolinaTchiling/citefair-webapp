@@ -1,4 +1,4 @@
-import { fetchUserName, fetchUserFiles } from "../services/UserService.js";
+import { fetchUserName } from "../services/UserService.js";
 
 // Returns user's name from the Firebase Realtime DB
 export const getUserName = async (req, res) => {
@@ -21,19 +21,3 @@ export const getUserName = async (req, res) => {
   }
 };
 
-// Returns all files with signed download links and metadata
-export const getUserFiles = async (req, res) => {
-  try {
-    const uid = req.user?.uid;
-    if (!uid) {
-      return res.status(401).json({ error: "Unauthorized: No UID found in token." });
-    }
-
-    const files = await fetchUserFiles(uid);
-
-    res.status(200).json({ files });
-  } catch (error) {
-    console.error("Error fetching user files:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};

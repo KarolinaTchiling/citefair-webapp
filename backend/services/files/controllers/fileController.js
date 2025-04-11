@@ -1,4 +1,6 @@
 import { uploadFileToFirebase } from "../services/uploadService.js";
+import { deleteUserFile } from "../services/deleteService.js";
+import { fetchUserFiles } from "../services/fetchService.js";
 import { bucket } from "../../../utils/firebaseConfig.js";
 
 // Handles file upload requests
@@ -38,3 +40,35 @@ export const handleFileUpload = async (req, res) => {
       return res.status(500).json({ error: "File upload failed" });
     }
   };
+
+export const handleFileDelete = async (req, res) => {
+    try {
+      const { fileName } = req.query;
+      const userId = req.user?.uid;
+  
+      const result = await deleteUserFile(userId, fileName);
+      return res.json(result);
+  
+    } catch (error) {
+      const status = error.status || 500;
+      console.error(" Error deleting file:", error);
+      res.status(status).json({ error: error.message || "Failed to delete file" });
+    }
+  };
+
+// Returns all files with signed download links and metadata
+export const handleFetchUserFiles = async (req, res) => {
+  try {
+    const uid = req.user?.uid;
+    if (!uid) {
+      return res.status(401).json({ error: "Unauthorized: No UID found in token." });
+    }
+
+    const files = await fetchUserFiles(uid);
+
+    res.status(200).json({ files });
+  } catch (error) {
+    console.error("Error fetching user files:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

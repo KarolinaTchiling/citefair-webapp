@@ -16,8 +16,8 @@ const UserFiles = () => {
       try {
         const token = await user.getIdToken();
 
-        const response = await fetch(`${API_BASE_URL}/user/files`, {
-          method: "POST",
+        const response = await fetch(`${API_BASE_URL}/file/get-files`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -44,12 +44,17 @@ const UserFiles = () => {
   }, [user]);
 
   const handleDeleteFile = async (fileName) => {
-    if (user?.uid && fileName) {
+    if (user && fileName) {
       try {
+
+        const token = await user.getIdToken();
         const response = await fetch(
-          `${API_BASE_URL}/upload/delete-file?userId=${user.uid}&fileName=${fileName}`,
+          `${API_BASE_URL}/file/delete?fileName=${fileName}`, 
           {
             method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
   
