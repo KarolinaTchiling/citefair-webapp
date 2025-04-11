@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom';
 import GuestDashboard from "../components/GuestDashboard";
-import { useAuth } from "../AuthContext"
+import { useAuth } from "../contexts/AuthContext"
 
 function LandingPage() {
 

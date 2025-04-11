@@ -6,8 +6,8 @@ import Footer from "../components/Footer.jsx";
 import Loader from "../components/Loader.jsx";
 import Typewriter from "../components/TypewriterRelated.jsx";
 import toast from 'react-hot-toast';
-import { useAuth } from "../AuthContext";
-import { useSelectedFile } from "../SelectedFileContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

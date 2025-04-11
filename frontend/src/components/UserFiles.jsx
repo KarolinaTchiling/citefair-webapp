@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom"; 
-import { useSelectedFile } from "../SelectedFileContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

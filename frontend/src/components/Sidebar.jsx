@@ -3,8 +3,8 @@ import { Drawer, Box, IconButton, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../AuthContext";
-import { useSelectedFile } from "../SelectedFileContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const drawerWidth = 250; // Set width of the Drawer

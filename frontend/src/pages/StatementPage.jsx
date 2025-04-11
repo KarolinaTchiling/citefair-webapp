@@ -3,8 +3,8 @@ import Sidebar from '../components/Sidebar.jsx';
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import { useAuth } from "../AuthContext";
-import { useSelectedFile } from "../SelectedFileContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

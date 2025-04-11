@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FileUploadAnalysis from "../components/FileUploadAnalysis";
 import UserFiles from "../components/UserFiles";
-import { useAuth } from "../AuthContext"
+import { useAuth } from "../contexts/AuthContext"
 import Sidebar from '../components/Sidebar.jsx';
 import SaveGuest from "../components/SaveGuest";
 

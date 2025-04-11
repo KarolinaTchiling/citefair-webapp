@@ -10,7 +10,7 @@ import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
 import NotFound from './pages/NotFoundPage';
 import './input.css';
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 import { Toaster } from 'react-hot-toast';
 
 function App() {

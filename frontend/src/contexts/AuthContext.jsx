@@ -5,7 +5,7 @@ import {
   set,
   get,
 } from "firebase/database";
-import { auth } from "./firebaseConfig"; // Import your configured auth
+import { auth } from "../firebaseConfig"; // Import your configured auth
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
