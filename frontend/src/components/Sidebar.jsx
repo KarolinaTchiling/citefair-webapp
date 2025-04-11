@@ -13,29 +13,29 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
   const navigate = useNavigate();
   const { user } = useAuth(); // Get the authenticated user
   const { fileName } = useSelectedFile();
-  const [isGuest, setIsGuest] = useState(false);
+  // const [isGuest, setIsGuest] = useState(false);
   const [cleanName, setCleanName] = useState(null);
 
-  useEffect(() => {
-    const fetchGuestStatus = async () => {
-      if (user?.uid) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/guest/isGuest?uid=${user.uid}`);
+  // useEffect(() => {
+  //   const fetchGuestStatus = async () => {
+  //     if (user?.uid) {
+  //       try {
+  //         const response = await fetch(`${API_BASE_URL}/guest/isGuest?uid=${user.uid}`);
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch guest status");
-          }
+  //         if (!response.ok) {
+  //           throw new Error("Failed to fetch guest status");
+  //         }
 
-          const data = await response.json();
-          setIsGuest(data.isGuest);
-        } catch (error) {
-          console.error("Error fetching guest status:", error);
-        }
-      }
-    };
+  //         const data = await response.json();
+  //         setIsGuest(data.isGuest);
+  //       } catch (error) {
+  //         console.error("Error fetching guest status:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchGuestStatus();
-  }, [user]);
+  //   fetchGuestStatus();
+  // }, [user]);
 
   useEffect(() => {
       if (fileName) {
@@ -127,7 +127,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
             </button>
 
             {/* 🔹 Hide "Back to Dashboard" for Guest Users */}
-            {!isGuest && (
+            {user?.isAnonymous && (
               <button 
                 className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
                 onClick={() => navigate('/dashboard')}>
@@ -135,7 +135,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
               </button>
             )}
 
-            {isGuest && (
+            {user?.isAnonymous && (
               <button 
                 className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
                 onClick={() => navigate('/save-guest')}>

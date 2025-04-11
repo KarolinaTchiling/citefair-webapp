@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -11,10 +11,14 @@ const LogButton = () => {
   // Handle "End Session" (Delete Guest Account)
   const handleEndSession = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/guest/deleteGuest`, {
+      const token = await user.getIdToken();
+      
+      const response = await fetch(`${API_BASE_URL}/guest/delete`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {

@@ -14,15 +14,12 @@ function GuestDashboard() {
 
   const [showUploadSection, setShowUploadSection] = useState(false); // Track section visibility
 
-  console.log(user?.uid);
-
   const handleContinueAsGuest = async (e) => {
     e.preventDefault(); // Prevents the form from refreshing
     await continueAsGuest(firstName, middleName, lastName); // Ensure the function completes
     setShowUploadSection(true); // Update the UI
   };
 
-  console.log(uploadedFile);
   return (
     <div className="">
       <div className="h-full w-full flex flex-col bg-white rounded-lg p-8 pb-4">

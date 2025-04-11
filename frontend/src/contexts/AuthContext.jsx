@@ -5,7 +5,7 @@ import {
   set,
   get,
 } from "firebase/database";
-import { auth } from "../firebaseConfig"; // Import your configured auth
+import { auth } from "../firebaseConfig"; 
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -85,14 +85,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const registerGuest = async (uid, firstName, middleName, lastName) => {
+  const registerGuest = async (firstName, middleName, lastName) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/guest/registerGuest`, {
+      const token = await firebaseUser.getIdToken();
+      const response = await fetch(`${API_BASE_URL}/guest/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ uid, firstName, middleName, lastName }),
+        body: JSON.stringify({ firstName, middleName, lastName }),
       });
       const result = await response.json();
       console.log(result);

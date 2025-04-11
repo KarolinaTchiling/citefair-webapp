@@ -18,10 +18,14 @@ const SaveGuest = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/guest/save-guest`, {
+      const token = await user.getIdToken();
+      const response = await fetch(`${API_BASE_URL}/guest/save`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, email, password }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
