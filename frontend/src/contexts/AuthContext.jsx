@@ -114,14 +114,12 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (email, password, firstName, middleName, lastName, navigate) => {
     try {
-      // Step 1: Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
-      // Step 2: Save user data to Firebase Realtime Database
       const db = getDatabase();
       await set(ref(db, `users/${user.uid}`), {
-        uid: user.uid, // Save UID as well
+        uid: user.uid,
         email,
         firstName,
         middleName,
@@ -129,13 +127,31 @@ export const AuthProvider = ({ children }) => {
         isGuest: false,
         createdAt: new Date().toISOString(),
       });
-
+  
+      const token = await user.getIdToken();
+      const response = await fetch(`${API_BASE_URL}/user/name`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setFullName({
+          first: data.firstName || "",
+          middle: data.middleName || "",
+          last: data.lastName || ""
+        });
+      }
+  
       console.log("User successfully signed up & saved to database.");
       navigate("/dashboard"); 
   
     } catch (error) {
       console.error("Signup failed:", error);
-      throw error; 
+      throw error;
     }
   };
 

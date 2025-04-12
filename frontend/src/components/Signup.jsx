@@ -109,7 +109,7 @@ const Signup = () => {
           {error}
         </div>
         )}
-\
+
         <button
           className="mt-auto w-full bg-blue text-white font-medium py-2 px-4 rounded-md hover:bg-blue/80"
         >
