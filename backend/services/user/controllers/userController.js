@@ -1,4 +1,4 @@
-import { fetchUserName } from "../services/UserService.js";
+import { fetchUserName } from "../services/userService.js";
 
 // Returns user's name from the Firebase Realtime DB
 export const getUserNameController = async (req, res) => {

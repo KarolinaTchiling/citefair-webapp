@@ -9,4 +9,3 @@ export const fetchUserName = async (uid) => {
   const { firstName, middleName, lastName } = userData;
   return { firstName, middleName, lastName };
 };
-
