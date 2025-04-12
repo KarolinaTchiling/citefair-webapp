@@ -2,7 +2,7 @@ import { runRelatedWorks } from "../services/RelatedWorksService.js";
 import { db } from "../../../utils/firebaseConfig.js";
 
 
-// Creates the related works from the relatedWorksService 
+// Generates related works from the relatedWorksService 
 export const relatedWorksController = async (req, res) => {
     try {
         const userId = req.user.uid; 

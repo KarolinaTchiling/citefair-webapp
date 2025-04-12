@@ -10,9 +10,9 @@ import { fetchAuthorGender } from "./GenderService.js";
  * 
  * PIPELINE:
  *  1. Extract doi from the processed bibliography                   (DoiService.js)
- *      2.  send those DOI to semantic Scholar Recommendation API    (SemanticScholarService.js)
- *          3.  label genders of authors of the returns papers         (GenderService.js)
- *              -> Save the results to the firebase DB                   (RelatedWorksService.js)
+ *      2.  send those DOI to semantic Scholar Recommendation API       (SemanticScholarService.js)
+ *          3.  label genders of authors of the returns papers              (GenderService.js)
+ *              -> Save the results to the firebase DB                          (RelatedWorksService.js)
  */
 
 export const runRelatedWorks = async (fileName, userId) => {

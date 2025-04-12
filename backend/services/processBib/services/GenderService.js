@@ -6,10 +6,7 @@ dotenv.config();
 /**
  * STEP 3
  * 
- * These service uses titles to fetch papers from OPEN ALEX, removes self-citations & generates BibTeX citations 
- * OPEN ALEX returns authors and doi 
- * 
- * BibTeX citations are generated using citation.js with Semantic Scholar as a fallback 
+ * This service uses Gender-API to label author genders. Done in batches 50 names.
  * 
  */
 
@@ -29,7 +26,7 @@ export async function fetchAuthorGender(papers) {
 
         for (const author of paper.authors) {
             authorRequests.push({
-                id: authorId.toString(), // Keep original unique ID
+                id: authorId.toString(), 
                 full_name: author.name.trim()
             });
             authorId++;
@@ -91,7 +88,6 @@ export async function fetchAuthorGender(papers) {
                     author.gender = "X";  // Assign "X" if missing
                     author.prob = 0;
                 } else {
-                    // console.log("Mapped Gender Data:", genderData);
 
                     let gender = "X";
                     if (genderData?.result_found) {

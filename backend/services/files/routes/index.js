@@ -3,7 +3,7 @@ import multer from "multer";
 import { FetchUserFilesController, FileUploadController, FileDeleteController } from "../controllers/fileController.js";
 
 const router = express.Router();
-const upload = multer(); // uses memo`ry storage
+const upload = multer(); // uses memory storage
 
 router.get("/get-files", FetchUserFilesController);
 router.post("/upload", upload.single("file"), FileUploadController);

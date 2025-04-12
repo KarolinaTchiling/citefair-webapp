@@ -55,7 +55,7 @@ export const processBibliography = async (fileName, userId, firstName, middleNam
         // Save papers to references in firebase
         await db.ref(`users/${userId}/data/${fileName}/references`).set(papersWithGender);
 
-        // **Save results to Firebase**
+        // Save results to Firebase
         await db.ref(`users/${userId}/data/${fileName}/processedBib`).set({
             ...processedData,
         });

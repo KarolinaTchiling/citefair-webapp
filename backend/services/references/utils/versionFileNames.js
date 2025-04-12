@@ -1,3 +1,7 @@
+/**
+ * Helper function to rename the file with versions. 
+ */
+
 export const getVersionedFileName = (originalName) => {
     let name = originalName.replace(/\.(bib|txt)$/i, "");
     name = name.replace(/_(bib|txt)$/i, "");

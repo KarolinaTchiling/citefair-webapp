@@ -3,7 +3,6 @@
  * 
  * These service calculates the gender statistics.
  * 
- * 
  */
 
 export function calculatePercentages(data) {

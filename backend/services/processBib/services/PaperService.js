@@ -6,7 +6,7 @@ dotenv.config();
 /**
  * STEP 2
  * 
- * These service uses titles to fetch papers from OPEN ALEX, removes self-citations & generates BibTeX citations 
+ * This service uses titles to fetch papers from OPEN ALEX, removes self-citations & generates BibTeX citations 
  * OPEN ALEX returns authors and doi 
  * 
  * BibTeX citations are generated using citation.js with Semantic Scholar acting as a fallback 

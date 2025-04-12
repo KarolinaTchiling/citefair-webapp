@@ -1,15 +1,11 @@
 import { bucket } from "../../../utils/firebaseConfig.js";
-import dotenv from "dotenv";
 import { parseString } from 'bibliography'
-dotenv.config();
 
 /**
  * STEP 1 
  * 
- * These service parses uploaded bibliographies to extract titles.
+ * This service parses uploaded bibliographies to extract titles.
  * Currently supports .bib and .txt
- * 
- * This service is a precursor to the StatService.
  * 
  */
 
@@ -58,20 +54,13 @@ function extractTitlesFromBib(fileContent) {
           return title ? title.trim() : null;
         })
         .filter(Boolean); // Remove null/undefined
-  
-    //   // Print each title inside the function to verify
-    //   console.log(" Extracted Titles:");
-    //   titles.forEach((title, index) => {
-    //     console.log(`  ${index + 1}. ${title}`);
-    //   });
-  
+    
       return { titles };
     } catch (error) {
       console.error("Error processing bibliography:", error.message);
       return { error: error.message };
     }
   }
-
 function extractTitlesFromTxt(fileContent) {
     // Use regex to find all substrings inside double quotes
     const matches = fileContent.match(/"([^"]+)"/g);

@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 /**
  * STEP 2
  * 
- * These service calls the Semantic Scholar Recommendations API, and returns the recommended articles with their metadata
+ * This service calls the Semantic Scholar Recommendations API, and returns the recommended articles with their metadata
  * 
  */
 

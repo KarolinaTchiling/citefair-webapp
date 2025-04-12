@@ -3,7 +3,7 @@ import { db } from "../../../utils/firebaseConfig.js";
 /**
  * STEP 1
  * 
- * These service returns a list of of DOIs from the processed bibliography stored in the Firebase DB
+ * This service returns a list of of DOIs from the processed bibliography stored in the Firebase DB
  * 
  */
 

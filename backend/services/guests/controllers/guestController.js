@@ -39,7 +39,7 @@ import {
   
   export const deleteGuestController = async (req, res) => {
     try {
-        const uid = req.user.uid; // from API Gateway
+        const uid = req.user.uid;
         const response = await deleteGuest(uid);
         res.status(200).json(response);
     } catch (error) {
