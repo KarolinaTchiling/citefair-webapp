@@ -61,8 +61,22 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
+### 📂 `/ref`
+
+| Method | Endpoint              | Description                                                   | Auth Required |
+|--------|-----------------------|---------------------------------------------------------------|---------------|
+| GET   | `/ref/get-all`         | Retrieves the references from the DB (includes gender labelled authors, BibTeX citation, title, doi) | ✅             |
+| POST    | `/ref/add`             | Adds a reference to the reference list                        | ✅             |
+| DELETE   | `/ref/delete`         | Removes a reference from the reference list | ✅      |
+| POST | `/ref/download`       | Combines all the BibTex citations in the reference lists and returns a BibTex file    | ✅             |
+
+---
 
 ## 🔐 Authentication Notes
 
-All protected routes require the client to include a Firebase ID token in the header:
+All protected routes require the client to include a valid Firebase ID token in the request header.
+The frontend retrieves this token using Firebase Authentication.
+
+The API Gateway is the authentication middleware and is responsible for validating these tokens.
+Once validated, the token is decoded, and the user's information is attached to the request object as it is forwarded to the appropriate service.
 
