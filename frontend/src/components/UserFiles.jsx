@@ -72,7 +72,7 @@ const UserFiles = () => {
     }
   };
 
-  // Navigate to the results page and pass `fileName`
+  
   const handleSeeResults = (fileName) => {
     setFileName(fileName);
     navigate("/results");

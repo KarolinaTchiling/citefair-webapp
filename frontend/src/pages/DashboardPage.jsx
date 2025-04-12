@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import FileUploadAnalysis from "../components/FileUploadAnalysis";
+import UserUploadComp from "../components/UploadComponents/UserUploadComp";
 import UserFiles from "../components/UserFiles";
 import { useAuth } from "../contexts/AuthContext"
 
@@ -28,7 +28,7 @@ function DashBoardPage() {
                   <UserFiles />
                 </div>
                 <div className="flex-[45%]">
-                  <FileUploadAnalysis />
+                  <UserUploadComp />
                 </div>
 
              </div>

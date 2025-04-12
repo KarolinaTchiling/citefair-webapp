@@ -6,7 +6,6 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     return (
-        // <div className="border-2 border-indigo-600 py-4 px-20 flex flex-row items-center justify-between">
          <div className="py-4 px-20 flex flex-row items-center justify-between bg-white">
 
             <button

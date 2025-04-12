@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import FileUploadComponent from "./Upload";
 import RunButton from "./RunButton";
 

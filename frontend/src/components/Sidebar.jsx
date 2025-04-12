@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../contexts/AuthContext";
 import { useSelectedFile } from "../contexts/SelectedFileContext";
 
-const drawerWidth = 250; // Set width of the Drawer
+const drawerWidth = 250; 
 
 const Sidebar = ({ isOpen, toggleDrawer }) => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Get the authenticated user
+  const { user } = useAuth(); 
   const { fileName } = useSelectedFile();
   const [cleanName, setCleanName] = useState(null);
 
@@ -30,11 +30,11 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
         sx={{ 
             color: "white",
             position: "absolute",
-            top: "80px", // equivalent to Tailwind's top-20 (80px)
-            left: "20px", // adjust as needed
+            top: "80px", 
+            left: "20px", 
             backgroundColor: "transparent",
             boxShadow: "none",
-            width: "auto" // remove fixed width
+            width: "auto" 
         }}
         >
         <MenuIcon fontSize="large"/>
@@ -104,7 +104,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
                 Reference List
             </button>
 
-            {/* 🔹 Hide "Back to Dashboard" for Guest Users */}
+            {/* Hide "Back to Dashboard" for Guest Users */}
             {!user?.isAnonymous && (
               <button 
                 className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"

@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import FileUploadComponent from "./Upload";
 import RunButton from "./RunButton";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function FileUploadAnalysis() {
   const { fullName } = useAuth();

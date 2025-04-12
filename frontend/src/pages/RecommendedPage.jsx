@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import Footer from "../components/Footer.jsx";
-import Loader from "../components/Loader.jsx";
-import Typewriter from "../components/TypewriterRelated.jsx";
+import Loader from "../components/Loaders/Loader.jsx";
+import Typewriter from "../components/Loaders/TypewriterRelated.jsx";
 import toast from 'react-hot-toast';
 import { useAuth } from "../contexts/AuthContext";
 import { useSelectedFile } from "../contexts/SelectedFileContext";
@@ -24,7 +24,7 @@ const RecommendedPage = () => {
   const [error, setError] = useState(null);
   const [cleanName, setCleanName] = useState(null);
   const [addedReferences, setAddedReferences] = useState([]);
-  const [referencesLoading, setReferencesLoading] = useState(false);  //** */
+  const [referencesLoading, setReferencesLoading] = useState(true); 
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);

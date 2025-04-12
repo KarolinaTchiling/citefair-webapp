@@ -11,7 +11,6 @@ const Signup = () => {
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -110,8 +109,7 @@ const Signup = () => {
           {error}
         </div>
         )}
-
-        {/* Submit Button (Pushes to Bottom) */}
+\
         <button
           className="mt-auto w-full bg-blue text-white font-medium py-2 px-4 rounded-md hover:bg-blue/80"
         >
