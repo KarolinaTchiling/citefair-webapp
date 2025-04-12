@@ -39,7 +39,7 @@ CiteFairly relies on the following third-party APIs and libraries to enable cita
 - [Semantic Scholar Recommendations API](https://api.semanticscholar.org/api-docs/recommendations): to retrieve related articles
 - [Semantic Scholar Academic Graph API](https://api.semanticscholar.org/api-docs/graphs):  for fallback BibTex citations
 - [Gender-API](https://gender-api.com/en/api-docs/v2): to infer gender from author first names
-- [Bibliography.js](https://github.com/digitalheir/bibliography-js#readme): Bibliography.js: for parsing and formatting .bib files
+- [Bibliography.js](https://github.com/digitalheir/bibliography-js#readme): for parsing and formatting .bib files
 - [Citations.js](https://citation.js.org/): for generating BibTex citations
 
 ---
