@@ -95,7 +95,6 @@ const StatementPage = () => {
     };
     
 
-
     return (
         <div>
           <Navbar />
