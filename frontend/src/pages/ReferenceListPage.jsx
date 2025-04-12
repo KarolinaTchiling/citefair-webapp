@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import toast from 'react-hot-toast';
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,26 +17,28 @@ const ReferenceListPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { fileName } = useSelectedFile();
+    const { user } = useAuth();
     const [cleanName, setCleanName] = useState(null);
 
-    const fetchData = async () => {
-        const sessionUserData = sessionStorage.getItem("userData");
-      
-        if (!sessionUserData) {
-          console.error("Missing required session data, redirecting...");
-          navigate("/");
-          return;
+    useEffect(() => {
+        if (fileName) {
+          const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+          setCleanName(cleanedName);
         }
-      
-        const userData = JSON.parse(sessionUserData);
-        const fileName = userData.fileName;
-        const userId = userData.userId;
+      }, [fileName]);
 
-        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-        setCleanName(cleanedName);
-      
+    const fetchData = async () => {
         try {
-          const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
+          const token = await user.getIdToken();
+          const response = await fetch(`${API_BASE_URL}/ref/get-all?fileName=${fileName}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, 
+            },
+          });
       
           if (!response.ok) {
             throw new Error("Failed to fetch data");
@@ -51,26 +55,22 @@ const ReferenceListPage = () => {
       };
     
     useEffect(() => {
+      if (!user || !fileName) return;
         fetchData();
       }, [navigate]);
     
 
     const handleDeleteReference = async (title) => {
-        const sessionUserData = sessionStorage.getItem("userData");
-        if (!sessionUserData) {
-          console.error("Missing user data");
-          return;
-        }
-      
-        const { userId, fileName } = JSON.parse(sessionUserData);
-      
+
+      const token = await user.getIdToken();
         try {
-          const response = await fetch(`${API_BASE_URL}/ref/delete-ref`, {
+          const response = await fetch(`${API_BASE_URL}/ref/delete`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, 
             },
-            body: JSON.stringify({ uid: userId, fileName, title }),
+            body: JSON.stringify({ fileName, title }),
           });
       
           const data = await response.json();
@@ -90,21 +90,15 @@ const ReferenceListPage = () => {
       };
 
       const handleDownloadReference = async () => {
-        const sessionUserData = sessionStorage.getItem("userData");
-        if (!sessionUserData) {
-          console.error("Missing user data");
-          return;
-        }
-      
-        const { userId, fileName } = JSON.parse(sessionUserData);
-      
+        const token = await user.getIdToken();
         try {
-          const response = await fetch(`${API_BASE_URL}/ref/download-ref`, {
+          const response = await fetch(`${API_BASE_URL}/ref/download`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ uid: userId, fileName }),
+            body: JSON.stringify({ fileName }),
           });
       
           if (!response.ok) {
@@ -114,19 +108,15 @@ const ReferenceListPage = () => {
           }
       
           const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
       
-          let versionedFileName = "references.bib";
+          // Extract filename from Content-Disposition header
           const contentDisposition = response.headers.get("Content-Disposition");
-          if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-            if (filenameMatch && filenameMatch[1]) {
-              versionedFileName = filenameMatch[1];
-            }
-          }
+          console.log(contentDisposition);
+
+          const match = contentDisposition && contentDisposition.match(/filename="?([^"]+)"?/);
+          const versionedFileName = match ? match[1] : "references.bib";
       
-          console.log("⬇Downloading as:", versionedFileName);
-      
+          const url = window.URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
           link.download = versionedFileName;
@@ -134,7 +124,6 @@ const ReferenceListPage = () => {
           link.click();
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-      
           toast.success(`Downloaded ${versionedFileName}!`);
         } catch (error) {
           console.error("Request failed:", error);
@@ -143,8 +132,7 @@ const ReferenceListPage = () => {
       };
       
     const papers = data || [];
-    console.log("References:");
-    console.log(data);
+
     return (
         <div>
             <Navbar />
@@ -258,7 +246,7 @@ const ReferenceListPage = () => {
                                         )}
                                         </div>
 
-                                    <div className="self-end">
+                                    <div className="self-end pt-3">
                                         <button 
                                         onClick={() => handleDeleteReference(paper.title)}
                                         className="border border-gray-300 h-8 w-8 rounded-full shadow-md text-white bg-black/80 hover:bg-red hover:text-white transition duration-200">✖</button>

@@ -57,6 +57,7 @@ export const downloadReferences = async (userId, fileName, res) => {
   const tempFilePath = path.join(tempDir, versionedFileName);
   fs.writeFileSync(tempFilePath, bibtexEntries);
 
+  res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
   res.setHeader("Content-Disposition", `attachment; filename=\"${versionedFileName}\"`);
   res.setHeader("Content-Type", "application/x-bibtex");
   const fileStream = fs.createReadStream(tempFilePath);

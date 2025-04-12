@@ -27,6 +27,10 @@ const ResultsPage = () => {
     const [cleanName, setCleanName] = useState(null);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+
+    useEffect(() => {
         if (fileName) {
           const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
           setCleanName(cleanedName);
