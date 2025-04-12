@@ -165,7 +165,10 @@ const ReferenceListPage = () => {
                             Click the <span className="font-bold text-yellow">&nbsp;✖&nbsp;</span> button at the bottom right of any paper to remove it from your reference list.
                         </li>
                         <li>
-                            Open the collapsible drawer on the left and select <span className="italic text-yellow">&nbsp;"Recommended Articles"&nbsp;</span> to add more references. Newly added articles will appear at the bottom of this list with a <span className="font-bold text-white">&nbsp;★★ New ★★&nbsp;</span> label.
+                            Open the collapsible drawer on the left and select <span className="italic text-yellow">&nbsp;"Recommended Articles"&nbsp;</span> to add more references. Newly added articles will appear at the top of this list with a <span className="font-bold text-white">&nbsp;★★ New ★★&nbsp;</span> label.
+                        </li>
+                        <li>
+                            If you choose to include a Citation Diversity Statement, open the collapsible drawer on the left and select <span className="italic text-yellow">&nbsp;"Citation Diversity Statements"&nbsp;</span> to add the CDS citations. These references will appear at the top of this list with a <span className="font-bold text-white">&nbsp;★★ CDS ★★&nbsp;</span> label.
                         </li>
                         <li>
                             Once you're happy with your updated reference list, click the <span className="font-semibold text-yellow">&nbsp;Download&nbsp;</span> button below to export it as a BibTeX file.
@@ -197,6 +200,9 @@ const ReferenceListPage = () => {
                                 <div key={index} className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30 flex flex-col">
                                     {paper.url && (
                                     <h2 className="text-2xl text-center font-semibold text-yellow-400">★★ New ★★</h2>
+                                    )}
+                                    {paper.cds && (
+                                    <h2 className="text-2xl text-center font-semibold text-yellow-400">★★ CDS ★★</h2>
                                     )}
                                     <h2 className="text-lg font-semibold">{paper.title} </h2>
                                     <h4 className="text-sm pt-1">

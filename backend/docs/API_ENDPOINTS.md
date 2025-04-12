@@ -58,6 +58,7 @@ This file lists all current API endpoints in the project, organized by module an
 | Method | Endpoint       | Description                        | Auth Required |
 |--------|----------------|------------------------------------|---------------|
 | GET   | `/cds/get-statements`   | Retrieves citation diversity statements | ✅             |
+| GET   | `/cds/add-cds-references`   | Adds the CDS citations to user's reference list | ✅             |
 
 ---
 

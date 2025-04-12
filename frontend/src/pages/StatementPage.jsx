@@ -70,6 +70,31 @@ const StatementPage = () => {
         });
     };
 
+    const handleAddReferences = async () => {
+        try {
+          const token = await user.getIdToken();
+          const response = await fetch(`${API_BASE_URL}/cds/add-cds-references?fileName=${fileName}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, 
+            },
+          });
+      
+          const data = await response.json();
+      
+          if (response.ok) {
+            toast.success("Articles added to reference list!");
+          } else {
+            console.error("Error adding reference:", data.error);
+            toast.error(data.error);
+          }
+        } catch (error) {
+          console.error("Request failed:", error);
+        }
+    };
+    
+
 
     return (
         <div>
@@ -89,7 +114,7 @@ const StatementPage = () => {
                   </h1>
                 </div>
 
-                <div className="bg-white/10 rounded-lg p-4 text-left mb-8">
+                <div className="bg-white/10 rounded-lg p-4 text-left mb-8 max-w-5xl">
                     <h3 className="text-lg font-semibold text-yellow mb-2">Select your desired Citation Diversity Statement</h3>
                     <ul className="list-disc list-inside space-y-2 text-sm text-white">
                         <li>
@@ -107,7 +132,10 @@ const StatementPage = () => {
                         of all authors in your reference list.
                         </li>
                         <li>
-                        Citations are provided at the bottom.
+                            Citations are listed below and can be added to your reference list. 
+                            <span className="block mt-1">
+                                <span className="font-semibold text-yellow">Note:</span> If you choose to use them, be sure to download your updated list and re-run <span className="font-semibold text-yellow">CiteFairly</span> to generate refreshed statistics.
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -197,6 +225,15 @@ const StatementPage = () => {
                             <li key={key} className="text-gray-300 py-1">{citation}</li>
                             ))}
                         </ol>
+                        <div className="text-center">
+                            <button
+                                onClick={handleAddReferences}
+                                className=" bg-blue text-white font-medium px-8 py-1 rounded hover:bg-blue/60 transition"
+                                >
+                                Add References
+                            </button>
+                        </div>
+
                         </div>
                     </>
                     )}
