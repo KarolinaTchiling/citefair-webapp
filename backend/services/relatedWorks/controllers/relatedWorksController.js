@@ -3,7 +3,7 @@ import { db } from "../../../utils/firebaseConfig.js";
 
 
 // Creates the related works from the relatedWorksService 
-export const relatedWorks = async (req, res) => {
+export const relatedWorksController = async (req, res) => {
     try {
         const userId = req.user.uid; 
         const { fileName } = req.body;
@@ -18,7 +18,7 @@ export const relatedWorks = async (req, res) => {
 }
 
 // Retrieves the related works from the realtime Firebase db
-export const getRelatedWorks = async (req, res) => {
+export const getRelatedWorksController = async (req, res) => {
     try {
         const userId = req.user.uid; 
         const { fileName } = req.query;

@@ -1,9 +1,9 @@
 import express from "express";
-import { getUserName } from "../controllers/userController.js";
+import { getUserNameController } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.post("/name", getUserName);
+router.post("/name", getUserNameController);
 
 export default router;
 

@@ -2,7 +2,7 @@ import { processBibliography } from "../services/ProcessBibService.js";
 import { db, bucket } from "../../../utils/firebaseConfig.js";
 
 // Processes the bibliography using  processBibliography function from the services
-export const processBib = async (req, res) => {
+export const processBibController = async (req, res) => {
   try {
     const { fileName, firstName, middleName, lastName } = req.body;
     const userId = req.user.uid; 
@@ -43,7 +43,7 @@ export const processBib = async (req, res) => {
 };
 
 // Retrieves the process bib data from the firebase db
-export const getProcessedBib = async (req, res) => {
+export const getProcessedBibController = async (req, res) => {
   try {
     const { fileName } = req.query;
     const userId = req.user.uid; 

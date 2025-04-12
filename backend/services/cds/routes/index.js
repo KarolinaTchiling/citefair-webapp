@@ -1,9 +1,9 @@
 import express from "express";
-import { getCds } from "../controllers/cdsController.js";
+import { getCdsController } from "../controllers/cdsController.js";
 
 const router = express.Router();
 
-router.get("/get-statements", getCds);
+router.get("/get-statements", getCdsController);
 
 export default router;
 

@@ -1,6 +1,6 @@
 import { generateStatements} from "../services/StatementService.js";
 
-export const getCds = async (req, res) => {
+export const getCdsController = async (req, res) => {
     try {
         const { fileName } = req.query;
         const userId = req.user.uid; 

@@ -4,7 +4,7 @@ import { fetchUserFiles } from "../services/fetchService.js";
 import { bucket } from "../../../utils/firebaseConfig.js";
 
 // Handles file upload requests
-export const handleFileUpload = async (req, res) => {
+export const FileUploadController = async (req, res) => {
     try {
       const userId = req.user?.uid; // from Firebase token
       const file = req.file;
@@ -41,7 +41,7 @@ export const handleFileUpload = async (req, res) => {
     }
   };
 
-export const handleFileDelete = async (req, res) => {
+export const FileDeleteController = async (req, res) => {
     try {
       const { fileName } = req.query;
       const userId = req.user?.uid;
@@ -57,7 +57,7 @@ export const handleFileDelete = async (req, res) => {
   };
 
 // Returns all files with signed download links and metadata
-export const handleFetchUserFiles = async (req, res) => {
+export const FetchUserFilesController = async (req, res) => {
   try {
     const uid = req.user?.uid;
     if (!uid) {

@@ -29,7 +29,6 @@ async function verifyFirebaseToken(req, res, next) {
   }
 }
 
-
 router.use('/process', verifyFirebaseToken, processBibRoutes);
 router.use('/user', verifyFirebaseToken, userRoutes);
 router.use('/file', verifyFirebaseToken, fileRoutes);

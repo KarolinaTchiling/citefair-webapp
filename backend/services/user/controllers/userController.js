@@ -1,7 +1,7 @@
 import { fetchUserName } from "../services/UserService.js";
 
 // Returns user's name from the Firebase Realtime DB
-export const getUserName = async (req, res) => {
+export const getUserNameController = async (req, res) => {
   try {
     const uid = req.user?.uid;
     if (!uid) {

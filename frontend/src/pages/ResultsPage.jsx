@@ -129,10 +129,7 @@ const ResultsPage = () => {
         WW: { label: "First and last authors are women", color: "#FF6384" },  // Pink
     };
 
-    console.log(fileName);
     
-    
-
     return (
         <div className="flex flex-col">
             <Navbar />

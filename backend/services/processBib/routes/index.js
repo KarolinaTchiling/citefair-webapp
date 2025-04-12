@@ -1,9 +1,9 @@
 import express from "express";
-import { processBib, getProcessedBib } from "../controllers/processBibController.js";
+import { processBibController, getProcessedBibController } from "../controllers/processBibController.js";
 
 const router = express.Router();
 
-router.post("/run-process-bib", processBib);
-router.get("/get-process-bib", getProcessedBib);
+router.post("/run-process-bib", processBibController);
+router.get("/get-process-bib", getProcessedBibController);
 
 export default router;
