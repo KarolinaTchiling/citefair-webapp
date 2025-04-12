@@ -72,7 +72,7 @@ This file lists all current API endpoints in the project, organized by module an
 
 ---
 
-## 🔐 Authentication Notes
+## Authentication Notes
 
 All protected routes require the client to include a valid Firebase ID token in the request header.
 The frontend retrieves this token using Firebase Authentication.

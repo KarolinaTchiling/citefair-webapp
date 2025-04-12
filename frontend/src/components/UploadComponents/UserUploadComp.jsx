@@ -8,7 +8,6 @@ function FileUploadAnalysis() {
   const [uploadedFile, setUploadedFile] = useState(""); // Track uploaded file
   const [fileUploaded, setFileUploaded] = useState(false); // Track file status
 
-
   return (
 
       <div className="h-full w-full flex flex-col bg-white rounded-lg px-8 py-4">
