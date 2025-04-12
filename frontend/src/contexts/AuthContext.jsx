@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         console.log("User already exists, logging in.");
       }
-      console.log("Google Sign-In successful:", user);
+      console.log("Google Sign-In successful");
       navigate("/dashboard"); 
     } catch (error) {
       console.error("Google Sign-In failed:", error);

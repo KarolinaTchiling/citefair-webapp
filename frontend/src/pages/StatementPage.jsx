@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useAuth } from "../contexts/AuthContext";
 import { useSelectedFile } from "../contexts/SelectedFileContext";
+import toast from 'react-hot-toast';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -63,6 +64,12 @@ const StatementPage = () => {
         fetchData();
     }, [navigate]);
 
+    const handleCopy = (text) => {
+        navigator.clipboard.writeText(text).then(() => {
+          toast.success("Copied to clipboard!");
+        });
+    };
+
 
     return (
         <div>
@@ -78,9 +85,33 @@ const StatementPage = () => {
               <>
                 <div className="h-[13vh] flex items-center justify-center">
                   <h1 className="text-4xl md:text-5xl text-white font-semibold text-center">
-                    Your Citation Diversity Statements – {cleanName}
+                    Citation Diversity Statements – {cleanName}
                   </h1>
                 </div>
+
+                <div className="bg-white/10 rounded-lg p-4 text-left mb-8">
+                    <h3 className="text-lg font-semibold text-yellow mb-2">Select your desired Citation Diversity Statement</h3>
+                    <ul className="list-disc list-inside space-y-2 text-sm text-white">
+                        <li>
+                        Choose from two types of statements: 
+                        <span className="font-semibold text-yellow">&nbsp;Full&nbsp;</span> (includes citation analysis)
+                        or 
+                        <span className="font-semibold text-yellow">&nbsp;Abbreviated&nbsp;</span> (excludes citation metrics).
+                        </li>
+                        <li>
+                        The <span className="font-semibold text-yellow">category-based</span> version shows author distribution across 
+                        <span className="italic text-yellow">&nbsp;MM, MW, WM, and WW&nbsp;</span> groups.
+                        </li>
+                        <li>
+                        The <span className="font-semibold text-yellow">gender-based</span> version shows the overall gender distribution 
+                        of all authors in your reference list.
+                        </li>
+                        <li>
+                        Citations are provided at the bottom.
+                        </li>
+                    </ul>
+                </div>
+                
       
                 {data === null ? (
                     <p className="text-white text-lg">No statements found.</p>
@@ -104,35 +135,62 @@ const StatementPage = () => {
                         </div>
 
                         {/* Selected Statement */}
-                        <div className="space-y-6 w-full max-w-4xl mb-10">
+                        <div className="space-y-6 w-full max-w-5xl mb-10">
                         {selected === "Category" && (
                             <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
-                            <h2 className="text-3xl font-semibold text-center py-2">
-                                Full Citation Diversity Statement - By Author Categories
-                            </h2>
+                                <div className="flex flex-row items-center justify-between my-2">
+                                    <p></p>
+                                    <h2 className="text-3xl font-semibold text-center">
+                                        Full Citation Diversity Statement - By Author Categories
+                                    </h2>
+                                    <button
+                                        onClick={() => handleCopy(data.catStatement)}
+                                        className=" bg-blue font-semibold px-2 py-2 rounded-full hover:bg-blue/60 transition"
+                                        >
+                                        <img src="/clipboard.svg" alt="Copy" className="w-5 h-5" />
+                                    </button>
+                                </div>
                             <p>{data.catStatement}</p>
                             </div>
                         )}
                         {selected === "Gender" && (
                             <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
-                            <h2 className="text-3xl font-semibold text-center py-2">
-                                Full Citation Diversity Statement - By Gender
-                            </h2>
+                                <div className="flex flex-row items-center justify-between my-2">
+                                    <p></p>
+                                    <h2 className="text-3xl font-semibold text-center">
+                                        Full Citation Diversity Statement - By Gender
+                                    </h2>
+                                    <button
+                                        onClick={() => handleCopy(data.genderStatement)}
+                                        className=" bg-blue font-semibold px-2 py-2 rounded-full hover:bg-blue/60 transition"
+                                        >
+                                        <img src="/clipboard.svg" alt="Copy" className="w-5 h-5" />
+                                    </button>
+                                </div>
                             <p>{data.genderStatement}</p>
                             </div>
                         )}
                         {selected === "Abbreviated" && (
                             <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30">
-                            <h2 className="text-3xl font-semibold text-center py-2">
-                                Abbreviated Citation Diversity Statement
-                            </h2>
+                                <div className="flex flex-row items-center justify-between my-2">
+                                    <p></p>
+                                    <h2 className="text-3xl font-semibold text-center">
+                                        Abbreviated Citation Diversity Statement
+                                    </h2>
+                                    <button
+                                        onClick={() => handleCopy(data.abbStatement)}
+                                        className=" bg-blue font-semibold px-2 py-2 rounded-full hover:bg-blue/60 transition"
+                                        >
+                                        <img src="/clipboard.svg" alt="Copy" className="w-5 h-5" />
+                                    </button>
+                                </div>
                             <p>{data.abbStatement}</p>
                             </div>
                         )}
                         </div>
 
                         {/* Always Visible Citations */}
-                        <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30 w-full max-w-4xl mb-20">
+                        <div className="border border-gray-300 p-4 rounded-lg shadow-md text-white bg-black/30 w-full max-w-5xl mb-20">
                         <h2 className="text-lg font-semibold text-center">Citations</h2>
                         <ol className="list-decimal text-sm list-inside">
                             {Object.entries(data.citations).map(([key, citation]) => (

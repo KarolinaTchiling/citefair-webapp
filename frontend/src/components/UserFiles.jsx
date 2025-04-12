@@ -108,6 +108,7 @@ const UserFiles = () => {
                         href={downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        download={ogName}
                         className="text-blue hover:underline"
                       >
                         Download

@@ -143,7 +143,7 @@ const RecommendedPage = () => {
       const data = await response.json();
   
       if (response.ok) {
-        console.log("Paper added to reference list:", data.paper);
+        // console.log("Paper added to reference list:", data.paper);
         toast.success("Article added to reference list!");
         setAddedReferences((prev) => [...prev, paperId])
       } else {
