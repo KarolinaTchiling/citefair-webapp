@@ -36,7 +36,6 @@ const RecommendedPage = () => {
   const fetchRelated = async (fileName) => {
     const token = await user.getIdToken();
 
-
     // Try GET request first
     try {
       const storedResponse = await fetch(`${API_BASE_URL}/related/get-related-work?fileName=${fileName}`, {
@@ -49,7 +48,6 @@ const RecommendedPage = () => {
       if (storedResponse.ok) {
         const storedData = await storedResponse.json();
         if (storedData) {
-          console.log("Using stored data:", storedData);
           setData(storedData);
           setLoading(false);
           return;

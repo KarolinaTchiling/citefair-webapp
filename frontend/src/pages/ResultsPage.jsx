@@ -128,6 +128,8 @@ const ResultsPage = () => {
         WM: { label: "Woman first author and man last author", color: "#AD85FF" },  // Purple
         WW: { label: "First and last authors are women", color: "#FF6384" },  // Pink
     };
+
+    console.log(fileName);
     
     
 
