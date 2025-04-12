@@ -10,17 +10,37 @@ import ReferenceListPage from './pages/ReferenceListPage';
 import SaveGuestPage from './pages/SaveGuestPage';
 import NotFound from './pages/NotFoundPage';
 import './input.css';
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const PrivateRoute = ({ children }) => {
     return isAuthenticated ? children : <Navigate to="/" replace />;
   };
-  
 
+  const UserProtectedRoute = ({ children }) => {
+    if (!user) {
+      return <Navigate to="/" replace />;
+    }
+    if (user.isAnonymous) {
+      return <Navigate to="/save-guest" replace />;
+    }
+    return children;
+  };
+
+  const GuestProtectedRoute = ({ children }) => {
+    if (!user) {
+      return <Navigate to="/" replace />;
+    }
+    if (!user.isAnonymous) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    return children;
+  };
+  
+  
   return (
     <div>
       <Toaster position="bottom-right" reverseOrder={false} />
@@ -33,9 +53,9 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute>
+            <UserProtectedRoute>
               <DashBoardPage />
-            </PrivateRoute>
+            </UserProtectedRoute>
           }
         />
         <Route
@@ -65,9 +85,9 @@ function App() {
         <Route
           path="/save-guest"
           element={
-            <PrivateRoute>
+            <GuestProtectedRoute>
               <SaveGuestPage />
-            </PrivateRoute>
+            </GuestProtectedRoute>
           }
         />
         <Route

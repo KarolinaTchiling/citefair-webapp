@@ -3,8 +3,8 @@ import Signup from "../components/Signup";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom';
-import GuestDashboard from "../components/GuestDashboard";
-import { useAuth } from "../AuthContext"
+import GuestUpload from "../components/UploadComponents/GuestUploadComp";
+import { useAuth } from "../contexts/AuthContext"
 
 function LandingPage() {
 
@@ -21,8 +21,6 @@ function LandingPage() {
     }
   }, [location]);
 
-
-  
   const handleScroll = () => {
     const targetElement = document.getElementById("create-account");
     if (targetElement) {
@@ -125,7 +123,7 @@ function LandingPage() {
                 {/* Step Title */}
                 <span className="mt-3 text-center">{step.title}</span>
 
-                {/* Caption (Hidden by Default, Shows on Hover) */}
+                {/* Caption  */}
                 <div className="text-white text-sm text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 mt-2">
                   {step.caption}
                 </div>
@@ -138,9 +136,6 @@ function LandingPage() {
 
       { user?.isAnonymous || !user ? (
       <div id="create-account"  className=" bg-indigo">
-        {/* <div id="target-section"  className="h-[calc(100vh)] bg-indigo"> */}
-
-        {/* <div className="flex flex-col items-center border border-red bg-indigo rounded-2xl mt-20 mx-20"> */}
         <div className="flex flex-col items-center bg-indigo rounded-2xl mt-10 mx-20">
 
 
@@ -160,7 +155,7 @@ function LandingPage() {
           <div className="flex-1 flex flex-col justify-center min-h-full">
             <div className="mb-4 text-center text-white text-2xl">Continue Without an Account</div>
             <div className="flex-grow flex">
-              <GuestDashboard />
+              <GuestUpload />
             </div>
           </div>
         </div>

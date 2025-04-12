@@ -1,53 +1,21 @@
-import express from "express";
-import cors from "cors";
-import uploadRoutes from "./routes/uploadRoutes.js";
-import statsRoutes from "./routes/StatsRoutes.js";
-import statementRoutes from "./routes/StatementRoutes.js";
-import relatedWorksRoutes from "./routes/RelatedWorksRoutes.js";
-import guestRoutes from "./routes/GuestRoutes.js";
-import userRoutes from "./routes/UserRoutes.js";
-import referencesRoutes from "./routes/ReferencesRoutes.js";
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import apiGateway from './api-gateway/index.js';
 
-import testingRoutes from "./routes/TestingRoutes.js";
+dotenv.config();
 
 const app = express();
 
 app.use(cors({
-    origin: "*", 
-    credentials: true,
-    exposedHeaders: ["Content-Disposition"] 
-  }));
+  origin: "*", 
+  credentials: true             
+}));
 
 app.use(express.json());
-
-// Basic route (like CiteFairly API)
-app.get("/", (req, res) => {
-    res.json({
-        message: "Welcome to the CiteFairly API!",
-        status: "running",
-        service_routes: {
-            upload: "/upload",
-            stats: "/stats",
-            cds: "/cds",
-            related: "/related",
-            guest: "/guest",
-            user: "/user",
-            references: "/ref",
-            test: "/test"
-        }
-    });
-});
-
-// Load API routes
-app.use("/upload", uploadRoutes);
-app.use("/stats", statsRoutes);
-app.use("/cds", statementRoutes);
-app.use("/related", relatedWorksRoutes);
-app.use("/guest", guestRoutes);
-app.use("/user", userRoutes);
-app.use("/ref", referencesRoutes);
-
-app.use("/test", testingRoutes);
+app.use('/', apiGateway); // all requests go through the gateway
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

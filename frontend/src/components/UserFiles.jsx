@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
-import { useNavigate } from "react-router-dom"; // Import navigation hook
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom"; 
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const UserFiles = () => {
   const { user } = useAuth();
+  const { setFileName } = useSelectedFile();
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const fetchFiles = async () => {
-    if (user?.uid) {
+    if (user) {
       try {
-        const response = await fetch(`${API_BASE_URL}/user/files`, {
-          method: "POST",
+        const token = await user.getIdToken();
+
+        const response = await fetch(`${API_BASE_URL}/file/get-files`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ uid: user.uid }),
         });
 
         if (!response.ok) {
@@ -42,12 +46,17 @@ const UserFiles = () => {
   }, [user]);
 
   const handleDeleteFile = async (fileName) => {
-    if (user?.uid && fileName) {
+    if (user && fileName) {
       try {
+
+        const token = await user.getIdToken();
         const response = await fetch(
-          `${API_BASE_URL}/upload/delete-file?userId=${user.uid}&fileName=${fileName}`,
+          `${API_BASE_URL}/file/delete?fileName=${fileName}`, 
           {
             method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
   
@@ -63,11 +72,10 @@ const UserFiles = () => {
     }
   };
 
-  // Navigate to the results page and pass `fileName` & `userId`
+  
   const handleSeeResults = (fileName) => {
-    navigate("/results", {
-      state: { userData: { fileName, userId: user.uid } },
-    });
+    setFileName(fileName);
+    navigate("/results");
   };
 
   return (
@@ -100,6 +108,7 @@ const UserFiles = () => {
                         href={downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        download={ogName}
                         className="text-blue hover:underline"
                       >
                         Download

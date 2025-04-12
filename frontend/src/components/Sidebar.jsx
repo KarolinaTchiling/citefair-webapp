@@ -3,36 +3,24 @@ import { Drawer, Box, IconButton, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const drawerWidth = 250; // Set width of the Drawer
+const drawerWidth = 250; 
 
 const Sidebar = ({ isOpen, toggleDrawer }) => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Get the authenticated user
-  const [isGuest, setIsGuest] = useState(false);
+  const { user } = useAuth(); 
+  const { fileName } = useSelectedFile();
+  const [cleanName, setCleanName] = useState(null);
+
 
   useEffect(() => {
-    const fetchGuestStatus = async () => {
-      if (user?.uid) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/guest/isGuest?uid=${user.uid}`);
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch guest status");
-          }
-
-          const data = await response.json();
-          setIsGuest(data.isGuest);
-        } catch (error) {
-          console.error("Error fetching guest status:", error);
-        }
+      if (fileName) {
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
       }
-    };
-
-    fetchGuestStatus();
-  }, [user]);
+    }, [fileName]);
 
   return (
     <>
@@ -42,11 +30,11 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
         sx={{ 
             color: "white",
             position: "absolute",
-            top: "80px", // equivalent to Tailwind's top-20 (80px)
-            left: "20px", // adjust as needed
+            top: "80px", 
+            left: "20px", 
             backgroundColor: "transparent",
             boxShadow: "none",
-            width: "auto" // remove fixed width
+            width: "auto" 
         }}
         >
         <MenuIcon fontSize="large"/>
@@ -90,6 +78,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
         {/* Sidebar Content */}
         <Box>
           <h2 className="text-lg pl-4 font-semibold mt-5">Menu</h2>
+          <h2 className="text-lg pl-4 font-thin mt-1 mb-10 italic">{cleanName}</h2>
           <ul className="pl-4 mt-4 space-y-5">
             <button 
               className="w-full text-left transition duration-300 hover:scale-105"
@@ -115,8 +104,8 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
                 Reference List
             </button>
 
-            {/* 🔹 Hide "Back to Dashboard" for Guest Users */}
-            {!isGuest && (
+            {/* Hide "Back to Dashboard" for Guest Users */}
+            {!user?.isAnonymous && (
               <button 
                 className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
                 onClick={() => navigate('/dashboard')}>
@@ -124,7 +113,7 @@ const Sidebar = ({ isOpen, toggleDrawer }) => {
               </button>
             )}
 
-            {isGuest && (
+            {user?.isAnonymous && (
               <button 
                 className="w-full text-left transition duration-300 pt-7 font-bold hover:scale-105"
                 onClick={() => navigate('/save-guest')}>

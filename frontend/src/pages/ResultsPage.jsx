@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import Loader from '../components/Loader.jsx';
-import Typewriter from '../components/Typewriter.jsx';
+import Loader from '../components/Loaders/Loader.jsx';
+import Typewriter from '../components/Loaders/Typewriter.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import Footer from "../components/Footer";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResultsPage = () => {
     const location = useLocation();
-    const navigate = useNavigate();
+    const postData = location.state?.postData;                          
+    
+    const { fileName } = useSelectedFile();
+    const { user, fullName } = useAuth();
 
-    const [userData, setUserData] = useState(() => {
-        return location.state?.userData || JSON.parse(sessionStorage.getItem("userData")) || null;
-    });
-   
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); // Function to Toggle Sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); 
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -30,30 +31,31 @@ const ResultsPage = () => {
       }, []);
 
     useEffect(() => {
-
-        if (!userData) {
-            console.error("No result data, redirecting...");
-            navigate("/");
-            return;
+        if (fileName) {
+          const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+          setCleanName(cleanedName);
         }
-
-        // Store `userData` in sessionStorage for persistence
-        sessionStorage.setItem("userData", JSON.stringify(userData));
-
-        const { fileName, userId } = userData;
-
-        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-        setCleanName(cleanedName);
+      }, [fileName]);
+    
+    useEffect(() => {
+        if (!user || !fileName) return;
 
         const fetchData = async () => {
+            const token = await user.getIdToken();
+
             // Step 1: Check if data exists in Firebase
             try {
-                const storedResponse = await fetch(`${API_BASE_URL}/stats/getProcessedBib?fileName=${fileName}&userId=${userId}`);
+                const storedResponse = await fetch(`${API_BASE_URL}/process/get-process-bib?fileName=${fileName}`, {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`, 
+                    },
+                  });
 
                 if (storedResponse.ok){
                     const storedData = await storedResponse.json();
                     if (storedData) {
-                        console.log("Using stored data:", storedData);
                         setData(storedData);
                         setLoading(false);
                         return;
@@ -66,20 +68,27 @@ const ResultsPage = () => {
 
             // Step 2: If no stored data, call processBib API
             try {
-                const response = await fetch(`${API_BASE_URL}/stats/processBib`, {
+                const response = await fetch(`${API_BASE_URL}/process/run-process-bib`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(userData),
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, 
+                      },
+                    body: JSON.stringify({
+                        fileName: fileName,
+                        firstName: postData?.firstName || fullName?.first,
+                        middleName: postData?.middleName || fullName?.middle,
+                        lastName: postData?.lastName || fullName?.last,
+                      }),
                 });
+                console.log(response);
                 
                 const result = await response.json(); 
                 if (!response.ok) {
                     throw new Error(result.error || "An unknown error occurred.");
                 }
         
-                setData(result); //store data in state
+                setData(result);
         
             } catch (error) {
                 console.error("Error:", error);
@@ -91,7 +100,7 @@ const ResultsPage = () => {
         };
 
         fetchData();
-    }, [userData, navigate]);
+    },[user, fileName]);
 
     // Convert gender distribution data to a format that Recharts can use
     const genderData = data?.genders
@@ -119,9 +128,8 @@ const ResultsPage = () => {
         WM: { label: "Woman first author and man last author", color: "#AD85FF" },  // Purple
         WW: { label: "First and last authors are women", color: "#FF6384" },  // Pink
     };
-    
-    
 
+    
     return (
         <div className="flex flex-col">
             <Navbar />

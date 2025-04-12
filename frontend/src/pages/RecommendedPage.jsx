@@ -3,14 +3,19 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import Footer from "../components/Footer.jsx";
-import Loader from "../components/Loader.jsx";
-import Typewriter from "../components/TypewriterRelated.jsx";
+import Loader from "../components/Loaders/Loader.jsx";
+import Typewriter from "../components/Loaders/TypewriterRelated.jsx";
 import toast from 'react-hot-toast';
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectedFile } from "../contexts/SelectedFileContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const RecommendedPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { fileName } = useSelectedFile();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -19,7 +24,7 @@ const RecommendedPage = () => {
   const [error, setError] = useState(null);
   const [cleanName, setCleanName] = useState(null);
   const [addedReferences, setAddedReferences] = useState([]);
-  const [referencesLoading, setReferencesLoading] = useState(true);
+  const [referencesLoading, setReferencesLoading] = useState(true); 
 
   // Filter states:
   const [filterAnyWoman, setFilterAnyWoman] = useState(false);
@@ -28,16 +33,21 @@ const RecommendedPage = () => {
 
 
   // fetch related articles
-  const fetchRelated = async (fileName, userId) => {
+  const fetchRelated = async (fileName) => {
+    const token = await user.getIdToken();
+
     // Try GET request first
     try {
-      const storedResponse = await fetch(
-        `${API_BASE_URL}/related/get-related-works?fileName=${fileName}&userId=${userId}`
-      );
+      const storedResponse = await fetch(`${API_BASE_URL}/related/get-related-work?fileName=${fileName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+      });
       if (storedResponse.ok) {
         const storedData = await storedResponse.json();
         if (storedData) {
-          console.log("Using stored data:", storedData);
           setData(storedData);
           setLoading(false);
           return;
@@ -49,12 +59,13 @@ const RecommendedPage = () => {
 
     // Fallback to POST request if no stored data
     try {
-      const response = await fetch(`${API_BASE_URL}/related/process-related-works`, {
+      const response = await fetch(`${API_BASE_URL}/related/run-related-work`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
         },
-        body: JSON.stringify({ fileName, userId }),
+        body: JSON.stringify({ fileName }),
       });
       if (!response.ok) {
         throw new Error("Failed to fetch data");
@@ -70,9 +81,17 @@ const RecommendedPage = () => {
   };
 
   // fetch references and isolate those which came from related papers (only they will have paperID field)
-  const fetchAddedReferences = async (fileName, userId) => {
+  const fetchAddedReferences = async (fileName) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/ref/get-refs?fileName=${fileName}&userId=${userId}`);
+      const token = await user.getIdToken();
+      const response = await fetch(`${API_BASE_URL}/ref/get-all?fileName=${fileName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+
       if (!response.ok) throw new Error("Failed to fetch reference list");
   
       const result = await response.json();
@@ -91,48 +110,40 @@ const RecommendedPage = () => {
 
   // do both fetches at the same time
   useEffect(() => {
-    const sessionUserData = sessionStorage.getItem("userData");
-    if (!sessionUserData) {
-      console.error("Missing required session data, redirecting...");
-      navigate("/");
-      return;
-    }
-    const { fileName, userId } = JSON.parse(sessionUserData);
-    const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
-    setCleanName(cleanedName); 
-
     const runFetches = async () => {
       await Promise.all([
-        fetchRelated(fileName, userId),
-        fetchAddedReferences(fileName, userId)
+        fetchRelated(fileName),
+        fetchAddedReferences(fileName)
       ]);
     };
     runFetches();
   }, [navigate]);
 
 
+  useEffect(() => {
+      if (fileName) {
+        const cleanedName = fileName.replace(/_(bib|txt)$/i, "");
+        setCleanName(cleanedName);
+      }
+    }, [fileName]);
+
+
   const handleAddReference = async (paperId) => {
-    const sessionUserData = sessionStorage.getItem("userData");
-    if (!sessionUserData) {
-      console.error("Missing user data");
-      return;
-    }
-  
-    const { userId, fileName } = JSON.parse(sessionUserData);
-  
     try {
-      const response = await fetch(`${API_BASE_URL}/ref/add-ref`, {
+      const token = await user.getIdToken();
+      const response = await fetch(`${API_BASE_URL}/ref/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
         },
-        body: JSON.stringify({ uid: userId, fileName, paperId }),
+        body: JSON.stringify({ fileName, paperId }),
       });
   
       const data = await response.json();
   
       if (response.ok) {
-        console.log("Paper added to reference list:", data.paper);
+        // console.log("Paper added to reference list:", data.paper);
         toast.success("Article added to reference list!");
         setAddedReferences((prev) => [...prev, paperId])
       } else {
@@ -321,7 +332,7 @@ const RecommendedPage = () => {
                     </div>
                   </div>
                  );
-})}
+                })}
               </div>
             )}
           </>

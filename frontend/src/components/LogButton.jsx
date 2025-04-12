@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -8,13 +8,17 @@ const LogButton = () => {
   const { user, logout } = useAuth(); // Get user & logout function from context
   const navigate = useNavigate();
 
+
   // Handle "End Session" (Delete Guest Account)
   const handleEndSession = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/guest/deleteGuest`, {
+      const token = await user.getIdToken();      
+      const response = await fetch(`${API_BASE_URL}/guest/delete`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
