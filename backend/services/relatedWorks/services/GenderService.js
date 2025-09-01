@@ -28,8 +28,6 @@ export async function fetchAuthorGender(data) {
                 id: trimmedName,
                 full_name: trimmedName
             });
-        }else{
-            console.warn(`Skipping author "${trimmedName}") because it is more than 50 characters long.`);
         }
 
       }
