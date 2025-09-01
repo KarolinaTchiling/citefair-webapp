@@ -15,17 +15,23 @@ export async function fetchAuthorGender(data) {
   const apiKey = process.env.GENDER_API_KEY;
 
   if (!apiKey) {
-      throw new Error("API key is missing. Make sure it is set in the .env file.");
+      throw new Error("API key is missing. Make sure it is set in the .env file.");// Use author's full name as unique ID
   }
 
   // Collect all authors from recommended papers
   const authorRequests = [];
   for (const paper of data.recommendedPapers) {
       for (const author of paper.authors) {
-          authorRequests.push({
-              id: author.name, // Use author's full name as unique ID
-              full_name: author.name.trim()
-          });
+        const trimmedName = author.name.trim();
+        if(trimmedName.length <= 50){ //Author name length cannot be more than 50 characters
+            authorRequests.push({
+                id: trimmedName,
+                full_name: trimmedName
+            });
+        }else{
+            console.warn(`Skipping author "${trimmedName}") because it is more than 50 characters long.`);
+        }
+
       }
   }
 
@@ -38,7 +44,7 @@ export async function fetchAuthorGender(data) {
   try {
       for (const batch of batches) {
           console.log(`Processing batch of ${batch.length} author names...`);
-
+          console.log("Batch content:", batch);
           const response = await fetch(`${baseUrl}?key=${apiKey}`, {
               method: "POST",
               headers: { 
