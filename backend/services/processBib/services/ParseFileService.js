@@ -45,7 +45,29 @@ export async function getFileContent(fileName, userId) {
 // Step 2: Extract titles from .bib or .txt 
 function extractTitlesFromBib(fileContent) {
     try {
+      fileContent = fileContent
+        .normalize("NFC") 
+        .replace(/%.*$/gm, '') // Remove LaTeX comments
+        .replace(/[\u2018\u2019\u201C\u201D]/g, '"') // // Replace smart quotes ‘ ’ with " "
+        .replace(/author\s*=\s*{([^}]*)}/gi, (_match, authors) => {
+          const cleanedAuthors = authors.replace(/\b(?:and\s+){1,}and\b/gi, 'and');
+          return `author = {${cleanedAuthors}}`;
+        }) // cleans multiple "and" in author section
+        .replace(/(?<=\d),(?=\d)/g, '') // removes commas in numbers
+        .replace(/\$(.*?)\$/g, '$1') // replaces inline math symbols
+        .replace(/=\s*{([^}]*)}/g, (_match, value) => {
+     const fixed = value
+        .replace(/@/g, ' at ')     // replace @ with " at "
+        .replace(/#/g, '')         // removes #
+        .replace(/\$/g, '')        // Removes $
+        .replace(/\\&/g, 'and')    // Replace \& with "and"
+        .trim();
+        return `= {${fixed}}`;
+     })
+    .replace(/([^\S\r\n]+)?}$/gm, ' }'); // fixes spacing on closing braces
+
       const bib = parseString(fileContent);
+      console.log(bib);
       const entries = bib.entries;
   
       const titles = Object.keys(entries)
