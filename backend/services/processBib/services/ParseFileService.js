@@ -48,8 +48,12 @@ function extractTitlesFromBib(fileContent) {
       // The file content has to be cleaned so that the parser wont break
       
       //1. converts all texts to unicode format
-      let clearText = fileContent.normalize('NFC');
+      let fileContentC = fileContent.normalize('NFC');
 
+      //2. removes all BibTeX comments
+      fileContentC = fileContentC.replace(/%.*$/gm, '');
+
+  
 
       const bib = parseString(fileContent);
       const entries = bib.entries;
