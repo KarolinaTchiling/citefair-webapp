@@ -65,6 +65,8 @@ function extractTitlesFromBib(fileContent) {
       }
       );
 
+      //5. removes all of the commas inside any numbers
+      fileContentC = fileContentC.replace(/(?<=\d),(?=\d)/g, "");
 
       const bib = parseString(fileContent);
       const entries = bib.entries;
