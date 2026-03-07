@@ -71,8 +71,20 @@ function extractTitlesFromBib(fileContent) {
       //6. remove all of $ signs used for math expressions in the bib file
       fileContentC = fileContentC.replace(/\$(.*?)\$/g, "$1");
 
-      //7. 
-      const bib = parseString(fileContent);
+      //7. replace all of the characeters in the content that breaks the parser within all sections
+
+      fileContentC = fileContentC.replace(/=\s*{([^}]*)}/g, (_, section) => {
+
+        // for the captured sections replace all the charactes that breaks the parser
+        const sectionC = section.replace(/@/g, " at ") //replace @ with at
+                                .replace(/#/g, "") // remove #
+                                .replace(/\$/g, "") // remove $
+                                .replace(/\\&/g, "and") // replace & with and
+                                .trim(); //
+        return `={${sectionC}}`;
+      });
+
+      const bib = parseString(fileContentC);
       const entries = bib.entries;
   
       const titles = Object.keys(entries)
