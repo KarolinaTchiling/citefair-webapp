@@ -47,16 +47,16 @@ function extractTitlesFromBib(fileContent) {
     try {
       // The file content has to be cleaned so that the parser wont break
       
-      //1. converts all texts to unicode format
+      //1. convert all texts to unicode format
       let fileContentC = fileContent.normalize('NFC');
 
-      //2. removes all BibTeX comments
+      //2. remove all BibTeX comments
       fileContentC = fileContentC.replace(/%.*$/gm, '');
 
-      //3. replaces all of the curly quotes with straight quotes
+      //3. replace all of the curly quotes with straight quotes
       fileContentC = fileContentC.replace(/[\u2018\u2019\u201C\u201D]/g, '"');
 
-      //4. removes all of repeated and's in the authors section(sarah and and john)
+      //4. remove all of repeated and's in the authors section(sarah and and john)
       fileContentC = fileContentC.replace(/author\s*=\s*{([^}]*)}/gi, (_, authors) => {
 
         const authorsC = authors.replace(/\band\s+and\b/gi, 'and');//replace all of the repeated ands between the authors name (john and and and sarah -> john and sarah)
@@ -65,9 +65,13 @@ function extractTitlesFromBib(fileContent) {
       }
       );
 
-      //5. removes all of the commas inside any numbers
+      //5. remove all of the commas inside any numbers
       fileContentC = fileContentC.replace(/(?<=\d),(?=\d)/g, "");
 
+      //6. remove all of $ signs used for math expressions in the bib file
+      fileContentC = fileContentC.replace(/\$(.*?)\$/g, "$1");
+
+      //7. 
       const bib = parseString(fileContent);
       const entries = bib.entries;
   
