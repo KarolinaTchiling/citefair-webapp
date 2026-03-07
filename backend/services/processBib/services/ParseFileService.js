@@ -45,6 +45,12 @@ export async function getFileContent(fileName, userId) {
 // Step 2: Extract titles from .bib or .txt 
 function extractTitlesFromBib(fileContent) {
     try {
+      // The file content has to be cleaned so that the parser wont break
+      
+      //1. converts all texts to unicode format
+      let clearText = fileContent.normalize('NFC');
+
+
       const bib = parseString(fileContent);
       const entries = bib.entries;
   
