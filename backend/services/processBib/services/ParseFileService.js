@@ -90,7 +90,7 @@ function extractTitlesFromBib(fileContent) {
       const titles = Object.keys(entries)
         .map((key) => {
           const title = entries[key].fields?.title?._unicode;
-          return title ? title.trim() : null;
+          return title ? title.replace(/[?:'"]/g, " ").replace(/\s+/g, " ").trim() : null; // removes remaining special characters that breaks the url request
         })
         .filter(Boolean); // Remove null/undefined
     
